@@ -10356,6 +10356,11 @@ static void update_d1_data(PictureControlSet *pcs, ModeDecisionContext *ctx, uin
 static void update_nsq_settings(PictureControlSet *pcs, ModeDecisionContext *ctx) {
     // Reset the NSQ setting if previous-SQ is_high_energy
     svt_aom_set_nsq_search_ctrls(pcs, ctx, pcs->nsq_search_level, pcs->ppcs->input_resolution);
+
+    // Do not adjust NSQ settings for ENC_MRP and ENC_MRS
+    if (pcs->ppcs->enc_mode <= ENC_MRP) {
+        return;
+    }
     // Derive area energy
     uint32_t energy      = ctx->blk_geom->sq_size < 64
              ? ctx->b32_satd[(ctx->blk_geom->org_x / 32) + ((ctx->blk_geom->org_y / 32) << 1)]

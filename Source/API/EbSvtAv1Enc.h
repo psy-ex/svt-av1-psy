@@ -43,6 +43,8 @@ extern "C" {
 #endif
 #endif /* ATTRIBUTE_PACKED */
 typedef enum ATTRIBUTE_PACKED {
+    ENC_MRS        = -3, // Highest quality research mode (slowest)
+    ENC_MRP        = -2, // Previous research mode with quality/speed tradeoffs found in v1.8.0
     ENC_MR         = -1, //Research mode with higher quality than M0
     ENC_M0         = 0,
     ENC_M1         = 1,

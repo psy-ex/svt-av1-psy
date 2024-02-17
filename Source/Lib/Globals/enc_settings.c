@@ -41,8 +41,8 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
     EbErrorType               return_error   = EB_ErrorNone;
     EbSvtAv1EncConfiguration *config         = &scs->static_config;
     unsigned int              channel_number = config->channel_id;
-    if (config->enc_mode > MAX_ENC_PRESET || config->enc_mode < -1) {
-        SVT_ERROR("Instance %u: EncoderMode must be in the range of [-1-%d]\n", channel_number + 1, MAX_ENC_PRESET);
+    if (config->enc_mode > MAX_ENC_PRESET || config->enc_mode < -3) {
+        SVT_ERROR("Instance %u: EncoderMode must be in the range of [-3-%d]\n", channel_number + 1, MAX_ENC_PRESET);
         return_error = EB_ErrorBadParameter;
     }
     if (scs->max_input_luma_width < 4) {
