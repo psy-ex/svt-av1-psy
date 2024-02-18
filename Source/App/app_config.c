@@ -176,6 +176,9 @@
 #define MASTERING_DISPLAY_TOKEN "--mastering-display"
 #define CONTENT_LIGHT_LEVEL_TOKEN "--content-light"
 #define FGS_TABLE_TOKEN "--fgs-table"
+#ifdef LIBDOVI_FOUND
+#define DOLBY_VISION_RPU_TOKEN "--dolby-vision-rpu"
+#endif
 
 #define SFRAME_DIST_TOKEN "--sframe-dist"
 #define SFRAME_MODE_TOKEN "--sframe-mode"
@@ -400,6 +403,20 @@ static EbErrorType set_cfg_fgs_table_path(EbConfig *cfg, const char *token, cons
 
     return EB_ErrorNone;
 }
+#ifdef LIBDOVI_FOUND
+static EbErrorType set_cfg_dovi_rpu(EbConfig *cfg, const char *token, const char *value) {
+    printf("Svt[info]: Parsing Dolby Vision RPU file...\n");
+    const DoviRpuOpaqueList *rpus = dovi_parse_rpu_bin_file(value);
+    if (rpus->error) {
+        fprintf(stderr, "%s\n", rpus->error);
+        dovi_rpu_list_free(rpus);
+        return validate_error(EB_ErrorBadParameter, token, value);
+    }
+    printf("Svt[info]: Loaded %zu DoVi RPUs\n", rpus->len);
+    cfg->dovi_rpus = rpus;
+    return EB_ErrorNone;
+}
+#endif
 
 static EbErrorType set_two_pass_stats(EbConfig *cfg, const char *token, const char *value) {
     return str_to_str(value, (char **)&cfg->stats, token);
@@ -1185,7 +1202,13 @@ ConfigEntry config_entry_color_description[] = {
      "Set content light level in the format of \"max_cll,max_fall\", refer to the user guide "
      "Appendix A.2",
      set_cfg_generic_token},
-
+    // Dolby Vision RPU
+#ifdef LIBDOVI_FOUND
+    {SINGLE_INPUT,
+     DOLBY_VISION_RPU_TOKEN,
+     "[PSY] Set the Dolby Vision RPU path",
+     set_cfg_dovi_rpu},
+#endif
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};
 
@@ -1356,6 +1379,9 @@ ConfigEntry config_entry[] = {
     {SINGLE_INPUT, CHROMA_SAMPLE_POSITION_TOKEN, "ChromaSamplePosition", set_cfg_generic_token},
     {SINGLE_INPUT, MASTERING_DISPLAY_TOKEN, "MasteringDisplay", set_cfg_generic_token},
     {SINGLE_INPUT, CONTENT_LIGHT_LEVEL_TOKEN, "ContentLightLevel", set_cfg_generic_token},
+#ifdef LIBDOVI_FOUND
+    {SINGLE_INPUT, DOLBY_VISION_RPU_TOKEN, "DolbyVisionRpu", set_cfg_dovi_rpu},
+#endif
 
     // QM
     {SINGLE_INPUT, ENABLE_QM_TOKEN, "EnableQM", set_cfg_generic_token},
@@ -1398,6 +1424,9 @@ EbConfig *svt_config_ctor() {
     app_cfg->progress            = 1;
     app_cfg->injector_frame_rate = 60;
     app_cfg->roi_map_file        = NULL;
+#ifdef LIBDOVI_FOUND
+    app_cfg->dovi_rpus           = NULL;
+#endif
     app_cfg->fgs_table_path      = NULL;
 
     return app_cfg;
@@ -1452,6 +1481,13 @@ void svt_config_dtor(EbConfig *app_cfg) {
         fclose(app_cfg->roi_map_file);
         app_cfg->roi_map_file = (FILE *)NULL;
     }
+    
+#ifdef LIBDOVI_FOUND
+    if (app_cfg->dovi_rpus) {
+        dovi_rpu_list_free(app_cfg->dovi_rpus);
+        app_cfg->dovi_rpus = NULL;
+    }
+#endif
 
     if (app_cfg->fgs_table_path) {
         free(app_cfg->fgs_table_path);
