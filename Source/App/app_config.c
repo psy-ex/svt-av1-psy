@@ -501,6 +501,7 @@ static EbErrorType set_progress(EbConfig *cfg, const char *token, const char *va
     switch (value ? *value : '1') {
     case '0': cfg->progress = 0; break; // no progress printed
     case '2': cfg->progress = 2; break; // aomenc style progress
+    case '3': cfg->progress = 3; break; // Patman style progress
     default: cfg->progress = 1; break; // default progress
     }
     return EB_ErrorNone;
@@ -664,7 +665,7 @@ ConfigEntry config_entry_options[] = {
 
     {SINGLE_INPUT,
      PROGRESS_TOKEN,
-     "Verbosity of the output, default is 1 [0: no progress is printed, 2: aomenc style output]",
+     "Verbosity of the output, default is 1 [0: no progress is printed, 2: aomenc style output, 3: fancy progress]",
      set_progress},
     {SINGLE_INPUT,
      NO_PROGRESS_TOKEN,
