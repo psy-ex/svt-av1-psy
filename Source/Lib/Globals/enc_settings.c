@@ -875,7 +875,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     }
     config_ptr->frame_rate_numerator     = 60000;
     config_ptr->frame_rate_denominator   = 1000;
-    config_ptr->encoder_bit_depth        = 8;
+    config_ptr->encoder_bit_depth        = 10;
     config_ptr->source_width             = 0;
     config_ptr->source_height            = 0;
     config_ptr->forced_max_frame_width   = 0;
@@ -939,7 +939,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->tier    = 0;
     config_ptr->level   = 0;
 
-    // Latency
+    // Film grain denoising
     config_ptr->film_grain_denoise_strength = 0;
     config_ptr->film_grain_denoise_apply    = 0;
 
@@ -959,7 +959,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     // Alt-Ref default values
     config_ptr->enable_tf       = 1;
     config_ptr->enable_overlays = false;
-    config_ptr->tune            = 1;
+    config_ptr->tune            = 2;
     // Super-resolution default values
     config_ptr->superres_mode      = SUPERRES_NONE;
     config_ptr->superres_denom     = SCALE_NUMERATOR;
@@ -988,8 +988,8 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->force_key_frames = 0;
 
     // Quant Matrices (QM)
-    config_ptr->enable_qm    = 0;
-    config_ptr->min_qm_level = 8;
+    config_ptr->enable_qm    = 1;
+    config_ptr->min_qm_level = 0;
     config_ptr->max_qm_level = 15;
 
     config_ptr->startup_mg_size                   = 0;
@@ -1000,7 +1000,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->frame_scale_evts.start_frame_nums = NULL;
     config_ptr->enable_roi_map                    = false;
     config_ptr->fgs_table                         = NULL;
-    config_ptr->enable_variance_boost             = false;
+    config_ptr->enable_variance_boost             = true;
     config_ptr->variance_boost_strength           = 2;
     config_ptr->variance_octile                   = 6;
     config_ptr->tf_strength                       = 3;
