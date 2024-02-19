@@ -1019,6 +1019,21 @@ void process_output_stream_buffer(EncChannel *channel, EncApp *enc_app, int32_t 
             const double fps        = (double)*frame_count / app_cfg->performance_context.total_encode_time;
             const double frame_rate = (double)app_cfg->config.frame_rate_numerator /
                 (double)app_cfg->config.frame_rate_denominator;
+
+            // Patman's progress variables
+            const double ete        = app_cfg->performance_context.total_encode_time;
+            int ete_r               = round(ete);
+            int ete_hours           = ete_r / 3600;
+            int ete_minutes         = (ete_r - (ete_hours * 3600)) / 60;
+            int ete_seconds         = ete_r - (ete_hours * 3600) - (ete_minutes * 60);
+            const double eta        = (app_cfg->performance_context.total_encode_time / app_cfg->frames_encoded) * (app_cfg->frames_to_be_encoded - app_cfg->frames_encoded);
+            int eta_r               = round(eta);
+            int eta_hours           = eta_r / 3600;
+            int eta_minutes         = (eta_r - (eta_hours * 3600)) / 60;
+            int eta_seconds         = eta_r - (eta_hours * 3600) - (eta_minutes * 60);
+            double size             = ((double)app_cfg->performance_context.byte_count / 1000000);
+            double estsz            = ((double)app_cfg->performance_context.byte_count * app_cfg->frames_to_be_encoded / (app_cfg->frames_encoded * 1000) / 1000);
+
             switch (app_cfg->progress) {
             case 0: break;
             case 1:
@@ -1033,6 +1048,18 @@ void process_output_stream_buffer(EncChannel *channel, EncApp *enc_app, int32_t 
                          (app_cfg->frames_encoded * 1000)),
                         fps >= 1.0 ? fps : fps * 60,
                         fps >= 1.0 ? 's' : 'm');
+                break;
+            case 3:
+                fprintf(stderr,
+                        "\rEncoding: \x1b[33m%4d/%d Frames\x1b[0m @ \x1b[32m%.2f\x1b[0m fp%c | \x1b[35m%.2f kb/s\x1b[0m | Time: \x1b[36m%d:%02d:%02d\x1b[0m \x1b[38;5;248m[-%d:%02d:%02d]\x1b[0m | Size: \x1b[31m%.2f MB\x1b[0m \x1b[38;5;248m[%.2f MB]\x1b[0m",
+                        *frame_count,
+                        (int)app_cfg->frames_to_be_encoded,
+                        fps >= 1.0 ? fps : fps * 60,
+                        fps >= 1.0 ? 's' : 'm',
+                        ((double)(app_cfg->performance_context.byte_count << 3) * frame_rate /
+                         (app_cfg->frames_encoded * 1000)),
+                        ete_hours, ete_minutes, ete_seconds, eta_hours, eta_minutes, eta_seconds, size, estsz);
+                break;
             default: break;
             }
             fflush(stderr);
