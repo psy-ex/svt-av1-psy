@@ -254,7 +254,7 @@ SVT-AV1 can encode these sources correctly and embed the required metadata in th
 output. High definition typically involves a high definition color space (such as BT.2020)
 and an associated set of transfer functions (such as PQ or HLG). HDR video is also
 typically encoded with 10-bit color. Detailed information on forcing these
-settings is available in the [full parameters description](parameters.md).
+settings is available in the [full parameters description](Parameters.md).
 
 Colors can be mapped from a wider space into a less wide space (such as the
 frequently used BT.709) using ffmpeg or other tools, but there are always
