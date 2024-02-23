@@ -773,7 +773,7 @@ much greater detail than this document.
 
 ## Notes
 
-The information in this document was compiled at <mark>v1.5.0</mark> may not
+The information in this document was compiled at <mark>v1.9.0</mark> may not
 reflect the latest status of the encoder design. For the most up-to-date
 settings and implementation, it's recommended to visit the section of the code
 implementing the feature / section in question.
