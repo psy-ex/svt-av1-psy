@@ -71,6 +71,10 @@ Note - a Dockerfile is provided to build the encoder into a tiny Alpine Linux Do
   - Run the sample application to encode: `./SvtAv1EncApp -i [in.yuv] -w [width] -h [height] -b [out.ivf]`
   - Sample application supports reading from pipe. E.g. `ffmpeg -i [in.mp4] -map 0:v:0 -pix_fmt yuv420p -f yuv4mpegpipe -strict -1 - | ./SvtAv1EncApp -i stdin -n [number_of_frames_to_encode] -b [out.ivf]`
 
+## ARM build targets and installation
+
+Build instructions for ARM targets can be found [here](ARM-Build-Guide.md)
+
 # SVT-AV1 ffmpeg plugin installation
 
 ## 1. Build and install SVT-AV1
