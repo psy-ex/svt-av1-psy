@@ -19,7 +19,7 @@ endif()
 project(svt-av1 VERSION 3.0.0
     LANGUAGES C CXX)
 
-set(VERSION_TAG "rc1")
+set(VERSION_TAG "rc2")
 
 if(POLICY CMP0063)
   cmake_policy(SET CMP0063 NEW)
