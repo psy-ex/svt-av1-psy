@@ -6,13 +6,17 @@ SVT-AV1-PSY is the Scalable Video Technology for AV1 (SVT-AV1 Encoder and Decode
 
 - `--variance-boost-strength` *1 to 4*
 
-Provides control over our augmented AQ Mode 2 which can utilize variance information in each frame for more consistent quality under high/low contrast scenes. Five curve options are provided, and the default is curve 2. 1: mild, 2: gentle, 3: medium, 4: aggressive
+Provides control over our augmented AQ Modes 0 and 2 which can utilize variance information in each frame for more consistent quality under high/low contrast scenes. Four curve options are provided, and the default is curve 2. 1: mild, 2: gentle, 3: medium, 4: aggressive
 
-- `--new-variance-octile` *0 to 8*
+- `--variance-octile` *1 to 8*
 
-Enables a new 8x8 variance algorithm and picks a variance value per superblock to use as a boost. Lower values enable detecting more false negatives, at the expense of false positives (bitrate increase). 0: partial (64x64 only), 1-8: enabled (8x8). The default value is 6.
+Controls how "selective" the algorithm is when boosting superblocks, based on their low/high 8x8 variance ratio. A value of 1 is the least selective, and will readily boost a superblock if only 1/8th of the superblock is low variance. Conversely, a value of 8 will only boost if the *entire* superblock is low variance. Lower values increase bitrate. The default value is 6.
 
-- `Preset -2 & -3`
+- `--enable-alt-curve` *0 and 1*
+
+Enable an alternative variance boost curve, with different bit allocation and visual characteristics. The default is 0.
+
+- `Presets -2 & -3`
 
 Terrifically slow encoding modes for research purposes.
 
