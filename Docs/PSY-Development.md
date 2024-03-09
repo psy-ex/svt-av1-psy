@@ -44,7 +44,7 @@ By maintaining these two branches, the SVT-AV1-PSY project ensures a balance bet
 
 ## Which Branch Do I Use?
 
-If unsure, please use the "master" branch.
+If unsure, **please use the "master" branch**.
 
 The "master" branch represents the stable state of the project, containing only those changes that have been thoroughly tested and approved. Therefore, for regular use, the "master" branch is recommended as it generally provides more reliable and visually superior performance.
 
@@ -59,3 +59,73 @@ We do not accept issue reports coming from the testing branch. If you encounter 
 If you have any questions or need assistance, please feel free to reach out to us. You can contact us through the [AV1 for Dummies](https://discord.gg/bbQD5MjDr3) Discord server, where you can find the SVT-AV1-PSY channel.
 
 Alternatively, you can reach out to us via the GitHub Issues here if you have a valid issue to report. Finally, you can contact Gianni directly on Matrix at `@computerbustr:matrix.org` if you have a specific query that the other two methods cannot properly address.
+
+## Documentation
+
+**Guides**
+- [System Requirements](Docs/System-Requirements.md)
+- [How to run SVT-AV1 within ffmpeg](Docs/Ffmpeg.md)
+- [Standalone Encoder Usage](Docs/svt-av1_encoder_user_guide.md)
+- [Decoder Usage](Docs/svt-av1_decoder_user_guide.md)
+- [List of All Parameters](Docs/Parameters.md)
+- [Build Guide](Docs/Build-Guide.md)
+- [ARM Build Guide](Docs/ARM-Build-Guide.md)
+
+**Common Questions/Issues**
+- [What presets do](Docs/CommonQuestions.md#what-presets-do)
+- [Scene change detection](Docs/CommonQuestions.md#scene-change-detection)
+- [GOP size selection](Docs/CommonQuestions.md#gop-size-selection)
+- [Threading and efficiency](Docs/CommonQuestions.md#threading-and-efficiency)
+- [Practical advice about grain synthesis](Docs/CommonQuestions.md#practical-advice-about-grain-synthesis)
+- [Improving decoding performance](Docs/CommonQuestions.md#improving-decoding-performance)
+- [Tuning for animation](Docs/CommonQuestions.md#tuning-for-animation)
+- [8 vs. 10-bit encoding](Docs/CommonQuestions.md#8-or-10-bit-encoding)
+- [HDR and SDR video](Docs/CommonQuestions.md#hdr-and-sdr)
+- [Options that give the best encoding bang-for-buck](Docs/CommonQuestions.md#options-that-give-the-best-encoding-bang-for-buck)
+- [Multi-pass encoding](Docs/CommonQuestions.md#multi-pass-encoding)
+- [CBR, VBR, and CRF modes](Docs/CommonQuestions.md#bitrate-control-modes)
+
+**Presentations**
+- [Big Apple Video 2019](https://www.youtube.com/watch?v=lXqOaYNo8m0)
+- [Video @ Scale 2021](https://atscaleconference.com/videos/highly-efficient-svt-av1-based-solutions-for-vod-applications/?contact-form-id=124119&contact-form-sent=163268&contact-form-hash=d4bb3fd420fae91cd39c11bdb69f970a05a152a9&_wpnonce=bba8096d24#contact-form-124119)
+
+**Papers and Blogs**
+- [Netflix Blog 2020](https://netflixtechblog.com/svt-av1-an-open-source-av1-encoder-and-decoder-ad295d9b5ca2)
+- [SPIE 2020](https://www.spiedigitallibrary.org/conference-proceedings-of-spie/11510/1151021/The-SVT-AV1-encoder--overview-features-and-speed-quality/10.1117/12.2569270.full)
+- [SPIE 2021](https://www.spiedigitallibrary.org/conference-proceedings-of-spie/11842/118420T/Towards-much-better-SVT-AV1-quality-cycles-tradeoffs-for-VOD/10.1117/12.2595598.full)
+- [SVT-AV1 - Tech Blog 2022](https://networkbuilders.intel.com/blog/svt-av1-enables-highly-efficient-large-scale-video-on-demand-vod-services)
+- [SPIE 2022](https://www.spiedigitallibrary.org/conference-proceedings-of-spie/12226/122260S/Enhancing-SVT-AV1-with-LCEVC-to-improve-quality-cycles-trade/10.1117/12.2633882.full)
+- [Adaptive Steaming Common Test Conditions](https://aomedia.org/docs/SIWG-D001o.pdf)
+- [ICIP 2023](https://arxiv.org/abs/2307.05208)
+
+**Design Documents**
+- [Encoder Design](Docs/svt-av1-encoder-design.md)
+- [Decoder Design](Docs/svt-av1-decoder-design.md)
+
+**Technical Appendices**
+- [Why build with LTO?] (Docs/CommonQuestions.md#why-build-with-lto)
+- [Adaptive Prediction Structure Appendix](Docs/Appendix-Adaptive-Prediction-Structure.md)
+- [Altref and Overlay Pictures Appendix](Docs/Appendix-Alt-Refs.md)
+- [CDEF Appendix](Docs/Appendix-CDEF.md)
+- [CfL Appendix](Docs/Appendix-CfL.md)
+- [Compliant Subpel Interpolation Filter Search Appendix](Docs/Appendix-Compliant-Subpel-Interpolation-Filter-Search.md)
+- [Compound Mode Prediction Appendix](Docs/Appendix-Compound-Mode-Prediction.md)
+- [Deblocking Loop Filter (LF) Appendix](Docs/Appendix-DLF.md)
+- [Film Grain Synthesis](Docs/Appendix-Film-Grain-Synthesis.md)
+- [Global Motion Appendix](Docs/Appendix-Global-Motion.md)
+- [Intra Block Copy Appendix](Docs/Appendix-Intra-Block-Copy.md)
+- [IPP Pass Appendix](Docs/Appendix-IPP-Pass.md)
+- [Local Warped Motion appendix](Docs/Appendix-Local-Warped-Motion.md)
+- [Mode Decision Appendix](Docs/Appendix-Mode-Decision.md)
+- [Motion Estimation Appendix](Docs/Appendix-Open-Loop-Motion-Estimation.md)
+- [Overlapped Block Motion Compensation Appendix](Docs/Appendix-Overlapped-Block-Motion-Compensation.md)
+- [Palette Prediction Appendix](Docs/Appendix-Palette-Prediction.md)
+- [Rate Control Appendix](Docs/Appendix-Rate-Control.md)
+- [Recursive Intra Appendix](Docs/Appendix-Recursive-Intra.md)
+- [Restoration Filter Appendix](Docs/Appendix-Restoration-Filter.md)
+- [SQ Weight Appendix](Docs/Appendix-SQ-Weight.md)
+- [Super-resolution Appendix](Docs/Appendix-Super-Resolution.md)
+- [Temporal Dependency Model](Docs/Appendix-TPL.md)
+- [Transform Search Appendix](Docs/Appendix-TX-Search.md)
+- [Reference Scaling Appendix](Docs/Appendix-Reference-Scaling.md)
+- [Variance Boost Appendix](Docs/Appendix-Variance-Boost.md)
