@@ -956,6 +956,7 @@ void process_output_stream_buffer(EncChannel *channel, EncApp *enc_app, int32_t 
                          (app_cfg->frames_encoded * 1000)),
                         fps >= 1.0 ? fps : fps * 60,
                         fps >= 1.0 ? 's' : 'm');
+                break;
             case 3:
                 if ((int)app_cfg->frames_to_be_encoded == -1) {
                     fprintf(stderr,
