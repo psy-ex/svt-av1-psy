@@ -4572,6 +4572,8 @@ static void copy_api_from_app(
     // Sharpness
     scs->static_config.sharpness = config_struct->sharpness;
 
+    // Extended CRF
+    scs->static_config.extended_crf_qindex_offset = config_struct->extended_crf_qindex_offset;
     return;
 }
 

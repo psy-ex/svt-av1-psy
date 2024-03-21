@@ -40,6 +40,10 @@ A new progress mode that provides more detailed information about the encoding p
 
 Argument for providing a film grain table for synthetic film grain (similar to aomenc's '--film-grain-table=' argument).
 
+- `Extended CRF`
+
+Provides a more versatile and granular way to set CRF. Range has been expanded to 70 (from 63) to help with ultra-low bitrate encodes, and can now be set in quarter-step (0.25) increments.
+
 ### Modified Defaults
 
 SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide better visual fidelity out of the box. They include:
