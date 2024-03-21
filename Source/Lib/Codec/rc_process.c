@@ -3258,6 +3258,7 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
                                 }
                                 new_qindex = crf_qindex_calc(pcs, rc, rc->active_worst_quality);
                             } else // if CQP
+                                //Check this in 3.0.0-psy
                                 new_qindex = cqp_qindex_calc(pcs, qindex);
                             frm_hdr->quantization_params.base_q_idx = (uint8_t)CLIP3(
                                 (int32_t)quantizer_to_qindex[scs->static_config.min_qp_allowed],
@@ -3265,7 +3266,7 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
                                 (int32_t)(new_qindex));
                         }
 
-                        if (scs->static_config.use_fixed_qindex_offsets || scs->static_config.tune == 3) {
+                        if (scs->static_config.use_fixed_qindex_offsets || scs->static_config.tune == 3 || scs->static_config.extended_crf_qindex_offset) {
                             int32_t qindex = scs->static_config.use_fixed_qindex_offsets == 1
                                 ? quantizer_to_qindex[scs_qp]
                                 : frm_hdr->quantization_params
@@ -3298,6 +3299,12 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
                                                          0.5) *
                                                     (qindex / 8.0));
 
+                            // Extended CRF range (63.25 - 70), add offset to all temporal layers to truncate QP scaling
+                            // Fixed: rebase onto original extended CRF commit
+                            if (scs->static_config.qp == MAX_QP_VALUE && scs->static_config.extended_crf_qindex_offset) {
+                                qindex += scs->static_config.extended_crf_qindex_offset;
+                            }
+
                             qindex = CLIP3(quantizer_to_qindex[scs->static_config.min_qp_allowed],
                                            quantizer_to_qindex[scs->static_config.max_qp_allowed],
                                            qindex);
@@ -3320,6 +3327,7 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
                         chroma_qindex += -rint(chroma_qindex / 8.0); // Chroma boost to fix saturation issues
                     }
 
+                    chroma_qindex += scs->static_config.extended_crf_qindex_offset;
                     chroma_qindex = CLIP3(quantizer_to_qindex[scs->static_config.min_qp_allowed],
                                           quantizer_to_qindex[scs->static_config.max_qp_allowed],
                                           chroma_qindex);

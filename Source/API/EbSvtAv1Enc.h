@@ -940,6 +940,12 @@ typedef struct EbSvtAv1EncConfiguration {
      */
     bool avif;
 
+    /* @brief Q index for extended CRF support
+     * Value is internally determined by CRF parameter value
+     * Default is 0 if CRF is an integer
+     */
+    uint8_t extended_crf_qindex_offset;
+
     /*Add 128 Byte Padding to Struct to avoid changing the size of the public configuration struct*/
     uint8_t padding[128];
 } EbSvtAv1EncConfiguration;
