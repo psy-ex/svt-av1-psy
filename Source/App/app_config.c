@@ -1941,7 +1941,7 @@ uint32_t get_help(int32_t argc, char *const argv[]) {
     printf(
         "\x1b[1;4mUsage\x1b[0m: SvtAv1EncApp <options> <-b dst_filename> -i src_filename\n"
         "\n"
-        "\x1b[1;4mExamples:\n"
+        "\x1b[1;4mExamples\x1b[0m:\n"
         "Multi-pass encode (VBR):\n"
         "    SvtAv1EncApp <--stats svtav1_2pass.log> --passes 2 --rc 1 --tbr 1000 -b dst_filename "
         "-i src_filename\n"
