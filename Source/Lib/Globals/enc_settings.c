@@ -867,6 +867,11 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
+    if (config->qp_scale_compress_strength > 3) {
+        SVT_ERROR("Instance %u: QP scale compress strength must be between 0 and 3\n", channel_number + 1);
+        return_error = EB_ErrorBadParameter;
+    }
+
     return return_error;
 }
 
@@ -1015,6 +1020,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->luminance_qp_bias                 = 0;
     config_ptr->sharpness                         = 0; 
     config_ptr->extended_crf_qindex_offset        = 0;
+    config_ptr->qp_scale_compress_strength        = 1;
     return return_error;
 }
 static const char *tier_to_str(unsigned in) {
@@ -1149,6 +1155,9 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
         case 2: SVT_INFO("SVT [config]: temporal filtering strength \t\t\t\t\t: auto\n"); break;
         default: break;
         }
+
+        SVT_INFO("QP scale compress strength \t\t\t: %d\n",
+                 config->qp_scale_compress_strength);
     }
 #ifdef DEBUG_BUFFERS
     SVT_INFO("SVT [config]: INPUT / OUTPUT \t\t\t\t\t\t\t: %d / %d\n",
@@ -2021,6 +2030,7 @@ EB_API EbErrorType svt_av1_enc_parse_parameter(EbSvtAv1EncConfiguration *config_
         {"variance-boost-strength", &config_struct->variance_boost_strength},
         {"variance-octile", &config_struct->variance_octile},
         {"variance-boost-curve", &config_struct->variance_boost_curve},
+        {"qp-scale-compress-strength", &config_struct->qp_scale_compress_strength},
         {"fast-decode", &config_struct->fast_decode},
         {"luminance-qp-bias", &config_struct->luminance_qp_bias},
         {"enable-tf", &config_struct->enable_tf},

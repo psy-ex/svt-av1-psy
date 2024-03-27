@@ -69,6 +69,9 @@ extern "C" {
 #define DEBUG_VAR_BOOST_QP      0
 #define DEBUG_VAR_BOOST_STATS   0
 
+// QP scaling debugging code
+#define DEBUG_QP_SCALING        0
+
 // Quantization matrices
 #define DEBUG_QM_LEVEL          0
 #define DEBUG_STARTUP_MG_SIZE   0
