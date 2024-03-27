@@ -44,6 +44,10 @@ Argument for providing a film grain table for synthetic film grain (similar to a
 
 Provides a more versatile and granular way to set CRF. Range has been expanded to 70 (from 63) to help with ultra-low bitrate encodes, and can now be set in quarter-step (0.25) increments.
 
+- `--qp-scale-compress-strength` *0 to 3*
+
+Increases video quality temporal consistency, especially with clips that contain film grain and/or contain fast-moving objects.
+
 ### Modified Defaults
 
 SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide better visual fidelity out of the box. They include:
