@@ -8800,8 +8800,16 @@ set lpd0_level
     }
     uint8_t dlf_level = 0;
     if (pcs->scs->static_config.enable_dlf_flag && frm_hdr->allow_intrabc == 0) {
+        EncMode dlf_enc_mode = enc_mode;
+
+        if (pcs->scs->static_config.enable_dlf_flag == 2) {
+            // trade off more accurate deblocking for longer encode time
+            // use dlf_mode as if were being set for 3 presets lower
+            dlf_enc_mode = AOMMAX(ENC_MRS, enc_mode - 3);
+        }
+
         dlf_level = get_dlf_level(pcs,
-                                  enc_mode,
+                                  dlf_enc_mode,
                                   is_not_last_layer,
                                   fast_decode,
                                   input_resolution,
