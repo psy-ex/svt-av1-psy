@@ -381,15 +381,16 @@ static const vector<bool> invalid_use_qp_file = {
 /* Flag to enable the Deblocking Loop Filtering.
  *
  * Default is true. */
-static const vector<bool> default_enable_dlf_flag = {
-    true,
+static const vector<uint8_t> default_enable_dlf_flag = {
+    1,
 };
-static const vector<bool> valid_enable_dlf_flag = {
-    false,
-    true,
+static const vector<uint8_t> valid_enable_dlf_flag = {
+    0,
+    1,
+    2,
 };
-static const vector<bool> invalid_enable_dlf_flag = {
-    // none
+static const vector<uint8_t> invalid_enable_dlf_flag = {
+    3
 };
 
 /* Film grain denoising the input picture

@@ -48,6 +48,10 @@ Provides a more versatile and granular way to set CRF. Range has been expanded t
 
 Increases video quality temporal consistency, especially with clips that contain film grain and/or contain fast-moving objects.
 
+- `--enable-dlf-flag 2`
+
+Enables a more accurate loop filter that prevents blocking, for a modest increase in compute time (most noticeable at presets 7 to 9)
+
 ### Modified Defaults
 
 SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide better visual fidelity out of the box. They include:
