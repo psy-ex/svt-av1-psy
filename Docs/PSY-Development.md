@@ -77,7 +77,26 @@ That's all! If you'd like to build with Dolby Vision support, you can do so by a
 
 ### Windows
 
-*To be filled.*
+#### Visual Studio
+On Windows, you can choose to build SVT-AV1-PSY with the provided batch script at /Build/windows/ [build guide here](https://github.com/gianni-rosato/svt-av1-psy/blob/master/Docs/Build-Guide.md#windows-operating-systems-64-bit).
+
+*Currently this method doesn't support libdovi, feel free to contribute.*
+
+#### MSYS2
+Alternatively, MSYS2 could be used, providing a Unix-like environment for building Windows native software, the compilation procedure is the same as described above for Linux.
+
+Download and install MSYS2 [from here](https://www.msys2.org/)
+1. Start the UCRT64 console, install the required dependencies:
+```bash
+pacman -Syu --needed git mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-yasm
+```
+
+*While not necessary, Clang is the recommended compiler for svt-av1:* 
+```bash
+pacman -Syu --needed mingw-w64-ucrt-x86_64-clang
+```
+
+2. Follow the steps at [Bash Script](#bash-script) or [CMake](#cmake) section, CMake may require to include ```-G "Ninja"``` in the command.
 
 ## Project Development
 
