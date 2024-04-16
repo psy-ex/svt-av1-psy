@@ -2,6 +2,83 @@
 
 # SVT-AV1-PSY: Additional Info
 
+## Build Instructions
+
+### Linux & macOS
+
+On Linux & macOS, you can choose to build SVT-AV1-PSY using the provided Bash script or manually with the CMake build system. Both methods for building the SVT-AV1-PSY standalone binary are detailed below.
+
+#### Bash Script
+
+This is the recommended method, as it conveniently runs CMake under the hood and provides generally adequate flexibility. If you just wish to build a working, optimized binary, the bash script is likely the best option for you.
+
+1. Clone the repository & enter the Linux build directory:
+
+```bash
+git clone https://github.com/gianni-rosato/svt-av1-psy
+cd svt-av1-psy/Build/linux
+```
+
+2. Run the build script with the desired options. You can run `./build.sh --help` if you'd like to see the full suite of options available to you, but a sane configuration is provided below:
+
+```bash
+./build.sh --native --static --no-dec --release --enable-lto
+```
+
+Consider that you may want to opt for using the Clang compiler on Linux instead of GCC. This is recommended for much faster build times. You can do this by running `export CC=clang CXX=clang++` before running the build script, provided you have Clang installed & in your PATH.
+
+3. The compiled binaries will be located in `Bin/Release` if you navigate back to the root directory:
+
+```bash
+cd ../../Bin/Release/ # navigate quickly to Bin/Release from build dir
+./SvtAv1EncApp --version
+```
+
+4. \[Optional\] On most Linux & macOS machines, you can install the compiled binary by running `sudo cp SvtAv1EncApp /usr/local/bin` if you'd like to have it available system-wide.
+
+```bash
+sudo cp SvtAv1EncApp /usr/local/bin
+```
+
+That's it! You're all set. If you'd like to build with Dolby Vision support, you can do so by adding `--enable-libdovi` to the build script's args. This assumes you have libdovi installed on your system already, which is a separate process related to [`dovi_tool`](https://github.com/quietvoid/dovi_tool/blob/main/dolby_vision/README.md#libdovi-c-api).
+
+Now you are all set! You can encode with the `SvtAv1EncApp` binary.
+
+#### CMake
+
+1. Clone the repository & create a build directory:
+
+```bash
+git clone https://github.com/gianni-rosato/svt-av1-psy
+cd svt-av1-psy && mkdir svt_build && cd svt_build
+```
+
+2. Run the CMake installation command:
+
+```bash
+cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DBUILD_DEC=OFF -DSVT_AV1_LTO=ON -DNATIVE=ON -DCMAKE_CXX_FLAGS="-O3" -DCMAKE_C_FLAGS="-O3" -DCMAKE_LD_FLAGS="-O3" && make -j$(nproc)
+```
+
+3. Navigate to the `Bin/Release` directory to find the compiled binary:
+
+```bash
+cd ../Bin/Release/
+rm -rf ../../svt_build
+./SvtAv1EncApp --version
+```
+
+4. \[Optional\] On most Linux & macOS machines, you can install the compiled binary by running `sudo cp SvtAv1EncApp /usr/local/bin` if you'd like to have it available system-wide.
+
+```bash
+sudo cp SvtAv1EncApp /usr/local/bin
+```
+
+That's all! If you'd like to build with Dolby Vision support, you can do so by adding `-DLIBDOVI_FOUND=1` to the CMake command. This assumes you have libdovi installed on your system already, which is a separate process related to [`dovi_tool`](https://github.com/quietvoid/dovi_tool/blob/main/dolby_vision/README.md#libdovi-c-api).
+
+### Windows
+
+*To be filled.*
+
 ## Project Development
 
 SVT-AV1-PSY is a project that aims to enhance the Scalable Video Technology for AV1 Encoder with perceptual enhancements for psychovisually optimal AV1 encoding. The ultimate goal is to create *the best encoding implementation for perceptual quality with AV1*. The development of this project involves a collaborative effort from a team of dedicated developers and contributors who are committed to improving the perceptual quality of AV1 encoding.
