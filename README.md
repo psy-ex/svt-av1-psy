@@ -69,6 +69,10 @@ SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide bet
 - `--color-help`
 Prints the information found in Appendix A.2 of the user guide in order to help users more easily understand the Color Description Options in SvtAv1EncApp.
 
+# Building
+
+For Linux, macOS, & Windows build instructions, see the [PSY Development](Docs/PSY-Development.md) page.
+
 # Getting Involved
 
 For more information on SVT-AV1-PSY and this project's mission, see the [PSY Development](Docs/PSY-Development.md) page.
