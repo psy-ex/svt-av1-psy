@@ -4314,7 +4314,7 @@ uint32_t svt_aom_product_full_mode_decision(
                 }
 
                 if (scs->static_config.tune == 3 &&
-                    is_inter_singleref_mode(buffer_ptr_array[cand_index]->cand->pred_mode)) {
+                    pcs->ppcs->slice_type == B_SLICE) { // Only somewhat reverse the uni psy bias on B-Frames, prevents sharp / squiggling(lack of a better term?) artifacting
                     cost = (cost * bi_psy_bias[pcs->picture_qp]) / 100;
                 }
 

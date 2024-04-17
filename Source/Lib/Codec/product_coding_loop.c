@@ -1757,7 +1757,7 @@ static void md_stage_0(PictureControlSet *pcs, ModeDecisionContext *ctx,
             if (apply_unipred_bias && is_inter_singleref_mode(cand_bf->cand->pred_mode)) {
                 *cand_bf->fast_cost = (*cand_bf->fast_cost * uni_psy_bias[pcs->picture_qp]) / 100;
             }
-            if (pcs->scs->static_config.tune == 3 && is_inter_singleref_mode(cand_bf->cand->pred_mode)) {
+            if (pcs->scs->static_config.tune == 3 && pcs->ppcs->slice_type == B_SLICE) { // Only somewhat reverse the uni psy bias on B-Frames, prevents sharp / squiggling(lack of a better term?) artifacting
                 *cand_bf->fast_cost = (*cand_bf->fast_cost * bi_psy_bias[pcs->picture_qp]) / 100;
             }
             if (*cand_bf->fast_cost < ctx->mds0_best_cost) {
