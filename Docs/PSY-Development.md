@@ -78,7 +78,7 @@ That's all! If you'd like to build with Dolby Vision support, you can do so by a
 ### Windows
 
 #### Visual Studio
-On Windows, you can choose to build SVT-AV1-PSY with the provided batch script at /Build/windows/ [build guide here](https://github.com/gianni-rosato/svt-av1-psy/blob/master/Docs/Build-Guide.md#windows-operating-systems-64-bit).
+On Windows, SVT-AV1-PSY can be built with the provided batch script at /Build/windows/ [build guide here](https://github.com/gianni-rosato/svt-av1-psy/blob/master/Docs/Build-Guide.md#windows-operating-systems-64-bit).
 
 *Currently this method doesn't support libdovi, feel free to contribute.*
 
