@@ -141,7 +141,7 @@ SSIMULACRA2 implementations:
 - https://github.com/dnjulek/vapoursynth-ssimulacra2 (Vapoursynth, faster)
 
 XPSNR implementations:
-- https://github.com/fraunhoferhhi/xpsnr (FFmpeg 4.4, very fast)
+- https://github.com/fraunhoferhhi/xpsnr (FFmpeg 7.0, very fast)
 - https://github.com/gianni-rosato/xpsnr (FFmpeg 6.0, very fast)
 
 With the exception of vanilla VMAF, PSNR, or SSIM, if you believe other metrics are relevant, you may include them in your analysis if you also include results from either SSIMULACRA2 or XPSNR in addition. VMAF NEG is accepted. Single frame visual comparisons are helpful as well, though they cannot be relied on by themselves.
