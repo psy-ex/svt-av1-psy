@@ -4,7 +4,7 @@
 
 ## Build Instructions
 
-Through the sections below, we aim to provide a simplified build guide for compiling a standalone SVT-AV1-PSY binary in the form of `SvtAv1EncApp`. Instructions are provided for Windows, Linux, & macOS. Please note that these instructions are *just* for procuring a standalone binary; since many of our users are evaluating the standalone binary's performance or using SVT-AV1-PSY in chunked encoding workflows which utilize the standalone binary, we have not included instructions for building the SVT-AV1-PSY plugin for FFmpeg or other needs not affiliated with the standalone binary in this section.
+Through the sections below, we aim to provide a simplified build guide for compiling a standalone SVT-AV1-PSY binary in the form of `SvtAv1EncApp`. Instructions are provided for Linux & macOS as well as for Windows. Please note that these instructions are *just* for procuring a standalone binary; since many of our users are evaluating the standalone binary's performance or using SVT-AV1-PSY in chunked encoding workflows which utilize the standalone binary, we have not included instructions for building the SVT-AV1-PSY plugin for FFmpeg or other needs not affiliated with the standalone binary in this section.
 
 If you are encountering issues with the processes we've documented or you are aware that you have unique needs that are not covered here (such as building FFmpeg with SVT-AV1-PSY), please refer to the more verbose [SVT-AV1 Build Guide](Build-Guide.md) that we have carried over from the mainline SVT-AV1 project.
 
