@@ -4,13 +4,24 @@
 
 ## Build Instructions
 
+Through the sections below, we aim to provide a simplified build guide for compiling a standalone SVT-AV1-PSY binary in the form of `SvtAv1EncApp`. Instructions are provided for Windows, Linux, & macOS. Please note that these instructions are *just* for procuring a standalone binary; since many of our users are evaluating the standalone binary's performance or using SVT-AV1-PSY in chunked encoding workflows which utilize the standalone binary, we have not included instructions for building the SVT-AV1-PSY plugin for FFmpeg or other needs not affiliated with the standalone binary in this section.
+
+If you are encountering issues with the processes we've documented or you are aware that you have unique needs that are not covered here (such as building FFmpeg with SVT-AV1-PSY), please refer to the more verbose [SVT-AV1 Build Guide](Build-Guide.md) that we have carried over from the mainline SVT-AV1 project.
+
 ### Linux & macOS
 
-On Linux & macOS, you can choose to build SVT-AV1-PSY using the provided Bash script or manually with the CMake build system. Both methods for building the SVT-AV1-PSY standalone binary are detailed below.
+On Linux & macOS, you can choose to build SVT-AV1-PSY using the provided Bash script or manually with the CMake build system. Both methods for building SVT-AV1-PSY's `SvtAv1EncApp` standalone binary are detailed below.
 
 #### Bash Script
 
 This is the recommended method, as it conveniently runs CMake under the hood and provides generally adequate flexibility. If you just wish to build a working, optimized binary, the bash script is likely the best option for you.
+
+0. Ensure you have the necessary dependencies for this process, which may include:
+    - Git
+    - CMake 3.23 or newer
+    - Yasm 1.2.0 or newer
+    - GCC or Clang (preferably Clang)
+    - A POSIX-compliant shell (Bash, Zsh, etc.)
 
 1. Clone the repository & enter the Linux build directory:
 
@@ -27,6 +38,8 @@ cd svt-av1-psy/Build/linux
 
 Consider that you may want to opt for using the Clang compiler on Linux instead of GCC. This is recommended for much faster build times. You can do this by running `export CC=clang CXX=clang++` before running the build script, provided you have Clang installed & in your PATH.
 
+If you'd like to build with Dolby Vision support, you can do so by adding `--enable-libdovi` to the build script's args. This assumes you have libdovi installed on your system already, which is a separate process related to [`dovi_tool`](https://github.com/quietvoid/dovi_tool/blob/main/dolby_vision/README.md#libdovi-c-api).
+
 3. The compiled binaries will be located in `Bin/Release` if you navigate back to the root directory:
 
 ```bash
@@ -40,11 +53,15 @@ cd ../../Bin/Release/ # navigate quickly to Bin/Release from build dir
 sudo cp SvtAv1EncApp /usr/local/bin
 ```
 
-That's it! You're all set. If you'd like to build with Dolby Vision support, you can do so by adding `--enable-libdovi` to the build script's args. This assumes you have libdovi installed on your system already, which is a separate process related to [`dovi_tool`](https://github.com/quietvoid/dovi_tool/blob/main/dolby_vision/README.md#libdovi-c-api).
-
-Now you are all set! You can encode with the `SvtAv1EncApp` binary.
+Now, you are all set! You can encode with the `SvtAv1EncApp` binary. Happy encoding!
 
 #### CMake
+
+0. Ensure you have the necessary dependencies for this process, which may include:
+    - Git
+    - CMake 3.23 or newer
+    - Yasm 1.2.0 or newer
+    - GCC or Clang (preferably Clang)
 
 1. Clone the repository & create a build directory:
 
@@ -77,26 +94,30 @@ That's all! If you'd like to build with Dolby Vision support, you can do so by a
 
 ### Windows
 
-#### Visual Studio
-On Windows, SVT-AV1-PSY can be built with the provided batch script at /Build/windows/ [build guide here](https://github.com/gianni-rosato/svt-av1-psy/blob/master/Docs/Build-Guide.md#windows-operating-systems-64-bit).
+On Windows, you can choose to build SVT-AV1-PSY using the provided batch script or with msys2. Both methods for building the SVT-AV1-PSY standalone binary are detailed below.
 
-*Currently this method doesn't support libdovi, feel free to contribute.*
+#### Batch Script
+
+On Windows, a standalone binary can be built with the provided batch script in `Build/windows/`. More information about this method can be found in the more verbose [SVT-AV1 build guide](Build-Guide.md).
 
 #### MSYS2
-Alternatively, MSYS2 could be used, providing a Unix-like environment for building Windows native software, the compilation procedure is the same as described above for Linux.
 
-Download and install MSYS2 [from here](https://www.msys2.org/)
-1. Start the UCRT64 console, install the required dependencies:
+MSYS2 is the best option for building in Windows, as it provides a Unix-like environment for building SVT-AV1-PSY. This makes the compilation procedure the same as described above for Linux & macOS. The full process is detailed below:
+
+0. Make sure you have downloaded & installed MSYS2 from [the MSYS2 website](https://www.msys2.org/) before beginning the build process.
+
+1. Start the UCRT64 console & install the required dependencies:
 ```bash
 pacman -Syu --needed git mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-cmake mingw-w64-ucrt-x86_64-ninja mingw-w64-ucrt-x86_64-yasm
 ```
 
-*While not necessary, Clang is the recommended compiler for svt-av1:* 
+2. \[Optional\] Clang is the recommended compiler for SVT-AV1 & SVT-AV1-PSY, so you may download that with the following command:
+
 ```bash
 pacman -Syu --needed mingw-w64-ucrt-x86_64-clang
 ```
 
-2. Follow the steps at [Bash Script](#bash-script) or [CMake](#cmake) section, CMake may require to include ```-G "Ninja"``` in the command.
+2. Follow the steps at [Bash Script](#bash-script) or [CMake](#cmake) section, and you will be all set! Please note that CMake may require you to include `-G "Ninja"` in the command.
 
 ## Project Development
 
