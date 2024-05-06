@@ -1635,6 +1635,66 @@ void svt_aom_sb_qp_derivation_tpl_la(PictureControlSet *pcs) {
     }
 }
 
+/******************************************************
+ * normalize_sb_delta_q
+ * Adjusts superblock delta q to the most optimal res
+ ******************************************************/
+void normalize_sb_delta_q(PictureControlSet *pcs) {
+    PictureParentControlSet *ppcs_ptr = pcs->ppcs;
+    SequenceControlSet      *scs      = pcs->ppcs->scs;
+
+    // use the (encode-wide) qp setting to determine delta_q_res
+    uint8_t qindex = quantizer_to_qindex[(uint8_t)scs->static_config.qp];
+    uint8_t delta_q_res = 8;
+
+    // determine delta_q_res based on qindex
+    // delta q overhead becomes proportionally bigger the higher the qindex,
+    // and qstep jumps between qindexes become bigger the lower the qindex
+    // so dynamically increase delta_q_res granularity as qindex decreases
+    if (qindex >= 160) {
+        delta_q_res = 8;
+    } else if (qindex >= 120) {
+        delta_q_res = 4;
+    } else if (qindex >= 80) {
+        delta_q_res = 2;
+    } else {
+        // low qindex, nothing to normalize (leave delta_q_res = 1)
+#if DEBUG_VAR_BOOST_STATS
+        printf("Frame %llu, temp. level %i, keep delta_q_res = 1\n", pcs->picture_number, pcs->temporal_layer_index);
+#endif
+        return;
+    }
+
+    assert(delta_q_res == 2 || delta_q_res == 4 || delta_q_res == 8);
+
+    pcs->ppcs->frm_hdr.delta_q_params.delta_q_res = delta_q_res;
+
+    uint8_t mask = ~(delta_q_res - 1);
+    uint8_t delta_q_remainder = ppcs_ptr->frm_hdr.quantization_params.base_q_idx & ~mask;
+
+    // super res pictures scaled with different sb count, should use sb_total_count for each picture
+    uint16_t sb_cnt = scs->sb_total_count;
+    if (ppcs_ptr->frame_superres_enabled || ppcs_ptr->frame_resize_enabled)
+        sb_cnt = ppcs_ptr->b64_total_count;
+#if DEBUG_VAR_BOOST_STATS
+        printf("Normalized delta q boost, frame %llu, temp. level %i, new delta_q_res %i\n", pcs->picture_number, pcs->temporal_layer_index, delta_q_res);
+#endif
+    for (uint32_t sb_addr = 0; sb_addr < sb_cnt; ++sb_addr) {
+        SuperBlock *sb_ptr = pcs->sb_ptr_array[sb_addr];
+
+        uint8_t normalized_q_index = (sb_ptr->qindex & mask) + delta_q_remainder;
+
+        // q_index 0 is lossless, and is currently not supported in SVT-AV1
+        sb_ptr->qindex = normalized_q_index == 0 ? delta_q_res : normalized_q_index;
+#if DEBUG_VAR_BOOST_STATS
+        printf("%4d ", sb_ptr->qindex);
+        if (pcs->frame_width <= (sb_ptr->org_x + 64)) {
+            printf("\n");
+        }
+#endif
+    }
+}
+
 static int av1_find_qindex(double desired_q, aom_bit_depth_t bit_depth, int best_qindex, int worst_qindex) {
     assert(best_qindex <= worst_qindex);
     int low  = best_qindex;
@@ -3560,6 +3620,12 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
             if ((pcs->scs->static_config.tune == 2 || pcs->scs->static_config.tune == 3) && !pcs->ppcs->frm_hdr.delta_q_params.delta_q_present) {
                 // enable sb level qindex when tune 2
                 pcs->ppcs->frm_hdr.delta_q_params.delta_q_present = 1;
+            }
+
+            if (scs->static_config.enable_variance_boost && pcs->ppcs->frm_hdr.delta_q_params.delta_q_present)
+            {
+                // adjust delta q res and normalize superblock delta q values to reduce signaling overhead
+                normalize_sb_delta_q(pcs);
             }
 
             if (scs->static_config.rate_control_mode && !is_superres_recode_task) {
