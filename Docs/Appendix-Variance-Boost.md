@@ -17,14 +17,12 @@ All of the aforementioned artifacts are shown in the example below, which displa
 
 | Without Variance Boost (QP 50)           | With Variance Boost (QP 53)       |
 |------------------------------------------|-----------------------------------|
-| ![novb](./img/vb_rock_novb_qp50.png)     | ![vb](./img/vb_rock_vb_qp53.png)  |
+| ![novb](./img/vb_rock_novb_qp50.avif)    | ![vb](./img/vb_rock_vb_qp53.avif) |
 | 22,848 bytes                             | 22,352 bytes                      |
 
 Through this example, we can observe that the quality appears uneven without variance boost. The high-contrast left side of the image retains detail with minimal artifacting, but as the image moves across the low-contrast right side, visual quality progressively worsens until there are no recognizable features left. The texture is distorted into low-frequency basis patterns and solid blocks on the right side.
 
 The image encoded with variance boost has significantly more balanced visual energy. Rock features remain consistent throughout the image, independent of contrast. Variance boost allows for a smarter allocation of bits. The image size is also a bit smaller (97.8% of the size of the fixed QP image).
-
-**Note:** The example images were transcoded to lossy (dithered) PNG format from their original AVIFs for markdown viewer compatibility and file size reasons. This process has not compromised the positive effects of variance boost in any way.
 
 ## Parameters
 
@@ -47,12 +45,12 @@ The default value is 2.
 
 |    Strength 1    |    Strength 2    |
 | ---------------- | ---------------- |
-| ![s1](./img/vb_rock_strength_s1.png) |![s2](./img/vb_rock_strength_s2.png) |
+| ![s1](./img/vb_rock_strength_s1.avif) |![s2](./img/vb_rock_strength_s2.avif) |
 | 14,767 bytes     | 16,403 bytes     |
 
 |    Strength 3    |    Strength 4    |
 | ---------------- | ---------------- |
- ![s3](./img/vb_rock_strength_s3.png) |![s4](./img/vb_rock_strength_s4.png) |
+ ![s3](./img/vb_rock_strength_s3.avif) |![s4](./img/vb_rock_strength_s4.avif) |
 16,826 bytes     | 21,351 bytes     |
 
 ### `--variance-octile [1-8]`
@@ -67,7 +65,7 @@ The default value is 6. Recommended values are between 4 and 7.
 
 |    Octile 1    |    Octile 2    |    Octile 4    |    Octile 6    |    Octile 8    |
 | -------------- | -------------- | -------------- | -------------- | -------------- |
-| ![o1](./img/vb_rock_octile_o1.png) |![o2](./img/vb_rock_octile_o2.png) | ![o4](./img/vb_rock_octile_o4.png) |![o6](./img/vb_rock_octile_o6.png) | ![o8](./img/vb_rock_octile_o8.png)|
+| ![o1](./img/vb_rock_octile_o1.avif) |![o2](./img/vb_rock_octile_o2.avif) | ![o4](./img/vb_rock_octile_o4.avif) |![o6](./img/vb_rock_octile_o6.avif) | ![o8](./img/vb_rock_octile_o8.avif)|
 | 4,810 bytes    | 4,186 bytes    | 2,507 bytes    | 1,878 bytes    | 1,584 bytes    |
 
 ## Description of the Algorithm
