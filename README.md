@@ -71,9 +71,11 @@ SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide bet
 ### Other Changes
 
 - `--color-help`
+
 Prints the information found in Appendix A.2 of the user guide in order to help users more easily understand the Color Description Options in SvtAv1EncApp.
 
 - `Micro-Releases`
+
 We are always continuously improving SVT-AV1-PSY, and we always recommend using the `master` branch to experience exciting new features as soon as they can be considered usable. To make our feature additions more clear, micro-release tags indicate when significant new feature additions have been made. Micro-release tags are letters starting with `A`, so new releases will be tagged as `v#.#.#-A`, `v#.#.#-B`, etc.
 
 # Building
