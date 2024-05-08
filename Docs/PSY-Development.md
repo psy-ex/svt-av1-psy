@@ -125,6 +125,12 @@ SVT-AV1-PSY is a project that aims to enhance the Scalable Video Technology for 
 
 The development process involves rigorous community testing and optimization to ensure that the encoder and decoder deliver the best possible performance. The team uses a variety of tools and methodologies to analyze and improve the performance of the encoder and decoder, including subjective analyses. SSIMULACRA2 and XPSNR are used extensively for metrics testing, and the team is committed to improving the overall quality and performance of the encoder using these two metrics as general guidelines and benchmarks. However, our goal is not to improve metric scores but to improve the overall perceptual quality of the encoder; that will always come first, so naturally some changes may be made that degrade metric performance in favor of perceptual fidelity per bit.
 
+### Micro-Releases
+
+As we develop SVT-AV1-PSY on `testing`, we always recommend users go to `master` to experience new features as soon as they are stable. To make PSY feature additions more clear, micro-release tags indicate when significant new feature additions have been made to `master`. These tags are letters starting at `A`, so new releases will be tagged as `v#.#.#-A`, `v#.#.#-B`, etc.
+
+These micro-releases are only numbered & tagged before a `master` merge from `testing`, so if you are making your own contributions to testing this should not be a concern for you. If you think it is time to make a new micro-release, you can modify the constant in `EbVersion.h.in` and open a PR to `master` with the change. The lead maintainer(s) will then decide if a new micro-release is warranted.
+
 ## Self-Testing
 
 If you wish to test local changes to see if you have improved on the perceptual quality of the encoder, you can use SSIMULACRA2 & XPSNR locally on legal content. This isn't a requirement for opening a PR, but it helps us quite a bit.
