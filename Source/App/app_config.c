@@ -1938,6 +1938,7 @@ int get_version(int argc, char *argv[]) {
     if (find_token(argc, argv, VERSION_TOKEN, NULL))
         return 0;
     printf("SVT-AV1-PSY %s (%s)\n", svt_av1_get_version(), debug_build ? "release" : "debug");
+    printf("PSY Release: \x1b[32m%s\x1b[0m\n", svt_psy_get_version());
     return 1;
 }
 

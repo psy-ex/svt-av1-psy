@@ -970,6 +970,12 @@ typedef struct EbSvtAv1EncConfiguration {
 EB_API const char *svt_av1_get_version(void);
 
 /**
+ * Returns a string containing only the SVT-AV1-PSY micro-release letter
+ * @param[out] SVT_AV1_PSY_RELEASE
+ */
+EB_API const char *svt_psy_get_version(void);
+
+/**
  * Prints the version header and build information to the file
  * specified by the SVT_LOG_FILE environment variable or stderr
  */
