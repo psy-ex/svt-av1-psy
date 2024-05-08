@@ -640,11 +640,18 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
             channel_number + 1);
         return_error = EB_ErrorBadParameter;
     }
-    // Limit 8K & 16K configurations ( due to  memory constraints)
-    if ((uint64_t)(scs->max_input_luma_width * scs->max_input_luma_height) > INPUT_SIZE_4K_TH &&
-        config->enc_mode <= ENC_M4) {
-        SVT_ERROR("Instance %u: 8k+ resolution support is limited to M5 and faster presets.\n", channel_number + 1);
-        return_error = EB_ErrorBadParameter;
+    // Limit 8K & 16K configurations (due to memory constraints)
+    uint64_t pixel_count = (uint64_t)(scs->max_input_luma_width * scs->max_input_luma_height);
+    if (pixel_count > INPUT_SIZE_4K_TH && config->enc_mode <= ENC_M7) {
+        if (pixel_count <= INPUT_SIZE_8K_TH && config->enc_mode >= ENC_M2) {
+            SVT_WARN("Instance %u: 8K resolution support below M8 isn't officially supported. 64 GB of available memory are recommended.\n", channel_number + 1);
+        } else if (pixel_count <= INPUT_SIZE_8K_TH && config->enc_mode < ENC_M2) {
+            SVT_ERROR("Instance %u: 8K resolution support is limited to M2 and faster presets.\n", channel_number + 1);
+            return_error = EB_ErrorBadParameter;
+        } else {
+            SVT_ERROR("Instance %u: 16K resolution support is limited to M8 and faster presets.\n", channel_number + 1);
+            return_error = EB_ErrorBadParameter;
+        }
     }
 
     if (config->pass > 0 && scs->static_config.enable_overlays) {

@@ -52,6 +52,10 @@ Increases video quality temporal consistency, especially with clips that contain
 
 Enables a more accurate loop filter that prevents blocking, for a modest increase in compute time (most noticeable at presets 7 to 9)
 
+- `Higher-quality presets for 8K`
+
+Lowers the minimum available preset from 8 to 2 for higher-quality 8K encoding (64 GB of RAM recommended per encoding instance)
+
 ### Modified Defaults
 
 SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide better visual fidelity out of the box. They include:
