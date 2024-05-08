@@ -2659,7 +2659,7 @@ static void perform_pred_depth_refinement(SequenceControlSet *scs, PictureContro
 void recode_loop_update_q(PictureParentControlSet *ppcs, int *const loop, int *const q, int *const q_low,
                           int *const q_high, const int top_index, const int bottom_index, int *const undershoot_seen,
                           int *const overshoot_seen, int *const low_cr_seen, const int loop_count);
-void svt_variance_adjust_qp(PictureControlSet *pcs);
+void svt_variance_adjust_qp(PictureControlSet *pcs, bool readjust_base_q_idx);
 void svt_aom_sb_qp_derivation_tpl_la(PictureControlSet *pcs);
 void normalize_sb_delta_q(PictureControlSet *pcs);
 void mode_decision_configuration_init_qp_update(PictureControlSet *pcs);
@@ -2719,7 +2719,8 @@ static void recode_loop_decision_maker(PictureControlSet *pcs, SequenceControlSe
         // adjust SB qindex based on variance
         // note: do not enable variance boost for CBR rate control mode
         if (scs->static_config.enable_variance_boost && scs->static_config.rate_control_mode != SVT_AV1_RC_MODE_CBR) {
-            svt_variance_adjust_qp(pcs);
+            // Don't readjust base qindex to make it play nice with the recode loop quality bookkeeping logic
+            svt_variance_adjust_qp(pcs, false);
         }
 
         // 2pass QPM with tpl_la

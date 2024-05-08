@@ -1488,7 +1488,7 @@ static int av1_get_deltaq_sb_variance_boost(uint8_t base_q_idx, uint16_t *varian
     return boost;
 }
 
-void svt_variance_adjust_qp(PictureControlSet *pcs) {
+void svt_variance_adjust_qp(PictureControlSet *pcs, bool readjust_base_q_idx) {
     PictureParentControlSet *ppcs_ptr = pcs->ppcs;
     SequenceControlSet      *scs      = pcs->ppcs->scs;
     SuperBlock              *sb_ptr;
@@ -1562,6 +1562,13 @@ void svt_variance_adjust_qp(PictureControlSet *pcs) {
              normalized_base_q_idx,
              range);
 #endif
+    if (readjust_base_q_idx) {
+        ppcs_ptr->frm_hdr.quantization_params.base_q_idx = normalized_base_q_idx;
+
+        pcs->picture_qp = (uint8_t)CLIP3((int32_t)scs->static_config.min_qp_allowed,
+                                        (int32_t)scs->static_config.max_qp_allowed,
+                                        (ppcs_ptr->frm_hdr.quantization_params.base_q_idx + 2) >> 2);
+    }
 #if DEBUG_VAR_BOOST_STATS
     printf("Total CQP/CRF + VAQ qindex, frame %llu, temp. level %i\n", pcs->picture_number, pcs->temporal_layer_index);
 #endif
@@ -3605,7 +3612,7 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
             // note: do not enable variance boost for CBR rate control mode
             if (scs->static_config.enable_variance_boost &&
                 scs->static_config.rate_control_mode != SVT_AV1_RC_MODE_CBR) {
-                svt_variance_adjust_qp(pcs);
+                svt_variance_adjust_qp(pcs, true);
             }
 
             // QPM with tpl_la
