@@ -79,6 +79,7 @@ For more information on valid values for specific keys, refer to the [EbEncSetti
 | **FastDecode**                   | --fast-decode               | [0,2]                          | 0           | Tune settings to output bitstreams that can be decoded faster, [0 = OFF, 1,2 = levels for decode-targeted optimization (2 yields faster decoder speed)]. Defaults to 5 temporal layers structure but may override with --hierarchical-levels|
 | **Tune**                         | --tune                      | [0-3]                          | 2           | Specifies whether to use PSNR, VQ, or SSIM as the tuning metric [0 = VQ, 1 = PSNR, 2 = SSIM, 3 = Subjective SSIM]                                                    |
 | **Sharpness**                    | --sharpness                 | [-7-7]                         | 0           | Bias towards block sharpness in rate-distortion optimization of transform coefficients                                                                               |
+| **FrameLumaBias**                | --frame-luma-bias           | [0-100]                        | 0           | Adjusts frame-level QP based on average luminance across each frame                                                                                                  |
 
 ## Rate Control Options
 
