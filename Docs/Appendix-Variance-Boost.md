@@ -72,12 +72,12 @@ The default value is 6. Recommended values are between 4 and 7.
 
 |Image|Description|
 |-|-|
-|![orig](./img/vb_rock_sb_orig.png)  | 1. Variance boost (`svt_variance_adjust_qp()`) loops over all 64x64 superblocks; first horizontally, then vertically. |
-|![grid](./img/vb_rock_sb_grid.png)  | 2. The algorithm then splits each superblock into 8x8 subblocks and calculates the variance of each one of them, receiving 64 values in total. |
-|![var](./img/vb_rock_sb_var.png)    | 3. Each subblock's variance correlates to how much contrast there is for that area. Lower values equate to less contrast, and any value below 256 is considered *low variance*. In the superblock pictured, more than half of its subblocks are considered low variance.  |
-|![ord](./img/vb_rock_sb_var_ord.png)| 4. In `av1_get_deltaq_sb_variance_boost()`, these values are then ranked from lowest to highest variance. Then, one of these values is picked at the specified octile; in this case, octile 4 (the value at the end of the 4th row highlighted in magenta). |
-|![strength](./img/vb_strength.png)  | 5. This value is plugged into one of the four boost formulas, which then outputs a delta-q offset. More aggressive curves result in bigger offsets and thus bigger resulting adjustments. Quantization index boosts can range from 0 (for high variance areas) to 80 (for very low variance areas). |
-|![enc](./img/vb_rock_sb_enc.png)    | 6. Finally, the offset is applied to the superblock's qindex and the same process is repeated for the remaining superblocks. Once complete, other parts of the encoding process can run. |
+|![orig](./img/vb_rock_sb_orig.webp)  | 1. Variance boost (`svt_variance_adjust_qp()`) loops over all 64x64 superblocks; first horizontally, then vertically. |
+|![grid](./img/vb_rock_sb_grid.webp)  | 2. The algorithm then splits each superblock into 8x8 subblocks and calculates the variance of each one of them, receiving 64 values in total. |
+|![var](./img/vb_rock_sb_var.webp)    | 3. Each subblock's variance correlates to how much contrast there is for that area. Lower values equate to less contrast, and any value below 256 is considered *low variance*. In the superblock pictured, more than half of its subblocks are considered low variance.  |
+|![ord](./img/vb_rock_sb_var_ord.webp)| 4. In `av1_get_deltaq_sb_variance_boost()`, these values are then ranked from lowest to highest variance. Then, one of these values is picked at the specified octile; in this case, octile 4 (the value at the end of the 4th row highlighted in magenta). |
+|![strength](./img/vb_strength.webp)  | 5. This value is plugged into one of the four boost formulas, which then outputs a delta-q offset. More aggressive curves result in bigger offsets and thus bigger resulting adjustments. Quantization index boosts can range from 0 (for high variance areas) to 80 (for very low variance areas). |
+|![enc](./img/vb_rock_sb_enc.webp)    | 6. Finally, the offset is applied to the superblock's qindex and the same process is repeated for the remaining superblocks. Once complete, other parts of the encoding process can run. |
 
 ## References
 
