@@ -98,6 +98,7 @@ One way to get involved is to use SVT-AV1-PSY in your own AV1 encoding projects,
 - [rAV1ator CLI](https://github.com/gianni-rosato/rav1ator-cli) ~ a TUI for video encoding with Av1an by @gianni-rosato
 - [SVT-AV1-PSY on the AUR](https://aur.archlinux.org/packages/svt-av1-psy-git) ~ by @BlueSwordM
 - [SVT-AV1-PSY in CachyOS](https://github.com/CachyOS/CachyOS-PKGBUILDS/pull/144) ~ by @BlueSwordM
+- [Custom Handbrake Builds](https://github.com/vincejv/docker-handbrake) ~ by @vincejv
 
 ## License
 
