@@ -56,6 +56,10 @@ Enables a more accurate loop filter that prevents blocking, for a modest increas
 
 Lowers the minimum available preset from 8 to 2 for higher-quality 8K encoding (64 GB of RAM recommended per encoding instance)
 
+- `--frame-luma-bias` *0 to 100*
+
+Enables frame-level luma bias to improve quality in dark scenes by adjusting frame-level QP based on average luminance across each frame
+
 ### Modified Defaults
 
 SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide better visual fidelity out of the box. They include:
