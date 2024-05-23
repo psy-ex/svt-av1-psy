@@ -2193,9 +2193,14 @@ static void build_cand_block_array(SequenceControlSet *scs, PictureControlSet *p
         : (ctx->depth_removal_ctrls.enabled && ctx->depth_removal_ctrls.disallow_below_16x16)                 ? 16
         : ctx->disallow_4x4                                                                                   ? 8
                                                                                                               : 4;
+    // Safety check: Restrict min sq size so mode decision can always find at least one valid partition scheme
+    min_sq_size = scs->static_config.max_32_tx_size ? MIN(min_sq_size, 32) : min_sq_size;
 
     while (blk_index < max_block_cnt) {
         const BlockGeom *blk_geom = get_blk_geom_mds(blk_index);
+        int32_t max_sq_size = (blk_geom->sq_size > 32 && scs->static_config.max_32_tx_size) ? 32 : blk_geom->sq_size;
+
+        assert(min_sq_size <= max_sq_size);
 
         // Initialize here because may not be updated at inter-depth decision for incomplete SBs
         if (!is_complete_sb)
@@ -2203,7 +2208,7 @@ static void build_cand_block_array(SequenceControlSet *scs, PictureControlSet *p
 
         // SQ/NSQ block(s) filter based on the SQ size
         uint8_t is_block_tagged = (blk_geom->sq_size == 128 && pcs->slice_type == I_SLICE) ||
-                (blk_geom->sq_size < min_sq_size)
+                (blk_geom->sq_size < min_sq_size || blk_geom->sq_size > max_sq_size)
             ? 0
             : 1;
         // Only 8x8 and 16x16 block(s) are supported if lossless
@@ -2582,6 +2587,24 @@ static void perform_pred_depth_refinement(SequenceControlSet *scs, PictureContro
                             ctx->depth_refinement_ctrls.cost_band_based_modulation && use_cost_band_based_modulation &&
                             (s_depth != 0 || e_depth != 0)) {
                             update_pred_th_offset(ctx, blk_geom, &s_depth, &e_depth, &th_offset);
+                        }
+
+                        if (scs->static_config.max_32_tx_size) {
+                            // Don't test depths that result in blocks greater than 32x32
+                            switch (blk_geom->sq_size) {
+                                case 4:
+                                    s_depth = MAX(-3, s_depth);
+                                    break;
+                                case 8:
+                                    s_depth = MAX(-2, s_depth);
+                                    break;
+                                case 16:
+                                    s_depth = MAX(-1, s_depth);
+                                    break;
+                                case 32:
+                                    s_depth = MAX(0, s_depth);
+                                    break;
+                            }
                         }
 
                         // Add block indices of upper depth(s)
