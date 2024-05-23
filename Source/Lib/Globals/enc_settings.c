@@ -1037,6 +1037,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->avif                              = false;
     config_ptr->extended_crf_qindex_offset        = 0;
     config_ptr->qp_scale_compress_strength        = 1;
+    config_ptr->max_32_tx_size                    = false;
     return return_error;
 }
 static const char *tier_to_str(unsigned in) {
@@ -2154,6 +2155,7 @@ EB_API EbErrorType svt_av1_enc_parse_parameter(EbSvtAv1EncConfiguration *config_
         {"enable-variance-boost", &config_struct->enable_variance_boost},
         {"lossless", &config_struct->lossless},
         {"avif", &config_struct->avif},
+        {"max-32-tx-size", &config_struct->max_32_tx_size},
     };
     const size_t bool_opts_size = sizeof(bool_opts) / sizeof(bool_opts[0]);
 

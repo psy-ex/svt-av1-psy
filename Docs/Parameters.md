@@ -80,6 +80,7 @@ For more information on valid values for specific keys, refer to the [EbEncSetti
 | **Tune**                         | --tune                      | [0-3]                          | 2           | Specifies whether to use PSNR, VQ, or SSIM as the tuning metric [0 = VQ, 1 = PSNR, 2 = SSIM, 3 = Subjective SSIM]                                                    |
 | **Sharpness**                    | --sharpness                 | [-7-7]                         | 0           | Bias towards block sharpness in rate-distortion optimization of transform coefficients                                                                               |
 | **FrameLumaBias**                | --frame-luma-bias           | [0-100]                        | 0           | Adjusts frame-level QP based on average luminance across each frame                                                                                                  |
+| **Max32TxSize**                  | --max-32-tx-size            | [0-1]                          | 0           | Restricts use of block transform sizes to a maximum of 32x32 pixels (disabled: use max of 64x64 pixels)      |
 
 ## Rate Control Options
 

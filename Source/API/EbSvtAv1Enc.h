@@ -959,6 +959,20 @@ typedef struct EbSvtAv1EncConfiguration {
      */
     uint8_t qp_scale_compress_strength;
 
+    /* @brief Experimental frame-level luma bias to improve quality in dark scenes
+     * 0: no bias, stock behavior
+     * 1-4: enable low-luma bias, the higher the number the stronger the bias
+     * Default is 0
+     */
+    uint8_t frame_luma_bias;
+
+    /* @brief Limit transform sizes to a maximum of 32x32 pixels
+     * 0: disabled, use transform sizes up to 64x64 pixels
+     * 1: enabled, use transform sizes up to 32x32 pixels
+     * Default is 0
+     */
+    bool max_32_tx_size;
+
     /*Add 128 Byte Padding to Struct to avoid changing the size of the public configuration struct*/
     uint8_t padding[128];
 } EbSvtAv1EncConfiguration;

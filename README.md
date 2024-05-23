@@ -60,6 +60,10 @@ Lowers the minimum available preset from 8 to 2 for higher-quality 8K encoding (
 
 Enables frame-level luma bias to improve quality in dark scenes by adjusting frame-level QP based on average luminance across each frame
 
+- `--max-32-tx-size` *0 and 1*
+
+Restricts available transform sizes to a maximum of 32x32 pixels. Can help slightly improve detail retention at high fidelity CRFs.
+
 ### Modified Defaults
 
 SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide better visual fidelity out of the box. They include:
