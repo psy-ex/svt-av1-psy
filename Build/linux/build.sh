@@ -78,6 +78,8 @@ For each enable-*, there is a disable-* option, and vice versa.
     enable-lto
     --enable-libdovi,   Enable support for Dolby Vision RPUs (if libdovi is found)
     enable-libdovi
+    --enable-libhdr10plus-rs,   Enable support for HDR10+ metadata (if libhdr10plus-rs is found)
+    enable-libhdr10plus-rs
     --disable-native,   Disable the use of -march=native
     disable-native
     --enable-pgo,       Enable profile guided optimization
@@ -298,6 +300,7 @@ parse_options() {
                 esac
                 ;;
             libdovi) CMAKE_EXTRA_FLAGS="$CMAKE_EXTRA_FLAGS -DLIBDOVI_FOUND=1" ;;
+            libhdr10plus-rs) CMAKE_EXTRA_FLAGS="$CMAKE_EXTRA_FLAGS -DLIBHDR10PLUS_RS_FOUND=1" ;;
             *) print_message "Unknown option: $1" ;;
             esac
             shift

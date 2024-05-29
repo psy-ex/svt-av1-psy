@@ -40,6 +40,30 @@ else()
   execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libdovi support - No\n")
 endif()
 
+# libhdr10plus-rs detection & preprocessor macro
+option(LIBHDR10PLUS_RS_FOUND "Use the libhdr10plus-rs library" OFF)
+if(LIBHDR10PLUS_RS_FOUND)
+  if(PKG_CONFIG_FOUND)
+  pkg_check_modules(PC_LIBHDR10PLUS_RS libhdr10plus-rs QUIET)
+  endif()
+
+  find_library(LIBHDR10PLUS_RS_LIBRARY NAMES hdr10plus-rs libhdr10plus-rs
+                               PATHS ${PC_LIBHDR10PLUS_RS_LIBDIR})
+  if(NOT LIBHDR10PLUS_RS_LIBRARY)
+  message(FATAL_ERROR "libhdr10plus-rs library not found!")
+  endif()
+
+  find_path(LIBHDR10PLUS_RS_INCLUDE_DIR NAMES libhdr10plus-rs/hdr10plus.h
+                                PATHS ${PC_LIBHDR10PLUS_RS_INCLUDEDIR})
+
+  set(LIBHDR10PLUS_RS_INCLUDE_DIRS ${LIBHDR10PLUS_RS_INCLUDE_DIR})
+  set(LIBHDR10PLUS_RS_LIBRARIES ${LIBHDR10PLUS_RS_LIBRARY})
+  add_definitions(-DLIBHDR10PLUS_RS_FOUND=1)
+  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libhdr10plus-rs support - Yes\n")
+else()
+  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libhdr10plus-rs support - No\n")
+endif()
+
 set(all_files
     ../API/EbDebugMacros.h
     ../API/EbSvtAv1.h
@@ -73,7 +97,8 @@ endif()
 # Link the Encoder App
 target_link_libraries(SvtAv1EncApp
         SvtAv1Enc
-        ${LIBDOVI_LIBRARY})
+        ${LIBDOVI_LIBRARY}
+        ${LIBHDR10PLUS_RS_LIBRARY})
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Android")
     target_link_libraries(SvtAv1EncApp ${PLATFORM_LIBS})
 elseif(UNIX)
