@@ -179,6 +179,9 @@
 #ifdef LIBDOVI_FOUND
 #define DOLBY_VISION_RPU_TOKEN "--dolby-vision-rpu"
 #endif
+#ifdef LIBHDR10PLUS_RS_FOUND
+#define HDR10PLUS_JSON_TOKEN "--hdr10plus-json"
+#endif
 
 #define SFRAME_DIST_TOKEN "--sframe-dist"
 #define SFRAME_MODE_TOKEN "--sframe-mode"
@@ -418,6 +421,22 @@ static EbErrorType set_cfg_dovi_rpu(EbConfig *cfg, const char *token, const char
     }
     printf("Svt[info]: Loaded %zu DoVi RPUs\n", rpus->len);
     cfg->dovi_rpus = rpus;
+    return EB_ErrorNone;
+}
+#endif
+
+#ifdef LIBHDR10PLUS_RS_FOUND
+static EbErrorType set_cfg_hdr10plus_json(EbConfig *cfg, const char *token, const char *value) {
+    printf("Svt[info]: Parsing HDR10+ JSON file...\n");
+    Hdr10PlusRsJsonOpaque *hdr10plus_json = hdr10plus_rs_parse_json(value);
+    const char *error = hdr10plus_rs_json_get_error(hdr10plus_json);
+    if (error) {
+        fprintf(stderr, "%s\n", error);
+        hdr10plus_rs_json_free(hdr10plus_json);
+        return validate_error(EB_ErrorBadParameter, token, value);
+    }
+    printf("Svt[info]: Loaded HDR10+ JSON file\n");
+    cfg->hdr10plus_json = hdr10plus_json;
     return EB_ErrorNone;
 }
 #endif
@@ -1214,6 +1233,12 @@ ConfigEntry config_entry_color_description[] = {
      "[PSY] Set the Dolby Vision RPU path",
      set_cfg_dovi_rpu},
 #endif
+#ifdef LIBHDR10PLUS_RS_FOUND
+    {SINGLE_INPUT,
+     HDR10PLUS_JSON_TOKEN,
+     "[PSY] Set the HDR10+ JSON file path",
+     set_cfg_hdr10plus_json},
+#endif
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};
 
@@ -1391,6 +1416,9 @@ ConfigEntry config_entry[] = {
 #ifdef LIBDOVI_FOUND
     {SINGLE_INPUT, DOLBY_VISION_RPU_TOKEN, "DolbyVisionRpu", set_cfg_dovi_rpu},
 #endif
+#ifdef LIBHDR10PLUS_RS_FOUND
+    {SINGLE_INPUT, HDR10PLUS_JSON_TOKEN, "Hdr10PlusJson", set_cfg_hdr10plus_json},
+#endif
 
     // QM
     {SINGLE_INPUT, ENABLE_QM_TOKEN, "EnableQM", set_cfg_generic_token},
@@ -1441,6 +1469,9 @@ EbConfig *svt_config_ctor() {
     app_cfg->roi_map_file        = NULL;
 #ifdef LIBDOVI_FOUND
     app_cfg->dovi_rpus           = NULL;
+#endif
+#ifdef LIBHDR10PLUS_RS_FOUND
+    app_cfg->hdr10plus_json      = NULL;
 #endif
     app_cfg->fgs_table_path      = NULL;
 
@@ -1501,6 +1532,12 @@ void svt_config_dtor(EbConfig *app_cfg) {
     if (app_cfg->dovi_rpus) {
         dovi_rpu_list_free(app_cfg->dovi_rpus);
         app_cfg->dovi_rpus = NULL;
+    }
+#endif
+#ifdef LIBHDR10PLUS_RS_FOUND
+    if (app_cfg->hdr10plus_json) {
+        hdr10plus_rs_json_free(app_cfg->hdr10plus_json);
+        app_cfg->hdr10plus_json = NULL;
     }
 #endif
 

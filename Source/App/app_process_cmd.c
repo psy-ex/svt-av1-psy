@@ -18,7 +18,7 @@
 #include <string.h>
 #include <math.h>
 #include <ctype.h>
-#ifdef LIBDOVI_FOUND
+#if defined(LIBDOVI_FOUND) || defined(LIBHDR10PLUS_RS_FOUND)
 #include "EbSvtAv1Metadata.h"
 #endif
 #include "app_context.h"
@@ -476,6 +476,25 @@ static EbErrorType retrieve_dovi_rpu_for_frame(const DoviRpuOpaqueList *rpus, ui
     return EB_ErrorNone;
 }
 #endif
+#ifdef LIBHDR10PLUS_RS_FOUND
+static EbErrorType retrieve_hdr10plus_payload_for_frame(Hdr10PlusRsJsonOpaque *hdr10plus_json, uint64_t pic_num, EbBufferHeaderType *header_ptr) {
+    if (hdr10plus_json == NULL) {
+        return EB_ErrorNone;
+    }
+
+    const Hdr10PlusRsData *payload = hdr10plus_rs_write_av1_metadata_obu_t35_complete(hdr10plus_json, pic_num);
+    if (!payload) {
+        return EB_ErrorNone;
+    }
+
+    if (svt_add_metadata(header_ptr, EB_AV1_METADATA_TYPE_ITUT_T35, payload->data, payload->len)) {
+        hdr10plus_rs_data_free(payload);
+        return EB_ErrorInsufficientResources;
+    }
+    hdr10plus_rs_data_free(payload);
+    return EB_ErrorNone;
+}
+#endif
 
 static void free_private_data_list(void *node_head) {
     while (node_head) {
@@ -550,6 +569,9 @@ void process_input_buffer(EncChannel *channel) {
             retrieve_roi_map_event(app_cfg->roi_map, header_ptr->pts, header_ptr);
 #ifdef LIBDOVI_FOUND
             retrieve_dovi_rpu_for_frame(app_cfg->dovi_rpus, header_ptr->pts, header_ptr);
+#endif
+#ifdef LIBHDR10PLUS_RS_FOUND
+            retrieve_hdr10plus_payload_for_frame(app_cfg->hdr10plus_json, header_ptr->pts, header_ptr);
 #endif
             // Send the picture
             if (svt_av1_enc_send_picture(component_handle, header_ptr) != EB_ErrorNone)
