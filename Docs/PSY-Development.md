@@ -40,6 +40,8 @@ Consider that you may want to opt for using the Clang compiler on Linux instead 
 
 If you'd like to build with Dolby Vision support, you can do so by adding `--enable-libdovi` to the build script's args. This assumes you have libdovi installed on your system already, which is a separate process related to [`dovi_tool`](https://github.com/quietvoid/dovi_tool/blob/main/dolby_vision/README.md#libdovi-c-api).
 
+If you'd like to build with HDR10+ support, you can do so by adding `--enable-libhdr10plus` to the build script's args. This assumes you have libhdr10plus installed on your system already, which is a separate process related to [`hdr10plus_tool`](https://github.com/quietvoid/hdr10plus_tool/tree/main/hdr10plus).
+
 3. The compiled binaries will be located in `Bin/Release` if you navigate back to the root directory:
 
 ```bash
@@ -91,6 +93,8 @@ sudo cp SvtAv1EncApp /usr/local/bin
 ```
 
 That's all! If you'd like to build with Dolby Vision support, you can do so by adding `-DLIBDOVI_FOUND=1` to the CMake command. This assumes you have libdovi installed on your system already, which is a separate process related to [`dovi_tool`](https://github.com/quietvoid/dovi_tool/blob/main/dolby_vision/README.md#libdovi-c-api).
+
+The process is similar for HDR10+ support, which can be enabled by adding `-DLIBHDR10PLUS_RS_FOUND=1` to the CMake command. This assumes you have libhdr10plus installed on your system already, which is a separate process related to [`hdr10plus_tool`](https://github.com/quietvoid/hdr10plus_tool/tree/main/hdr10plus).
 
 ### Windows
 
@@ -154,7 +158,7 @@ With the exception of vanilla VMAF, PSNR, or SSIM, if you believe other metrics 
 
 ## Project Goals
 
- As stated above, the primary goal of SVT-AV1-PSY is to create the best encoding implementation for perceptual quality with AV1. This involves optimizing the encoder and decoder to deliver superior psychovisual performance. Psychovisual optimizations aim to improve the perceived visual fidelity of encoded video. Fidelity is distinct from mathematical loss or appeal in that it is a measure of how well the encoded video matches the original source video in terms of visual quality according to our eyes. This is a complex and subjective task compared to simply improving the BD-rate of certain metrics, but the team is committed to improving this through rigorous testing and optimization.
+As stated above, the primary goal of SVT-AV1-PSY is to create the best encoding implementation for perceptual quality with AV1. This involves optimizing the encoder and decoder to deliver superior psychovisual performance. Psychovisual optimizations aim to improve the perceived visual fidelity of encoded video. Fidelity is distinct from mathematical loss or appeal in that it is a measure of how well the encoded video matches the original source video in terms of visual quality according to our eyes. This is a complex and subjective task compared to simply improving the BD-rate of certain metrics, but the team is committed to improving this through rigorous testing and optimization.
 
 ## Branches: Testing vs Master
 
