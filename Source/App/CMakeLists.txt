@@ -59,9 +59,9 @@ if(LIBHDR10PLUS_RS_FOUND)
   set(LIBHDR10PLUS_RS_INCLUDE_DIRS ${LIBHDR10PLUS_RS_INCLUDE_DIR})
   set(LIBHDR10PLUS_RS_LIBRARIES ${LIBHDR10PLUS_RS_LIBRARY})
   add_definitions(-DLIBHDR10PLUS_RS_FOUND=1)
-  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libhdr10plus-rs support - Yes\n")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libhdr10plus support - Yes\n")
 else()
-  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libhdr10plus-rs support - No\n")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libhdr10plus support - No\n")
 endif()
 
 set(all_files
