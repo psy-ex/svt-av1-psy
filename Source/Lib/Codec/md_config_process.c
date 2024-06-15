@@ -223,10 +223,11 @@ void svt_av1_qm_init(PictureParentControlSet *pcs) {
         const int32_t base_qindex = pcs->frm_hdr.quantization_params.base_q_idx;
 
         pcs->frm_hdr.quantization_params.qm[AOM_PLANE_Y] = aom_get_qmlevel(base_qindex, min_qmlevel, max_qmlevel);
-        pcs->frm_hdr.quantization_params.qm[AOM_PLANE_U] = aom_get_qmlevel(
-            base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_U], min_qmlevel, max_qmlevel);
-        pcs->frm_hdr.quantization_params.qm[AOM_PLANE_V] = aom_get_qmlevel(
-            base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_V], min_qmlevel, max_qmlevel);
+        //Chroma always seem to suffer too much with steep quantization matrices, so we're temporarily
+        //forcing not very steep quantization matrices for chroma channels
+        //Will enable for tune 3 and ideally within a range in the near future
+        pcs->frm_hdr.quantization_params.qm[AOM_PLANE_U] = 12;
+        pcs->frm_hdr.quantization_params.qm[AOM_PLANE_V] = 12;
 #if DEBUG_QM_LEVEL
         SVT_LOG("\n[svt_av1_qm_init] Frame %d - qindex %d, qmlevel %d %d %d\n",
                 (int)pcs->picture_number,
