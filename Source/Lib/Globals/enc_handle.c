@@ -4507,7 +4507,7 @@ static void copy_api_from_app(
     {
         // TODO: set search mode based on preset
         //scs->static_config.superres_auto_search_type = SUPERRES_AUTO_SOLO;
-        scs->static_config.superres_auto_search_type = SUPERRES_AUTO_DUAL;
+        scs->static_config.superres_auto_search_type = scs->static_config.tune == 3 ? SUPERRES_AUTO_ALL : SUPERRES_AUTO_DUAL;
         //scs->static_config.superres_auto_search_type = SUPERRES_AUTO_ALL;
     }
 

@@ -1174,7 +1174,7 @@ static uint8_t get_superres_denom_for_qindex(SequenceControlSet *scs, PicturePar
     double energy[16];
     analyze_hor_freq(pcs, energy);
 
-    const double energy_by_q2_thresh = get_energy_by_q2_thresh(&scs->enc_ctx->rc, update_type);
+    const double energy_by_q2_thresh = scs->static_config.tune == 3 ? 0.01 : get_energy_by_q2_thresh(&scs->enc_ctx->rc, update_type);
     int          denom               = get_superres_denom_from_qindex_energy(
         qindex, energy, energy_by_q2_thresh, SUPERRES_ENERGY_BY_AC_THRESH);
 
@@ -1260,7 +1260,7 @@ static void calc_superres_params(superres_params_type *spr_params, SequenceContr
             } else { // SUPERRES_AUTO_ALL
                 assert(sr_search_type == SUPERRES_AUTO_ALL);
                 int32_t update_type = svt_aom_get_frame_update_type(scs, pcs);
-                if (update_type == SVT_AV1_KF_UPDATE || update_type == SVT_AV1_ARF_UPDATE) {
+                if (update_type == SVT_AV1_KF_UPDATE || (update_type == SVT_AV1_ARF_UPDATE && scs->static_config.tune != 3)) {
                     for (int i = 0; i < NUM_SR_SCALES + 1; i++) {
                         if (i < SCALE_NUMERATOR) {
                             pcs->superres_denom_array[i] = SCALE_NUMERATOR + 1 + i;
