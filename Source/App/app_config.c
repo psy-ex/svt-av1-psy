@@ -845,7 +845,7 @@ ConfigEntry config_entry_rc[] = {
     {SINGLE_INPUT,
      CRF_LONG_TOKEN,
      "Constant Rate Factor value, setting this value is equal to `--rc 0 --aq-mode 2 --qp "
-     "x`, default is 35 [1-63]",
+     "x`, default is 35 [1-70]",
      set_cfg_generic_token},
 
     {SINGLE_INPUT,
