@@ -526,7 +526,7 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
     }
     if (config->tune > 3) {
         SVT_ERROR(
-            "Instance %u: Invalid tune flag [0 - 2, 0 for VQ, 1 for PSNR, 2 for SSIM, and 3 for SSIM with subjective qual. tuning], your "
+            "Instance %u: Invalid tune flag [0 - 3, 0 for VQ, 1 for PSNR, 2 for SSIM, and 3 for Subjective SSIM], your "
             "input: %d\n",
             channel_number + 1,
             config->tune);

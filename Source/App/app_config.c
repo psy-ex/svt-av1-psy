@@ -1102,7 +1102,7 @@ ConfigEntry config_entry_specific[] = {
     {SINGLE_INPUT,
      TUNE_TOKEN,
      "Specifies whether to use PSNR, VQ, or SSIM as the tuning metric [0 = VQ, 1 = PSNR, 2 = SSIM, 3 = Subjective SSIM], "
-     "default is 1 "
+     "default is 2 "
      "[0-3]",
      set_cfg_generic_token},
     // MD Parameters
