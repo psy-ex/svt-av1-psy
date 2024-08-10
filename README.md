@@ -78,7 +78,7 @@ SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide bet
 
 - Default 10-bit color depth when given a 10-bit input.
 - Disable film grain denoising by default, as it often harms visual fidelity. (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/commit/8b39b41df9e07bbcdbd19ea618762c5db3353c03)**)
-- Default to Tune 2 instead of Tune 1, as it reliably outperforms Tune 1 perceptually.
+- Default to Tune 2 (SSIM) instead of Tune 1 (PSNR), as it reliably outperforms Tune 1 perceptually & throughout trusted metrics.
 - Enable quantization matrices by default.
 - Set minimum QM level to 0 by default.
 - `--enable-variance-boost` enabled by default.
