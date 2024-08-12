@@ -525,13 +525,22 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
             config->fast_decode);
         return_error = EB_ErrorBadParameter;
     }
-    if (config->tune > 3) {
+
+    if (config->tune > 4) {
         SVT_ERROR(
-            "Instance %u: Invalid tune flag [0 - 3, 0 for VQ, 1 for PSNR, 2 for SSIM, and 3 for Subjective SSIM], your "
+            "Instance %u: Invalid tune flag [0 - 4, 0: VQ, 1: PSNR, 2: SSIM, 3: Subjective SSIM, 4: Still Picture], your "
             "input: %d\n",
             channel_number + 1,
             config->tune);
         return_error = EB_ErrorBadParameter;
+    }
+    if (config->tune == 2 || config->tune == 4) {
+        if (config->rate_control_mode != 0 || config->pred_structure != SVT_AV1_PRED_RANDOM_ACCESS) {
+            SVT_ERROR("Instance %u: Tunes SSIM & Tune Still Picture currently only support the CRF rate control mode\n",
+                      channel_number + 1,
+                      config->tune);
+            return_error = EB_ErrorBadParameter;
+        }
     }
     if (config->tune == 3) {
         if (config->rate_control_mode != 0 || config->pred_structure != SVT_AV1_PRED_RANDOM_ACCESS) {
@@ -1096,7 +1105,8 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
                  config->tune == 0       ? "VQ"
                      : config->tune == 1 ? "PSNR"
                          : config->tune == 2 ? "SSIM"
-                                             : "Subjective SSIM",
+                             : config->tune == 3 ? "Subjective SSIM"
+                                             : "Still Picture",
                  config->pred_structure == 1       ? "low delay"
                      : config->pred_structure == 2 ? "random access"
                                                    : "Unknown pred structure");
