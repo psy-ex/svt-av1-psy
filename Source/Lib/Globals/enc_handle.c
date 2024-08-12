@@ -4557,7 +4557,7 @@ static void copy_api_from_app(
 
 #ifdef ARCH_AARCH64
     // Work around a VQ issue that creates blocking with QMs and presets 5 and faster on ARM environments with NEON: https://gitlab.com/AOMediaCodec/SVT-AV1/-/issues/2189
-    if (scs->static_config.enable_qm && scs->static_config.enc_mode >= ENC_M5) {
+    if (scs->static_config.enable_qm && scs->static_config.enc_mode >= ENC_M5 && scs->static_config.tune != 4) {
         SVT_WARN("Quantization matrices will be turned off for presets 5 and higher on NEON-enabled environments\n");
     }else if (scs->static_config.enable_qm && scs->static_config.lossless) {
         SVT_WARN("Quantization matrices will be forced off since lossless coding is applied\n");
@@ -4586,6 +4586,18 @@ static void copy_api_from_app(
 
     // Extended CRF
     scs->static_config.extended_crf_qindex_offset = config_struct->extended_crf_qindex_offset;
+
+    // Override settings for Still Picture tune
+    if (scs->static_config.tune == 4) {
+        SVT_WARN("Tune 4: Still Picture is experimental, expect frequent changes that may modify present behavior.\n");
+        SVT_WARN("Tune 4: Still Picture overrides: enable-qm, sharpness, variance boost strength, alt curve, and min/max QM level.\n");
+        scs->static_config.enable_qm = 1;
+        scs->static_config.min_qm_level = 8;
+        scs->static_config.max_qm_level = 8;
+        scs->static_config.sharpness = 6;
+        scs->static_config.variance_boost_strength = 3;
+        scs->static_config.variance_boost_curve = 2;
+    }
 
     // QP scaling compression
     scs->static_config.qp_scale_compress_strength = config_struct->qp_scale_compress_strength;

@@ -2321,7 +2321,7 @@ void *svt_aom_source_based_operations_kernel(void *input_ptr) {
             }
         }
         /*********************************************Picture-based operations**********************************************************/
-        if (scs->static_config.tune == 2 || scs->static_config.tune == 3) {
+        if (scs->static_config.tune == 2 || scs->static_config.tune == 3 || scs->static_config.tune == 4) {
             aom_av1_set_mb_ssim_rdmult_scaling(pcs);
         }
         sbo_send_picture_out(context_ptr, pcs, false);

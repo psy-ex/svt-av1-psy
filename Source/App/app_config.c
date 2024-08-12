@@ -1101,9 +1101,9 @@ ConfigEntry config_entry_specific[] = {
     // --- end: ALTREF_FILTERING_SUPPORT
     {SINGLE_INPUT,
      TUNE_TOKEN,
-     "Specifies whether to use PSNR, VQ, or SSIM as the tuning metric [0 = VQ, 1 = PSNR, 2 = SSIM, 3 = Subjective SSIM], "
+     "Optimize the encoding process for different desired outcomes [0 = VQ, 1 = PSNR, 2 = SSIM, 3 = Subjective SSIM, 4 = Still Picture], "
      "default is 2 "
-     "[0-3]",
+     "[0-4]",
      set_cfg_generic_token},
     // MD Parameters
     {SINGLE_INPUT,
