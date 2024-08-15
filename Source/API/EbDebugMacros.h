@@ -69,6 +69,11 @@ extern "C" {
 #define DEBUG_VAR_BOOST_QP      0
 #define DEBUG_VAR_BOOST_STATS   0
 
+// PSY screen content mode debugging code
+// Note: these macros are mutually exclusive, do not enable both simultaneously!
+#define DEBUG_PSY_SCM           0
+#define DEBUG_PSY_SCM_DILATION  0
+
 // QP scaling debugging code
 #define DEBUG_QP_SCALING        0
 
