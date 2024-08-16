@@ -99,6 +99,10 @@ Prints the information found in Appendix A.2 of the user guide in order to help 
 
 We are always continuously improving SVT-AV1-PSY, and we always recommend using the `master` branch to experience exciting new features as soon as they can be considered usable. To make our feature additions more clear, micro-release tags indicate when significant new feature additions have been made. Micro-release tags are letters starting with `A`, so new releases will be tagged as `v#.#.#-A`, `v#.#.#-B`, etc.
 
+- `Enhanced Content Detection`
+
+Tune 4 features a smarter content detection algorithm to optimize the encoder for either screen or photographic content based on the image. This helps Tune 4 achieve better visual fidelity on still images.
+
 # Building
 
 For Linux, macOS, & Windows build instructions, see the [PSY Development](Docs/PSY-Development.md) page.
@@ -117,6 +121,7 @@ One way to get involved is to use SVT-AV1-PSY in your own AV1 encoding projects,
 - [SVT-AV1-PSY in CachyOS](https://github.com/CachyOS/CachyOS-PKGBUILDS/pull/144) ~ by @BlueSwordM
 - [Custom Handbrake Builds](https://github.com/vincejv/docker-handbrake) ~ by @vincejv
 - [Staxrip](https://github.com/staxrip/staxrip) ~ a video & audio encoding GUI for Windows by @Dendraspis
+- [Av1ador](https://github.com/porcino/Av1ador) ~ an AV1/HEVC/VP9/H264 parallel encoder GUI for FFmpeg by @porcino
 
 ## License
 
