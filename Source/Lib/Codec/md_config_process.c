@@ -204,26 +204,40 @@ static INLINE int psy_get_qmlevel(int qindex, int first, int last, bool chroma) 
     return rint(first + (pow((double)(qindex), sigmoid_qm_func(qindex)) * (last + 1 - first)) / pow(QINDEX_RANGE, sigmoid_qm_func(qindex)));
 }
 
-// QM levels tuned for still images
+// Polynomial to determine QM levels tuned for still images
 static INLINE int psy_still_get_qmlevel(int qindex) {
-    int qm_level = 0;
+    // Polynomial coefficients
+    const double coeffs[] = {
+        1.10464272e-14,
+        -9.78597634e-12,
+        3.46261763e-09,
+        -6.26759877e-07,
+        6.10876647e-05,
+        -3.04942759e-03,
+        4.79930113e-02,
+        9.86922373e+00
+    };
+    // Degree of the polynomial
+    const int degree = 7;
 
-    if (qindex <= 40)
-        qm_level = 10;
-    else if (qindex <= 100)
-        qm_level = 9;
-    else if (qindex <= 160)
-        qm_level = 8;
-    else if (qindex <= 200)
-        qm_level = 7;
-    else if (qindex <= 220)
-        qm_level = 6;
-    else if (qindex <= 240)
-        qm_level = 5;
-    else
-        qm_level = 4;
+    double result = 0.0;
+    double x = 1.0;
+    for (int i = degree; i >= 0; i--) {
+        result += coeffs[i] * x;
+        x *= qindex;
+    }
 
-    return qm_level;
+    const int qm_level = (int)round(result);
+
+    // Clamp the result to the original range [4, 10]
+    if (qm_level < 4) {
+        return 4;
+    } else if (qm_level > 10) {
+        return 10;
+    } else {
+        return qm_level;
+    }
+
 }
 
 void svt_av1_qm_init(PictureParentControlSet *pcs) {
