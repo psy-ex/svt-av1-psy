@@ -4592,8 +4592,8 @@ static void copy_api_from_app(
         SVT_WARN("Tune 4: Still Picture is experimental, expect frequent changes that may modify present behavior.\n");
         SVT_WARN("Tune 4: Still Picture overrides: enable-qm, sharpness, variance octile, variance boost strength, alt curve, and min/max QM level.\n");
         scs->static_config.enable_qm = 1;
-        scs->static_config.min_qm_level = 9;
-        scs->static_config.max_qm_level = 9;
+        scs->static_config.min_qm_level = 4;
+        scs->static_config.max_qm_level = 10;
         scs->static_config.sharpness = 6;
         scs->static_config.variance_boost_strength = 3;
         scs->static_config.variance_octile = 5;
