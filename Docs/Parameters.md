@@ -125,6 +125,8 @@ For more information on valid values for specific keys, refer to the [EbEncSetti
 | **EnableQM**                     | --enable-qm                      | [0-1]      | 1           | Enable quantisation matrices                                                                                                                         |
 | **MinQmLevel**                   | --qm-min                         | [0-15]     | 0           | Min quant matrix flatness                                                                                                                            |
 | **MaxQmLevel**                   | --qm-max                         | [0-15]     | 15          | Max quant matrix flatness                                                                                                                            |
+| **MinChromaQmLevel**             | --chroma-qm-min                  | [0-15]     | 0           | Min chroma quant matrix flatness                                                                                                                     |
+| **MaxChromaQmLevel**             | --chroma-qm-max                  | [0-15]     | 15          | Max chroma quant matrix flatness                                                                                                                     |
 | **LambdaScaleFactors**           | --lambda-scale-factors           | [0- ]      | '128,.,128' | list of scale factors for lambda values used for different SvtAv1FrameUpdateType, separated by `,` divide by 128 is the actual scale factor in float |
 | **RoiMapFile**                   | --roi-map-file                   | any string | Null        | Path to a file containing picture based QP offset map                                                                                                |
 | **TemporalFilteringStrength**    | --tf-strength                    | [0-4]      | 3           | Manually adjust temporal filtering strength. Higher values = stronger temporal filtering                                                             |
@@ -175,16 +177,16 @@ For this command line, corresponding qindex values are:
 ### **EnableQM** and more information
 
 With `EnableQM`, `MinQmLevel` and `MaxQmLevel`, user can customize the quantization
-matrix used in quantization procedure instead of using the default one. With the default
-quantization matrix, all coefficients share the same weight, whereas with non-default ones,
-coefficients can have different weight through the settings made by users. The deviation
-of weight (or flatness, equivalently) is controlled by arguments `MinQmLevel` and `MaxQmLevel`.
-There are sixteen quantization matrix levels, ranging from level 0 to level 15. The lower
-the level is the larger deviation of weight the quantization matrix will provide. Level 15
-is fully flat in weight and is set as the default quantization matrix. A lower level
-quantization matrix typically results in bitstreams with lower bitrate and slightly worse
-quality in CRF rate control mode. The reduction in bitrate is more obvious with low CRF
-than high CRF.
+matrix used in luma quantization procedure (`MinChromaQmLevel` & `MaxChromaQmLevel` for chroma control)
+instead of using the default one. With the default quantization matrix, all coefficients share the
+same weight, whereas with non-default ones, coefficients can have different weight through
+the settings made by users. The deviation of weight (or flatness, equivalently)
+is controlled by arguments `MinQmLevel` and `MaxQmLevel`. There are sixteen quantization matrix levels,
+ranging from level 0 to level 15. The lower the level is the larger deviation of weight the
+quantization matrix will provide. Level 15 is fully flat in weight and is set as the default
+quantization matrix. A lower level quantization matrix typically results in bitstreams with
+lower bitrate and slightly worse quality in CRF rate control mode. The reduction in bitrate is more
+obvious with low CRF than high CRF.
 
 The quantization matrices feature signals at frame level. When the feature is enabled,
 the encoder decides each frame’s quantization matrix level by normalizing its qindex to
@@ -194,6 +196,12 @@ An example command line is:
 
 ```bash
 SvtAv1EncApp -i in.y4m -b out.ivf --keyint -1 --enable-qm 1 --qm-min 0 --qm-max 15
+```
+
+Another example with chroma QM min/max specified:
+
+```bash
+SvtAv1EncApp -i in.y4m -b out.ivf --keyint -1 --enable-qm 1 --qm-min 0 --qm-max 15 --chroma-qm-min 4 --chroma-qm-max 8
 ```
 
 ### Recode loop level table
