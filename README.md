@@ -76,6 +76,10 @@ Adaptively varies the film grain blocksize based on the resolution of the input 
 
 Set the path to an HDR10+ JSON file for encoding HDR10+ video. SVT-AV1-PSY needs to be built with the `enable-hdr10plus` flag enabled in build.sh (see `./Build/linux/build.sh --help` for more info) (Thank you @quietvoid !)
 
+- `--chroma-qm-min` & `--chroma-qm-max` *0 to 15*
+
+Set the minimum & maximum quantization matrices for chroma planes. The defaults are 0 and 15, respectively. These options decouple chroma quantization matrix control from the luma quantization matrix options currently available, allowing for more control over chroma quality.
+
 ### Modified Defaults
 
 SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide better visual fidelity out of the box. They include:

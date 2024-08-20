@@ -936,6 +936,9 @@ typedef struct PictureParentControlSet {
     const QmVal *gqmatrix[NUM_QM_LEVELS][3][TX_SIZES_ALL];
     int32_t      min_qmlevel;
     int32_t      max_qmlevel;
+    // Chroma QMs
+    int32_t      min_chroma_qmlevel;
+    int32_t      max_chroma_qmlevel;
     // Encoder
     LoopFilterInfoN lf_info;
 

@@ -973,6 +973,21 @@ typedef struct EbSvtAv1EncConfiguration {
      */
     bool max_32_tx_size;
 
+    /**
+     * @brief Min quant matrix flatness. Applicable when enable_qm is true.
+     * Min value is 0.
+     * Max value is 15.
+     * Default is 0 in SVT-AV1-PSY, mainline default is 8.
+     */
+    uint8_t min_chroma_qm_level;
+    /**
+     * @brief Max quant matrix flatness. Applicable when enable_qm is true.
+     * Min value is 0.
+     * Max value is 15.
+     * Default is 15.
+     */
+    uint8_t max_chroma_qm_level;
+
     /*Add 128 Byte Padding to Struct to avoid changing the size of the public configuration struct*/
     uint8_t padding[128];
 } EbSvtAv1EncConfiguration;
