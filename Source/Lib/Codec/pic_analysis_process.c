@@ -1974,6 +1974,7 @@ void dilate_block(const uint8_t* src, uint32_t src_stride, uint8_t* dilated_bloc
 void svt_aom_is_screen_content_psy(PictureParentControlSet *pcs) {
     const int blk_w = 16;
     const int blk_h = 16;
+    const int blk_s = 256;
     // These threshold values are selected experimentally.
     const int simple_color_thresh          = 4;  // Detects text and glyphs without anti-aliasing, and graphics with a 4-color palette
     const int complex_initial_color_thresh = 40; // Detects potential text and glyphs with anti-aliasing, and graphics with a more extended color palette
@@ -1989,7 +1990,7 @@ void svt_aom_is_screen_content_psy(PictureParentControlSet *pcs) {
 
     const AomVarianceFnPtr *fn_ptr    = &svt_aom_mefn_ptr[BLOCK_16X16];
     EbPictureBufferDesc    *input_pic = pcs->enhanced_pic;
-    uint8_t                dilated_blk[blk_h * blk_w];
+    uint8_t                dilated_blk[blk_s];
 
     for (int r = 0; r + blk_h <= input_pic->height; r += blk_h) {
         for (int c = 0; c + blk_w <= input_pic->width; c += blk_w) {
