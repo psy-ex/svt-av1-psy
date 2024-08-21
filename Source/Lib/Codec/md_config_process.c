@@ -199,9 +199,9 @@ static INLINE double sigmoid_qm_func(int qindex) {
 static INLINE int psy_get_qmlevel(int qindex, int first, int last, bool chroma) {
     // mapping qindex(0, 255) to QM level(first, last)
     if (chroma) {
-        return rint(10 + first/3 + (pow((double)(qindex), sigmoid_qm_func(qindex)) * (last/3 + 1 - first/3)) / pow(QINDEX_RANGE, sigmoid_qm_func(qindex)));
+        return (int)rint(10 + first/3 + (pow((double)(qindex), sigmoid_qm_func(qindex)) * (last/3 + 1 - first/3)) / pow(QINDEX_RANGE, sigmoid_qm_func(qindex)));
     }
-    return rint(first + (pow((double)(qindex), sigmoid_qm_func(qindex)) * (last + 1 - first)) / pow(QINDEX_RANGE, sigmoid_qm_func(qindex)));
+    return (int)rint(first + (pow((double)(qindex), sigmoid_qm_func(qindex)) * (last + 1 - first)) / pow(QINDEX_RANGE, sigmoid_qm_func(qindex)));
 }
 
 // Polynomial to determine QM levels tuned for still images
