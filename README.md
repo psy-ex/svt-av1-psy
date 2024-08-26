@@ -76,6 +76,10 @@ Adaptively varies the film grain blocksize based on the resolution of the input 
 
 Set the path to an HDR10+ JSON file for encoding HDR10+ video. SVT-AV1-PSY needs to be built with the `enable-hdr10plus` flag enabled in build.sh (see `./Build/linux/build.sh --help` for more info) (Thank you @quietvoid !)
 
+- `--tf-strength` *0 to 4*
+
+Manually adjust temporal filtering strength to adjust the trade-off between fewer artifacts in motion and fine detail retention. Each increment is a 2x increase in temporal filtering strength; the default value of 1 is 4x weaker than mainline SVT-AV1's default temporal filter (which would be equivalent to 3 here).
+
 - `--chroma-qm-min` & `--chroma-qm-max` *0 to 15*
 
 Set the minimum & maximum quantization matrices for chroma planes. The defaults are 0 and 15, respectively. These options decouple chroma quantization matrix control from the luma quantization matrix options currently available, allowing for more control over chroma quality.
@@ -115,6 +119,8 @@ For Linux, macOS, & Windows build instructions, see the [PSY Development](Docs/P
 
 For more information on SVT-AV1-PSY and this project's mission, see the [PSY Development](Docs/PSY-Development.md) page.
 
+### Use SVT-AV1-PSY
+
 One way to get involved is to use SVT-AV1-PSY in your own AV1 encoding projects, increasing the impact our work has on others! You and your users will also be able to provide feedback on the encoder's overall performance and report any issues you encounter. Your name will also be added to this page.
 
 **Projects Featuring SVT-AV1-PSY:**
@@ -126,6 +132,10 @@ One way to get involved is to use SVT-AV1-PSY in your own AV1 encoding projects,
 - [Custom Handbrake Builds](https://github.com/vincejv/docker-handbrake) ~ by @vincejv
 - [Staxrip](https://github.com/staxrip/staxrip) ~ a video & audio encoding GUI for Windows by @Dendraspis
 - [Av1ador](https://github.com/porcino/Av1ador) ~ an AV1/HEVC/VP9/H264 parallel encoder GUI for FFmpeg by @porcino
+
+### Support Development
+
+If you'd like to directly support the team working on this project, we accept monetary donations via the "Sponsor" button at the top of this repository (it has a pink heart within the button frame). Your donations will help the core development team continue to improve the encoder, our support efforts, and our documentation - a little goes a long way, and we appreciate it immensely.
 
 ## License
 
