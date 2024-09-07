@@ -15,18 +15,19 @@ cmake_minimum_required(VERSION 3.5...3.28)
 
 # Include Subdirectories
 include_directories(${PROJECT_SOURCE_DIR}/Source/API/)
+find_package(PkgConfig REQUIRED)
 
 # libdovi detection & preprocessor macro
-option(LIBDOVI_FOUND "Use the libdovi library" OFF)
+option(LIBDOVI_FOUND "Use the dovi library" OFF)
 if(LIBDOVI_FOUND)
   if(PKG_CONFIG_FOUND)
-  pkg_check_modules(PC_LIBDOVI libdovi QUIET)
+  pkg_check_modules(PC_LIBDOVI dovi QUIET)
   endif()
 
   find_library(LIBDOVI_LIBRARY NAMES dovi libdovi
                                PATHS ${PC_LIBDOVI_LIBDIR})
   if(NOT LIBDOVI_LIBRARY)
-  message(FATAL_ERROR "libdovi library not found!")
+  message(FATAL_ERROR "dovi library not found!")
   endif()
 
   find_path(LIBDOVI_INCLUDE_DIR NAMES libdovi/rpu_parser.h
@@ -35,22 +36,22 @@ if(LIBDOVI_FOUND)
   set(LIBDOVI_INCLUDE_DIRS ${LIBDOVI_INCLUDE_DIR})
   set(LIBDOVI_LIBRARIES ${LIBDOVI_LIBRARY})
   add_definitions(-DLIBDOVI_FOUND=1)
-  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libdovi support - Yes\n")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with dovi support - Yes\n")
 else()
-  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libdovi support - No\n")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with dovi support - No\n")
 endif()
 
 # libhdr10plus-rs detection & preprocessor macro
-option(LIBHDR10PLUS_RS_FOUND "Use the libhdr10plus-rs library" OFF)
+option(LIBHDR10PLUS_RS_FOUND "Use the hdr10plus library" OFF)
 if(LIBHDR10PLUS_RS_FOUND)
   if(PKG_CONFIG_FOUND)
-  pkg_check_modules(PC_LIBHDR10PLUS_RS libhdr10plus-rs QUIET)
+  pkg_check_modules(PC_LIBHDR10PLUS_RS hdr10plus-rs QUIET)
   endif()
 
   find_library(LIBHDR10PLUS_RS_LIBRARY NAMES hdr10plus-rs libhdr10plus-rs
                                PATHS ${PC_LIBHDR10PLUS_RS_LIBDIR})
   if(NOT LIBHDR10PLUS_RS_LIBRARY)
-  message(FATAL_ERROR "libhdr10plus-rs library not found!")
+  message(FATAL_ERROR "hdr10plus library not found!")
   endif()
 
   find_path(LIBHDR10PLUS_RS_INCLUDE_DIR NAMES libhdr10plus-rs/hdr10plus.h
@@ -59,9 +60,9 @@ if(LIBHDR10PLUS_RS_FOUND)
   set(LIBHDR10PLUS_RS_INCLUDE_DIRS ${LIBHDR10PLUS_RS_INCLUDE_DIR})
   set(LIBHDR10PLUS_RS_LIBRARIES ${LIBHDR10PLUS_RS_LIBRARY})
   add_definitions(-DLIBHDR10PLUS_RS_FOUND=1)
-  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libhdr10plus support - Yes\n")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with hdr10plus support - Yes\n")
 else()
-  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with libhdr10plus support - No\n")
+  execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with hdr10plus support - No\n")
 endif()
 
 set(all_files
