@@ -3439,6 +3439,9 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
 
                     if (scs->static_config.tune == 3) {
                         chroma_qindex += (int32_t)-rint(chroma_qindex / 8.0); // Chroma boost to fix saturation issues
+                    } else if (scs->static_config.tune == 4) {
+                        // Constant chroma boost with gradual ramp-down for very high qindex levels
+                        chroma_qindex -= CLIP3(0, 16, frm_hdr->quantization_params.base_q_idx / 2);
                     }
 
                     chroma_qindex += scs->static_config.extended_crf_qindex_offset;
