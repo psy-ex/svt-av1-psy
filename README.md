@@ -56,9 +56,9 @@ Increases video quality temporal consistency, especially with clips that contain
 
 Enables a more accurate loop filter that prevents blocking, for a modest increase in compute time (most noticeable at presets 7 to 9)
 
-- `Higher-quality presets for 8K`
+- `Higher-quality presets for 8K and 16K`
 
-Lowers the minimum available preset from 8 to 2 for higher-quality 8K encoding (64 GB of RAM recommended per encoding instance)
+Lowers the minimum available preset from 8 to 2 for higher-quality 8K and 16K encoding (64 GB of RAM recommended per encoding instance).
 
 - `--frame-luma-bias` *0 to 100*
 
