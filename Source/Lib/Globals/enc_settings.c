@@ -1022,7 +1022,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->enable_qm    = 1;
     config_ptr->min_qm_level = 0;
     config_ptr->max_qm_level = 15;
-    config_ptr->min_chroma_qm_level = 0;
+    config_ptr->min_chroma_qm_level = 8;
     config_ptr->max_chroma_qm_level = 15;
 
     config_ptr->startup_mg_size                   = 0;
