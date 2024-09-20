@@ -3423,11 +3423,22 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
                         chroma_qindex += scs->static_config.chroma_qindex_offsets[pcs->temporal_layer_index];
                     }
 
-                    if (scs->static_config.tune == 3) {
-                        chroma_qindex += (int32_t)-rint(chroma_qindex / 8.0); // Chroma boost to fix saturation issues
-                    } else if (scs->static_config.tune == 4) {
-                        // Constant chroma boost with gradual ramp-down for very high qindex levels
-                        chroma_qindex -= CLIP3(0, 16, frm_hdr->quantization_params.base_q_idx / 2);
+                    uint8_t chroma_qindex_adjustment = chroma_qindex;
+                    switch (scs->static_config.tune) {
+                        case 2:
+                            // Chroma boost function - ramp down for higher qindices
+                            chroma_qindex_adjustment = MAX(0, chroma_qindex_adjustment - 48);
+                            chroma_qindex -= CLIP3(0, 16, (int32_t)rint(pow(chroma_qindex_adjustment, 1.4) / 9.0));
+                            break;
+                        case 3:
+                            chroma_qindex += (int32_t)-rint(chroma_qindex_adjustment / 8.0); // Chroma boost to fix saturation issues
+                            break;
+                        case 4:
+                            // Constant chroma boost with gradual ramp-down for very high qindex levels
+                            chroma_qindex -= CLIP3(0, 16, chroma_qindex_adjustment / 2);
+                            break;
+                        default:
+                            break;
                     }
 
                     chroma_qindex += scs->static_config.extended_crf_qindex_offset;
