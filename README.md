@@ -82,7 +82,7 @@ Manually adjust temporal filtering strength to adjust the trade-off between fewe
 
 - `--chroma-qm-min` & `--chroma-qm-max` *0 to 15*
 
-Set the minimum & maximum quantization matrices for chroma planes. The defaults are 0 and 15, respectively. These options decouple chroma quantization matrix control from the luma quantization matrix options currently available, allowing for more control over chroma quality.
+Set the minimum & maximum quantization matrices for chroma planes. The defaults are 8 and 15, respectively. These options decouple chroma quantization matrix control from the luma quantization matrix options currently available, allowing for more control over chroma quality.
 
 ### Modified Defaults
 
