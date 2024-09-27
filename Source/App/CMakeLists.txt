@@ -15,7 +15,10 @@ cmake_minimum_required(VERSION 3.5...3.28)
 
 # Include Subdirectories
 include_directories(${PROJECT_SOURCE_DIR}/Source/API/)
-find_package(PkgConfig REQUIRED)
+find_package(PkgConfig)
+if(NOT PkgConfig_FOUND)
+  message(WARNING "PkgConfig not found; disabled building with dovi & hdr10plus.")
+endif()
 
 # libdovi detection & preprocessor macro
 option(LIBDOVI_FOUND "Use the dovi library" OFF)
@@ -41,7 +44,7 @@ else()
   execute_process(COMMAND ${CMAKE_COMMAND} -E echo_append "-- Building with dovi support - No\n")
 endif()
 
-# libhdr10plus-rs detection & preprocessor macro
+# libhdr10plus detection & preprocessor macro
 option(LIBHDR10PLUS_RS_FOUND "Use the hdr10plus library" OFF)
 if(LIBHDR10PLUS_RS_FOUND)
   if(PKG_CONFIG_FOUND)
