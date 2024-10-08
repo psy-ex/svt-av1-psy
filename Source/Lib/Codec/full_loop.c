@@ -1460,40 +1460,54 @@ uint8_t svt_av1_compute_cul_level_c(const int16_t *const scan, const int32_t *co
     return (uint8_t)cul_level;
 }
 
-void svt_av1_perform_noise_normalization(MacroblockPlane *p, QuantParam *qparam, TranLow *coeff_ptr, TranLow *qcoeff_ptr, TranLow *dqcoeff_ptr, TxSize tx_size, TxType tx_type, uint16_t *eob)
+void svt_av1_perform_noise_normalization(MacroblockPlane *p,
+    QuantParam *qparam,
+    TranLow *coeff_ptr,
+    TranLow *qcoeff_ptr,
+    TranLow *dqcoeff_ptr,
+    TxSize tx_size,
+    TxType tx_type,
+    uint16_t *eob,
+    PictureControlSet *pcs)
 {
-    const int shift  = av1_get_tx_scale_tab[tx_size];
-    const ScanOrder *const scan_order = &av1_scan_orders[tx_size][tx_type];
-    const int16_t *scan = scan_order->scan;
+    const int shift = av1_get_tx_scale_tab[tx_size];
     const int width = get_txb_wide_tab[tx_size];
     const int height = get_txb_high_tab[tx_size];
+    const ScanOrder *const scan_order = &av1_scan_orders[tx_size][tx_type];
+    const int16_t *scan = scan_order->scan;
+    const uint8_t noisenorm_strength = pcs->scs->static_config.noise_norm_strength;
+
+    // If block is too small, terminate early
+    if (width == 4 && height == 4) {
+        return;
+    }
+
+    // If noisenorm_strength is 0, terminate early
+    if (noisenorm_strength < 1) {
+        return;
+    }
 
     int best_si = -1;
     int best_smallest_energy_gap = INT_MAX;
     TranLow best_qc_low;
     TranLow best_dqc_low;
+    int thresh;
 
-    if (width == 4 && height == 4) {
-        // Block is too small, early terminate
-        return;
+    // Determine threshold based on user-configurable noisenorm_strength
+    switch (noisenorm_strength) {
+        case 1:
+            thresh = 9;
+            break;
+        case 2:
+            thresh = 8;
+            break;
+        case 3:
+            thresh = 6;
+            break;
+        default:
+            thresh = 4;
+            break;
     }
-
-    /*char buffer[8000];
-    int buffer_idx = 0;
-    char newline = '\n';
-
-    sprintf(buffer, "Before:%c", newline);
-    buffer_idx += 8;
-
-    for (int si = 0; si < *eob; si++) {
-        int ci = scan[si];
-        if (ci > 999) { ci = 999; } // cap for easier reading
-        sprintf(buffer + buffer_idx, "%4i", qcoeff_ptr[ci]);
-        buffer_idx += 4;
-    }
-
-    sprintf(buffer + buffer_idx, "%c", newline);
-    buffer_idx += 1;*/
 
     if (*eob > 1) {
         // Textured block, boost the most suitable AC coefficient within the EOB range
@@ -1517,11 +1531,11 @@ void svt_av1_perform_noise_normalization(MacroblockPlane *p, QuantParam *qparam,
                 int energy_gap = abs(dqc_low - tqc);
                 int dq_step_size = abs(dqc_low - dqc);
                 int ratio = ((dq_step_size - energy_gap) << 4) / dq_step_size;
-                //printf("dqc: %5i, tqc: %5i, dqc_low: %5i, eg: %4i, dqss: %4i, ratio %2i\n", dqc, tqc, dqc_low, energy_gap, dq_step_size, ratio);
 
                 // Found coefficient with smaller energy gap, store it and continue
                 // "Energy gain/quant step size" ratio should be at least 6/16 to avoid boosting picked coeffs too much
-                if (ratio >= 6) {
+                // But we'll let users decide the threshold with the parameter
+                if (ratio >= thresh) {
                     best_si = si;
                     best_qc_low = qc_low;
                     best_dqc_low = dqc_low;
@@ -1553,7 +1567,8 @@ void svt_av1_perform_noise_normalization(MacroblockPlane *p, QuantParam *qparam,
 
                 // Found coefficient with smaller energy gap, store it and continue
                 // "Energy gain/quant step size" ratio should be at least 6/16 to avoid boosting picked coeffs too much
-                if (ratio >= 6 && energy_gap < best_smallest_energy_gap) {
+                // But we'll let users decide the threshold with the parameter
+                if (ratio >= thresh && energy_gap < best_smallest_energy_gap) {
                     best_smallest_energy_gap = energy_gap;
                     best_si = si;
                     best_qc_low = qc_low;
@@ -1821,7 +1836,8 @@ uint8_t svt_aom_quantize_inv_quantize(PictureControlSet *pcs, ModeDecisionContex
             (TranLow *)recon_coeff,
             txsize,
             tx_type,
-            eob);
+            eob,
+            pcs);
     }
 
     if (!ctx->rate_est_ctrls.update_skip_ctx_dc_sign_ctx)

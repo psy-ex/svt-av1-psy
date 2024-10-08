@@ -891,6 +891,11 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
+    if (config->noise_norm_strength > 4) {
+        SVT_ERROR("Instance %u: Noise normalization strength must be between 0 and 4\n", channel_number + 1);
+        return_error = EB_ErrorBadParameter;
+    }
+
     return return_error;
 }
 
@@ -1181,6 +1186,11 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
 
         SVT_INFO("QP scale compress strength \t\t\t: %d\n",
                  config->qp_scale_compress_strength);
+
+        if (config->noise_norm_strength >= 0) {
+            SVT_INFO("SVT [config]: Noise Normalization Strength \t: %d\n",
+                config->noise_norm_strength);
+        }  
     }
 #ifdef DEBUG_BUFFERS
     SVT_INFO("SVT [config]: INPUT / OUTPUT \t\t\t\t\t\t\t: %d / %d\n",
@@ -2059,6 +2069,7 @@ EB_API EbErrorType svt_av1_enc_parse_parameter(EbSvtAv1EncConfiguration *config_
         {"qp-scale-compress-strength", &config_struct->qp_scale_compress_strength},
         {"fast-decode", &config_struct->fast_decode},
         {"luminance-qp-bias", &config_struct->luminance_qp_bias},
+        {"noise-norm-strength", &config_struct->noise_norm_strength},
         {"enable-tf", &config_struct->enable_tf},
         {"tf-strength", &config_struct->tf_strength},
     };
