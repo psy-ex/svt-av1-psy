@@ -1070,7 +1070,7 @@ ConfigEntry config_entry_specific[] = {
      set_cfg_generic_token},
 
     // DLF
-    {SINGLE_INPUT, LOOP_FILTER_ENABLE, "Deblocking loop filter control, default is 1 [0-1]", set_cfg_generic_token},
+    {SINGLE_INPUT, LOOP_FILTER_ENABLE, "Deblocking loop filter control, default is 1 [0-2]", set_cfg_generic_token},
     // CDEF
     {SINGLE_INPUT,
      CDEF_ENABLE_TOKEN,
