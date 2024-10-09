@@ -4595,6 +4595,14 @@ static void copy_api_from_app(
     // Extended CRF
     scs->static_config.extended_crf_qindex_offset = config_struct->extended_crf_qindex_offset;
 
+    // QP scaling compression
+    scs->static_config.qp_scale_compress_strength = config_struct->qp_scale_compress_strength;
+
+    // Max 32 TX size
+    scs->static_config.max_32_tx_size = config_struct->max_32_tx_size;
+    // Noise normalization strength
+    scs->static_config.noise_norm_strength = config_struct->noise_norm_strength;
+
     // Override settings for Still Picture tune
     if (scs->static_config.tune == 4) {
         SVT_WARN("Tune 4: Still Picture is experimental, expect frequent changes that may modify present behavior.\n");
@@ -4611,14 +4619,6 @@ static void copy_api_from_app(
         scs->static_config.max_32_tx_size = 1;
     }
 
-    // QP scaling compression
-    scs->static_config.qp_scale_compress_strength = config_struct->qp_scale_compress_strength;
-
-    // Max 32 TX size
-    scs->static_config.max_32_tx_size = config_struct->max_32_tx_size;
-    // Noise normalization strength
-    scs->static_config.noise_norm_strength = config_struct->noise_norm_strength;
-    
     return;
 }
 
