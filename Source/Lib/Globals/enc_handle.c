@@ -4604,7 +4604,7 @@ static void copy_api_from_app(
         scs->static_config.max_qm_level = 10;
         scs->static_config.min_chroma_qm_level = 4;
         scs->static_config.max_chroma_qm_level = 10;
-        scs->static_config.sharpness = 6;
+        scs->static_config.sharpness = 7;
         scs->static_config.variance_boost_strength = 3;
         scs->static_config.variance_octile = 5;
         scs->static_config.variance_boost_curve = 2;
