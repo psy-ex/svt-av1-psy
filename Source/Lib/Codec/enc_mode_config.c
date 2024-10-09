@@ -8799,7 +8799,13 @@ set lpd0_level
         }
     }
     pcs->lambda_weight = 0;
-    if (!rtc_tune && !(enc_mode <= ENC_M0)) {
+    if (pcs->scs->static_config.tune == 4) {
+        // Adjust lambda weight towards more favorable still-picture performance (from 128 to 200), with gradual ramp-down for the lowest and highest QPs
+        // Lower QP cutoff: QP 18 = (QP) * 4
+        // Upper QP cutoff: QP 39 = (63 - QP) * 3
+        // ToDo: understand full implications of lambda adjustment on various encoding parts (TX search, TX partition, RDO...) to fully harness their advantage
+        pcs->lambda_weight = CLIP3(0, 72, MIN(pcs->picture_qp * 4, (63 - pcs->picture_qp) * 3)) + 128;
+    }else if (!rtc_tune && !(enc_mode <= ENC_M0)) {
         if (pcs->picture_qp >= 62) {
             pcs->lambda_weight = 300;
         } else if (pcs->picture_qp >= 56) {
