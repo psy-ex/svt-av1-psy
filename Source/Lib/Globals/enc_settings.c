@@ -1048,6 +1048,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->extended_crf_qindex_offset        = 0;
     config_ptr->qp_scale_compress_strength        = 1;
     config_ptr->max_32_tx_size                    = false;
+    config_ptr->noise_norm_strength               = 0;
     return return_error;
 }
 static const char *tier_to_str(unsigned in) {

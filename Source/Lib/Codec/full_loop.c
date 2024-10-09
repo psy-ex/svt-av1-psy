@@ -13,6 +13,7 @@
 #include "definitions.h"
 #include "full_loop.h"
 #include "pcs.h"
+#include <cstdint>
 #include "rd_cost.h"
 #include "aom_dsp_rtcd.h"
 #include "sequence_control_set.h"
@@ -1475,11 +1476,18 @@ void svt_av1_perform_noise_normalization(MacroblockPlane *p,
     const int height = get_txb_high_tab[tx_size];
     const ScanOrder *const scan_order = &av1_scan_orders[tx_size][tx_type];
     const int16_t *scan = scan_order->scan;
-    const uint8_t noisenorm_strength = pcs->scs->static_config.noise_norm_strength;
+    const uint8_t tune = pcs->scs->static_config.tune;
 
     // If block is too small, terminate early
     if (width == 4 && height == 4) {
         return;
+    }
+
+    uint8_t noisenorm_strength = pcs->scs->static_config.noise_norm_strength;
+
+    // If tune is 3 & noisenorm_strength is 0, set noisenorm_strength to 3
+    if (noisenorm_strength < 1 && tune == 3) {
+        noisenorm_strength = 3;
     }
 
     // If noisenorm_strength is 0, terminate early
@@ -1582,28 +1590,9 @@ void svt_av1_perform_noise_normalization(MacroblockPlane *p,
         int best_ci = scan[best_si];
         qcoeff_ptr[best_ci] = best_qc_low;
         dqcoeff_ptr[best_ci] = best_dqc_low;
-
-        //printf("Values: best_si %i, best_energy %i, best_qc_low %i, best_dqc_low %i, width: %i, height: %i\n", best_si, best_energy, best_qc_low, best_dqc_low, width, height);
-
         *eob = (best_si >= *eob) ? (best_si + 1) : *eob;
     }
 
-    /*sprintf(buffer + buffer_idx, "After:%c", newline);
-    buffer_idx += 7;
-
-    for (int si = 0; si < *eob; si++) {
-        int ci = scan[si];
-        if (ci > 999) { ci = 999; } // cap for easier reading
-        sprintf(buffer + buffer_idx, "%4i", qcoeff_ptr[ci]);
-        buffer_idx += 4;
-    }
-
-    sprintf(buffer + buffer_idx, "%c", newline);
-    buffer_idx += 1;
-
-    buffer[buffer_idx] = '\0';
-
-    printf("%s\n", buffer);*/
 }
 
 uint8_t svt_aom_quantize_inv_quantize(PictureControlSet *pcs, ModeDecisionContext *ctx, int32_t *coeff,
