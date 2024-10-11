@@ -33,7 +33,7 @@ cd svt-av1-psy/Build/linux
 2. Run the build script with the desired options. You can run `./build.sh --help` if you'd like to see the full suite of options available to you, but a sane configuration is provided below:
 
 ```bash
-./build.sh --native --static --no-dec --release --enable-lto
+./build.sh --native --static --release --enable-lto
 ```
 
 Consider that you may want to opt for using the Clang compiler on Linux instead of GCC. This is recommended for much faster build times. You can do this by running `export CC=clang CXX=clang++` before running the build script, provided you have Clang installed & in your PATH.
