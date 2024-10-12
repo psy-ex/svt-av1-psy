@@ -3435,7 +3435,7 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
                             break;
                         case 4:
                             // Constant chroma boost with gradual ramp-down for very high qindex levels
-                            chroma_qindex -= CLIP3(0, 16, chroma_qindex_adjustment / 2);
+                            chroma_qindex -= CLIP3(0, 16, (chroma_qindex_adjustment / 2) - 14);
                             break;
                         default:
                             break;
