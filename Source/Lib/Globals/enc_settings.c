@@ -1188,7 +1188,9 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
         SVT_INFO("QP scale compress strength \t\t\t: %d\n",
                  config->qp_scale_compress_strength);
 
-        if (config->noise_norm_strength >= 0) {
+        if (config->noise_norm_strength < 1 && config->tune == 3) {
+            SVT_INFO("SVT [config]: Noise Normalization Strength \t: 3\n");
+        } else if (config->noise_norm_strength < 1) {
             SVT_INFO("SVT [config]: Noise Normalization Strength \t: %d\n",
                 config->noise_norm_strength);
         }  
