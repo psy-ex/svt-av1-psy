@@ -118,7 +118,7 @@ For each enable-*, there is a disable-* option, and vice versa.
 Example usage:
     build.sh -xi debug test
     build.sh jobs=8 all cc=clang cxx=clang++
-    build.sh jobs=8 all cc=clang cxx=clang++ no-dec enable-avx512 enable-lto enable-dovi asm=nasm static native verbose
+    build.sh jobs=8 all cc=clang cxx=clang++ enable-avx512 enable-lto enable-dovi asm=nasm static native verbose
     build.sh -j 4 all -t "https://gist.githubusercontent.com/peterspackman/8cf73f7f12ba270aa8192d6911972fe8/raw/mingw-w64-x86_64.cmake"
     build.sh generator=Xcode cc=clang
 
