@@ -29,7 +29,7 @@ colors with index 0, 1 and 2. Based on the selected palette, the index
 map of the block can be generated as shown below. The encoding of the
 indices then proceeds in a wavefront manner as indicated below.
 
-![palette_prediction_fig1](./img/palette_prediction_fig1.png)
+![palette_prediction_fig1](./img/palette_prediction_fig1.webp)
 
 ##### Figure 1. Example of a 4x4 source block, corresponding palette, index map and wavefront processing pattern. The 4x4 block is considered here only for illustration purposes, as the block size needs to be at least 8x8 for palette prediction to be allowed.</p>
 
@@ -79,7 +79,7 @@ The feature is currently active only when screen content encoding is active, eit
 
 The main function calls associated with palette mode prediction are indicated in Figure 2 below.
 
-![palette_prediction_fig2](./img/palette_prediction_fig2.png)
+![palette_prediction_fig2](./img/palette_prediction_fig2.webp)
 
 ##### Figure 2. Main function calls related to the injection of palette mode candidates.
 

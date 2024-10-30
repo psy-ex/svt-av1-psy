@@ -33,7 +33,7 @@ matching. After each frame is completely coded, the packetization kernel sends
 the corresponding actual number of bits for the encoded frame back to the rate
 control algorithm to update the internal model and decide on future QPs.
 
-![rc_figure1](./img/rc_figure1.PNG)
+![rc_figure1](./img/rc_figure1.webp)
 
 ###### Figure 1. High-level encoder process dataflow.
 
@@ -75,7 +75,7 @@ helps in matching the target rate considerably. The second pass uses the
 data from the previous pass to achieve the best performance. A block diagram
 of the encoder with three passes is shown in Figure 2.
 
-![rc_figure2](./img/rc_figure2.PNG)
+![rc_figure2](./img/rc_figure2.webp)
 
 ###### Figure 2. Block diagram of two-pass encoder.
 
@@ -121,7 +121,7 @@ The rate control algorithm in the second pass includes the following main steps:
 6) Decide to perform re-encode (if applicable) at the end of the Mode Decision process (*recode_loop_decision_maker*).
 7) Update post-encode VBR data after receiving the feedback (*av1_rc_postencode_update()*).
 
-![rc_figure3](./img/rc_figure3.PNG)
+![rc_figure3](./img/rc_figure3.webp)
 
 ###### Figure 3. Flowchart of rate control in the second pass.
 
@@ -369,7 +369,7 @@ encoder pipeline tasks such as motion estimation, entropy coding or in-loop
 filtering. The flowchart in Figure 4 shows the high-level design of the
 re-encode decision mechanism.
 
-![rc_figure4](./img/rc_figure4.PNG)
+![rc_figure4](./img/rc_figure4.webp)
 
 ###### Figure 4. Re-encode flowchart.
 
@@ -443,7 +443,7 @@ frame is to be processed. The output is the actual encoded frame size, and is
 removed from the buffer content at the same frequency the contents of the
 virtual buffer are updated by the target frame size.
 
-![rc_figure5](./img/rc_figure5.PNG)
+![rc_figure5](./img/rc_figure5.webp)
 ###### Figure 5. CBR virtual buffer diagram.
 
 The virtual buffer parameters are initialized once before invoking the CBR rate control for the first frame as follows:

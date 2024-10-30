@@ -16,7 +16,7 @@ AV1 allows up to 8 pictures to be stored in a decoded picture buffer (DPB) to be
 
 ### Open Loop (Mostly in Picture Decision)
 
-<img src="./img/open_loop_fig1.png" width=100%>
+<img src="./img/open_loop_fig1.webp" width=100%>
 
 ##### **Figure 1:** Open-loop reference tracking.
 

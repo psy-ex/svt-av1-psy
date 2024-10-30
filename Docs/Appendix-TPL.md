@@ -87,7 +87,7 @@ The process where each function is called is also indicated as well as a brief d
 
 The TPL feature data flow is summarized in the diagram shown in Figure 1.
 
-![tpl_fig1](./img/tpl_fig1.png)
+![tpl_fig1](./img/tpl_fig1.webp)
 
 ##### Figure 1. TPL data flow in the encoder pipeline.
 
@@ -101,7 +101,7 @@ following.
 As illustrated in Figure 2 below, the TPL algorithm consists, for each base
 picture, of two picture-based loops:
 
-![tpl_fig2](./img/tpl_fig2.png)
+![tpl_fig2](./img/tpl_fig2.webp)
 
 ##### Figure 2. High-level diagram of the TPL feature.
 
@@ -353,7 +353,7 @@ The composition of the TPL group depends on the base layer picture of interest.
 To illustrate the construction of the TPL group, the case of a three-layer
 prediction structure shown below is considered.
 
-![tpl_fig3](./img/tpl_fig3.png)
+![tpl_fig3](./img/tpl_fig3.webp)
 
 - Case of lad_mg = 0:
   - IDR (Delayed intra):
@@ -458,7 +458,7 @@ including picture 8. The corresponding TPL group consists of pictures 8, 6, 5
 and 7, listed in decode order. At the Synthesizer, the pictures are processed
 in reverse decode order: 7,5,6,8.
 
-![tpl_fig4](./img/tpl_fig4.png)
+![tpl_fig4](./img/tpl_fig4.webp)
 
 To illustrate the Synthesizer operations, it is assumed the picture size is
 64x64. The TPL group associated with picture 8 is show below, where each
@@ -468,7 +468,7 @@ for illustration purposes). The blocks are indexed in raster scan order from 0
 to 15 in each picture. A block is identified using the pair (i,j), where i is
 the picture number and j is the block index in picture i.
 
-![tpl_fig5](./img/tpl_fig5.png)
+![tpl_fig5](./img/tpl_fig5.webp)
 
 The list of references to be considered for each picture is given in the table below.
 
@@ -704,4 +704,3 @@ v3.0.0 of the code and may not reflect the current status of the code. The
 description in this document represents an example showing how features would
 interact with the SVT architecture. For the most up-to-date settings, it's
 recommended to review the section of the code implementing this feature.
-

@@ -41,7 +41,7 @@ The remaining parameters $`h_{11}, h_{12}, h_{21}, h_{22}`$ are estimated using 
 
 To illustrate the estimation of these parameters, consider example shown in Figure 1 below.
 
-![local_warped_motion_fig1](./img/local_warped_motion_fig1.png)
+![local_warped_motion_fig1](./img/local_warped_motion_fig1.webp)
 
 ##### Figure 1. Current block in yellow is a 32x32 block. Neighboring blocks that refer to the same reference picture as the current block are in blue. MVs (in orange) for the current block and the blue blocks are used to infer the local warp motion of the yellow block.
 
@@ -130,7 +130,7 @@ The final warped motion model is applied on an 8x8 basis in the reference
 frame. The predicted block is constructed by assembling the 8x8 predicted
 warped blocks from the reference picture.
 
-![local_warped_motion_fig2](./img/local_warped_motion_fig2.png)
+![local_warped_motion_fig2](./img/local_warped_motion_fig2.webp)
 
 ##### Figure 2. The horizontal, vertical, and combined shears respectively.
 
@@ -158,7 +158,7 @@ indicated in Table 1.
 
 Figure 3 below summarizes the data flow of the LW implementation.
 
-![local_warped_motion_fig_new1](./img/local_warped_motion_fig_new1.png)
+![local_warped_motion_fig_new1](./img/local_warped_motion_fig_new1.webp)
 
 ##### Figure 3. Data flow for the LW feature.
 
@@ -168,7 +168,7 @@ RD optimization. A high-level diagram of the function calls relevant to the two
 main LW functions, namely ```inject_inter_candidates``` and
 ```warped_motion_prediction``` is given in Figure 4 below.
 
-![local_warped_motion_fig_new2](./img/local_warped_motion_fig_new2.png)
+![local_warped_motion_fig_new2](./img/local_warped_motion_fig_new2.webp)
 
 ##### Figure 4. Function calls relevant to the two main LW functions highlighted in blue.
 
@@ -181,7 +181,7 @@ are outlined in the following.
 The injection is performed by the function ```inject_inter_candidates```.
 A diagram of the relevant function calls is given in Figure 5.
 
-![local_warped_motion_fig_new3](./img/local_warped_motion_fig_new3.png)
+![local_warped_motion_fig_new3](./img/local_warped_motion_fig_new3.webp)
 
 ##### Figure 5. Continuation of Figure 3 with the function calls related to the injection of LW candidates.
 
@@ -243,7 +243,7 @@ The generation of the LW predictions in MD is performed using the
 function ```warped\_motion\_prediction```. A diagram of the associated
 function call is shown in Figure 6 below.
 
-![local_warped_motion_fig_new4](./img/local_warped_motion_fig_new4.png)
+![local_warped_motion_fig_new4](./img/local_warped_motion_fig_new4.webp)
 
 ##### Figure 6. Continuation of Figure 4 with the function calls related to the evaluation of the LW predictions in MD.
 

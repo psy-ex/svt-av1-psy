@@ -25,7 +25,7 @@ frame consists of already reconstructed blocks that are 256 pixels away
 (in a raster scan order) from the current block. Figure 1 below
 illustrates the allowed search area.
 
-![intra_block_copy_fig1](./img/intra_block_copy_fig1.png)
+![intra_block_copy_fig1](./img/intra_block_copy_fig1.webp)
 
 ##### Figure 1. Diagram showing blocks not allowed in the search area.
 
@@ -40,7 +40,7 @@ A diagram of the main function calls associated with the IBC algorithm
 is shown in Figure 2 below. The functions are shown according to the
 depth of the function call.
 
-![intra_block_copy_fig2](./img/intra_block_copy_fig2.png)
+![intra_block_copy_fig2](./img/intra_block_copy_fig2.webp)
 
 ##### Figure 2. Main function calls associated with the IBC algorithm.
 

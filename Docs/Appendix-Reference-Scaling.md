@@ -25,7 +25,7 @@ can have different downscaling factors. The following sections outline how
 pictures with different sizes are processed in the different stages of the
 SVT-AV1 encoder pipeline and how the downscaling factor is determined.
 
-![reference_scaling_pipeline](./img/reference_scaling_pipeline.png)
+![reference_scaling_pipeline](./img/reference_scaling_pipeline.webp)
 ##### Figure 1. Processing pipeline when reference scaling is active.
 
 
@@ -33,7 +33,7 @@ SVT-AV1 encoder pipeline and how the downscaling factor is determined.
 ### 2.1. Downscaled and full-size versions of pictures
 Figure 2 illustrates how pictures with different sizes are processed in
 different coding processes/stages.
-![reference_scaling_picture_size](./img/reference_scaling_picture_size.png)
+![reference_scaling_picture_size](./img/reference_scaling_picture_size.webp)
 ##### Figure 2. Processing of the downscaled and full-size pictures in the encoder pipeline.
 
 In Figure 2, downscaled input refers to a downscaled version of the current
@@ -92,7 +92,7 @@ each of the above-mentioned modes works is included below.
 The following sections explain how these different modes are implemented in the
 SVT-AV1 encoder. The high-level dataflow of reference scaling is shown in Figure
 3.
-![ref_scale_modes_dataflow](./img/ref_scale_modes_dataflow.png)
+![ref_scale_modes_dataflow](./img/ref_scale_modes_dataflow.webp)
 ##### Figure 3. High-level encoder process dataflow with reference scaling feature.
 
 #### 2.2.1. Fixed and Random mode
@@ -135,7 +135,7 @@ of scaling decision starts after this reset.
 ### 2.4. Reference Scaling API
 Table 1 illustrates the usage of reference scaling functions. Only related
 processes are listed.
-![ref_scale_API](./img/ref_scale_API.png)
+![ref_scale_API](./img/ref_scale_API.webp)
 ##### Table 1. Reference Scaling API
 
 ## 3. Optimization
@@ -161,7 +161,7 @@ The duplicated downscaling of ref_pic_0->downscaled_reference_picture[4][1] perf
 Reference Scaling also has an impact on memory usage: Extra buffers are
 allocated to hold downscaled pictures, including current coding picture, PA
 references and reconstructed references as shown in Figure 4.
-![ref_scale_downscaled_buffers](./img/ref_scale_downscaled_buffers.png)
+![ref_scale_downscaled_buffers](./img/ref_scale_downscaled_buffers.webp)
 ##### Figure 4. Buffers for downscaled pictures
 
 ## 4. Usage recommendation

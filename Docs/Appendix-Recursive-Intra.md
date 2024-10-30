@@ -11,7 +11,7 @@ shown in Figure 1 below. The intra prediction for sample P in this case is the
 weighted sum of samples A, B and C. The latter could be reference samples for
 the current block and/or already predicted samples within the same block.
 
-![recursive_intra_fig0](./img/recursive_intra_fig0.png)
+![recursive_intra_fig0](./img/recursive_intra_fig0.webp)
 
 ##### Figure 1. Prediction of the sample P using the neighboring samples A, B and C.
 
@@ -20,7 +20,7 @@ The prediction procedure is outlined as follows:
   - The predicted block is divided into 4x2 sub-blocks.
     See the example of the 8x8 block in Figure 2 below where the 8x8 block is divided into eight 4x2 blocks.
 
-![recursive_intra_fig1](./img/recursive_intra_fig1.png)
+![recursive_intra_fig1](./img/recursive_intra_fig1.webp)
 
 ##### Figure 2. Splitting an 8x8 block (in yellow) into 4x2 blocks.
 
@@ -31,14 +31,14 @@ The prediction procedure is outlined as follows:
         For Block\_1, the seven reference samples consist of the above five neighboring samples for the 8x8 block
         and two left neighboring samples that are predicted samples from Block\_0.
 
-![recursive_intra_fig2](./img/recursive_intra_fig2.png)
+![recursive_intra_fig2](./img/recursive_intra_fig2.webp)
 
 ##### Figure 3. Example of reference samples for 4x2 blocks.
 
   - The predicted pixels in the 4x2 sub-block are obtained by filtering the array of seven reference samples.
     To illustrate the procedure, consider the 4x2 block shown in Figure 4 below:
 
-![recursive_intra_fig3](./img/recursive_intra_fig3.png)
+![recursive_intra_fig3](./img/recursive_intra_fig3.webp)
 
 ##### Figure 4. Reference sample around a 4x2 block.
 
@@ -67,7 +67,7 @@ prediction mode and predicted sample.
 
 ##### Table 2. Filter coefficients as a function of the intra prediction mode and the predicted sample.
 
-![recursive_intra_table-2](./img/recursive_intra_table-2.png)
+![recursive_intra_table-2](./img/recursive_intra_table-2.webp)
 
 The best filtering mode (i.e. set of weights) is selected through, for
 example, a rate distortion performance measure.
@@ -100,7 +100,7 @@ below.
 
 ##### Table 4. Interface to the recursive filter intra feature.
 
-![recursive_intra_fig4](./img/recursive_intra_fig4.png)
+![recursive_intra_fig4](./img/recursive_intra_fig4.webp)
 
 ### Candidate Injection
 

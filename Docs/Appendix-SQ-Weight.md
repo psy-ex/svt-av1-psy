@@ -10,7 +10,7 @@ relative cost of the square (SQ), H and V shapes. The various shapes supported
 in the AV1 Bitstream & Decoding Process Specification are shown in Figure 1
 below.
 
-![sq_weight_fig2](./img/sq_weight_fig2.png)
+![sq_weight_fig2](./img/sq_weight_fig2.webp)
 
 ##### Figure 1. Block shapes in the AV1 specification.
 
