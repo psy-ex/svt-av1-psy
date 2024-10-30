@@ -28,7 +28,7 @@ The prediction algorithm for a given block proceeds as follows:
 
 As an example, consider the yellow block shown in Figure 1 below. The 16x16 yellow block is the current block to be predicted. The 16x16 green and 8x8 blue blocks are inter coded neighboring blocks. The initial inter prediction for the yellow block is generated using regular inter prediction.
 
-![obmc_figure1](./img/obmc_figure1.png)
+![obmc_figure1](./img/obmc_figure1.webp)
 
 ##### Figure 1. The yellow block in the figure is the inter block of interest.
 
@@ -43,7 +43,7 @@ Step 1: Vertical blending (see Figure 2 below)
 
   where the index i corresponds to the y position of the pixel in the block.
 
-![obmc_figure2](./img/obmc_figure2.png)
+![obmc_figure2](./img/obmc_figure2.webp)
 
 ##### Figure 2. Vertical blending of the prediction based on the blue 8x8 inter block.
 
@@ -60,7 +60,7 @@ Step 2: Horizontal blending (See Figure 3 below)
 
   where the index i corresponds to the x position of the pixel in the block.
 
-![obmc_figure3](./img/obmc_figure3.png)
+![obmc_figure3](./img/obmc_figure3.webp)
 
 ##### Figure 3. Horizontal blending of the prediction based on the green inter block.
 
@@ -89,7 +89,7 @@ Flags associated with the OBMC feature are listed in Table 1.
 
 A diagram of the OBMC-related function calls in MD and in the Encode Pass is given in Figure 5.
 
-![obmc_figure4](./img/obmc_figure4.png)
+![obmc_figure4](./img/obmc_figure4.webp)
 
 ##### Figure 4. A diagram of the function calls leading to the generation and coding of OBMC candidates in MD and in the Encode Pass.
 

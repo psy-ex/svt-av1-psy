@@ -47,7 +47,7 @@ search centres (based on SAD), the worst HME-level-0 search centre is replaced
 by the best pre-HME result (to be considered in the next HME stages). As such,
 HME-level-1 must be enabled to use pre-HME.
 
-![me_fig1](./img/me_fig1.png)
+![me_fig1](./img/me_fig1.webp)
 
 ##### Figure 1. Example of a pre-HME search area around point X. The search region is long and narrow in the horizontal and vertical direction.
 
@@ -69,11 +69,11 @@ is divided into a 2x2 grid). All search and selection decisions are based on a
 pure SAD distortion metric. Figure 3 depicts an example HME full search and
 refinement data flow through Level-0, Level-1, and Level-2.
 
-![me_fig2](./img/me_fig2.png)
+![me_fig2](./img/me_fig2.webp)
 
 ##### Figure 2: Illustration of the different search levels in HME.
 
-![me_fig3](./img/me_fig3.png)
+![me_fig3](./img/me_fig3.webp)
 
 ##### Figure 3: Search center selection in HME.
 
@@ -84,7 +84,7 @@ based on a SAD distortion metric. Search center candidates may be generated
 from HME or other sources of candidate search centers. A diagram showing search
 center selection and the Motion Estimation is given in Figure 4.
 
-![me_fig4](./img/me_fig4.png)
+![me_fig4](./img/me_fig4.webp)
 
 ##### Figure 4: Search centre selection and motion estimation. Reference N search centre candidates come from HME (or other sources, if applicable).
 
@@ -101,7 +101,7 @@ on 8x8 blocks, and the MV/SAD information for larger block sizes are derived
 from the 8x8 results (by adding together all the 8x8 SADs that make up a given
 block).
 
-![me_fig5](./img/me_fig_new.png)
+![me_fig5](./img/me_fig_new.webp)
 
 ##### Figure 5: ME search for the case of a 64x64 SB. The SAD is computed for each 8x8 block. For larger square blocks, the 8x8 SADs are summed to produce the output SAD of the larger blocks.
 
@@ -116,7 +116,7 @@ values.
 The flow of data in open-loop ME is illustrated in Figure 6, along with the
 relevant functions that are associated with each part of the algorithm.
 
-![me_fig6](./img/me_fig5.png)
+![me_fig6](./img/me_fig5.webp)
 
 ##### Figure 6: Open-loop ME flow diagram for each SB.
 

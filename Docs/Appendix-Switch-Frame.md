@@ -12,7 +12,7 @@ shorten the latency, a possible solution is to insert more key frames into
 renditions as to shorten the length of a segment. However, this will inevitably
 increase the bits as key frames call for more to encode. Or, an obvious drop of
 video quality will happen when the original bitrates is managed to be kept.
-![switch-at-key-frames-only](./img/switch-at-key-frames-only.png)
+![switch-at-key-frames-only](./img/switch-at-key-frames-only.webp)
 
 
 To solve this issue, a new type of frame is introduced as Switch Frame(s-frame)
@@ -21,7 +21,7 @@ affordable to be inserted into the segments. It can act like a key frame to
 further divide the segments to smaller pieces at a low cost. The spread of
 s-frames will shorten the latency to around 1 second or even 0.25 second (when
 set the mini GOP size of a 30fps video source to 8).
-![switch-at-switch-frames-or-key-frames](./img/switch-at-switch-frames-or-key-frames.png)
+![switch-at-switch-frames-or-key-frames](./img/switch-at-switch-frames-or-key-frames.webp)
 
 ## 2. Implementation
 According to the AV1 spec, the following requirements must be satisfied and so

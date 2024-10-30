@@ -20,7 +20,7 @@ estimations from the Motion Estimation process and the picture-level QP from
 the Rate Control process. The Mode Decision process operates on an SB basis
 (i.e. each step in the Mode Decision process is performed for each SB).
 
-![md_figure1](./img/md_figure1.png)
+![md_figure1](./img/md_figure1.webp)
 
 ##### Figure 1. Partitioning, mode decision, encoding and filtering tasks.
 
@@ -46,7 +46,7 @@ is applied in subsequent steps until PD Stage n where $`N_N`$ partitions will be
 tested. The output of the final (nth) PD stage is the final partition and its
 corresponding coding modes that are selected.
 
-![md_figure2](./img/md_figure2.png)
+![md_figure2](./img/md_figure2.webp)
 
 ##### Figure 2. Partitioning decision stages.
 
@@ -62,7 +62,7 @@ applied in subsequent stages. In the last stage, only very few candidates as
 considered at the input and usually the full set of high-performance prediction
 tools are used to finalize the selected partitions and modes.
 
-![md_figure3](./img/md_figure3.png)
+![md_figure3](./img/md_figure3.webp)
 
 ##### Figure 3. Example of the processing details in each PD stage.
 
@@ -97,7 +97,7 @@ in the bitstream, which is the task performed by the Encode Pass discussed
 next. The exception is that final MD stage must be conformant when the Encode
 Pass is bypassed (controlled using the ```bypass_encdec``` signal).
 
-![md_figure4](./img/md_figure4.png)
+![md_figure4](./img/md_figure4.webp)
 
 ##### Figure 4. MD flow within a single PD stage.
 
@@ -198,7 +198,7 @@ block as illustrated in Figure 5. Also note that the neighbor array design can
 store either mode information directly or reference data indirectly (e.g.
 pointers).
 
-![md_figure5](./img/md_figure5.png)
+![md_figure5](./img/md_figure5.webp)
 
 ##### Figure 5. Neighbor array structure.
 
@@ -230,7 +230,7 @@ neighbor arrays contain a snapshot of the mode information currently stored in
 each block position at the time that the block labeled “Current Block” is being
 processed.
 
-![md_figure6](./img/md_figure6.png)
+![md_figure6](./img/md_figure6.webp)
 
 ##### Figure 6. Neighbor array data illustration.
 

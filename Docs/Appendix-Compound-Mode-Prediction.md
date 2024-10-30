@@ -77,7 +77,7 @@ of the block. The feature makes use of a wedge codebook where wedge
 orientations are either horizontal, vertical or oblique with slopes: 2,
 -2, 0.5 and -0.5 for square and rectangular blocks, as shown in Figure 2.
 
-![Wedge_Codebook_2020_01_11](./img/Wedge_Codebook_2020_01_11.png)
+![Wedge_Codebook_2020_01_11](./img/Wedge_Codebook_2020_01_11.webp)
 
 ##### Figure 2. Wedge Codebook.
 

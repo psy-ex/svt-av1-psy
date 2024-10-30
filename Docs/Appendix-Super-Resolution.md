@@ -29,14 +29,14 @@ following sections outline how pictures with different sizes are processed in
 the different stages of the SVT-AV1 encoder pipeline and how the downscaling
 factor is determined.
 
-![superres_pipeline](./img/superres_pipeline.png)
+![superres_pipeline](./img/superres_pipeline.webp)
 ##### Figure 1. Processing pipeline when super-resolution is active.
 
 
 ## 2. Implementation of the algorithm
 ### 2.1. Downscaled and full-size versions of pictures
 Figure 2 illustrates how pictures with different sizes are processed in the different coding processes/stages.
-![superres_picture_size](./img/superres_picture_size.png)
+![superres_picture_size](./img/superres_picture_size.webp)
 ##### Figure 2. Processing of the downscaled and full-size pictures in the encoder pipeline.
 
 In Figure 2, downscaled input refers to a downscaled version of the current
@@ -92,7 +92,7 @@ included below.
 The following sections explain how these different modes are implemented in the
 SVT-AV1 encoder. The high level dataflow of super-resolution is shown in Figure
 3.
-![superres_new_modes_dataflow](./img/superres_new_modes_dataflow.png)
+![superres_new_modes_dataflow](./img/superres_new_modes_dataflow.webp)
 ##### Figure 3. High-level encoder process dataflow with super-resolution feature.
 
 #### 2.2.1. Fixed and Random mode
@@ -153,7 +153,7 @@ before each coding loop (Similar to ‘do recode’ in Mode Decision process).
 ### 2.4. Super-resolution API
 Table 1 illustrates the usage of super-resolution functions. Only related
 processes are listed.
-![superres_API](./img/superres_API.png)
+![superres_API](./img/superres_API.webp)
 ##### Table 1. Super-resolution API
 
 ## 3. Optimization
@@ -179,7 +179,7 @@ the best rate-distortion cost).
 Super-resolution also has an impact on memory usage: Extra buffers are
 allocated to hold downscaled pictures, including current coding picture, PA
 references and reconstructed references as shown in Figure 4.
-![superres_downscaled_buffers](./img/superres_downscaled_buffers.png)
+![superres_downscaled_buffers](./img/superres_downscaled_buffers.webp)
 ##### Figure 4. Buffers for downscaled pictures
 
 Whether to enable super-resolution or not is up to the user. If the Auto mode
