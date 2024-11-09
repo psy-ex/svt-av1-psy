@@ -191,8 +191,7 @@ static INLINE int aom_get_qmlevel(int qindex, int first, int last) {
     return first + (qindex * (last + 1 - first)) / QINDEX_RANGE;
 }
 
-// PSY: Utilize a sigmoidal curve to increase qmlevel at lower qindexes,
-// in which case bind it to a minimum of 10 for psychovisual purposes
+// PSY: Utilize a sigmoidal curve to adjust the rate of change of qmlevel across qindexes.
 static INLINE double sigmoid_qm_func(int qindex) {
     return 2 / (1 + exp(0.01 * qindex));
 }
