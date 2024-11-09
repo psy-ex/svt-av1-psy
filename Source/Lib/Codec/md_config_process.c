@@ -191,16 +191,13 @@ static INLINE int aom_get_qmlevel(int qindex, int first, int last) {
     return first + (qindex * (last + 1 - first)) / QINDEX_RANGE;
 }
 
-// PSY: Utilize a sigmoidal curve to increase qmlevel at lower qindexes, still adheres to min/max unless chroma is true,
+// PSY: Utilize a sigmoidal curve to increase qmlevel at lower qindexes,
 // in which case bind it to a minimum of 10 for psychovisual purposes
 static INLINE double sigmoid_qm_func(int qindex) {
-    return 2 / 1 + exp(0.01 * qindex);
+    return 2 / (1 + exp(0.01 * qindex));
 }
-static INLINE int psy_get_qmlevel(int qindex, int first, int last, bool chroma) {
+static INLINE int psy_get_qmlevel(int qindex, int first, int last) {
     // mapping qindex(0, 255) to QM level(first, last)
-    if (chroma) {
-        return (int)rint(10 + first/3 + (pow((double)(qindex), sigmoid_qm_func(qindex)) * (last/3 + 1 - first/3)) / pow(QINDEX_RANGE, sigmoid_qm_func(qindex)));
-    }
     return (int)rint(first + (pow((double)(qindex), sigmoid_qm_func(qindex)) * (last + 1 - first)) / pow(QINDEX_RANGE, sigmoid_qm_func(qindex)));
 }
 
@@ -271,9 +268,9 @@ void svt_av1_qm_init(PictureParentControlSet *pcs) {
                 //Chroma always seem to suffer too much with steep quantization matrices, so we're temporarily
                 //forcing not very steep quantization matrices for chroma channels
                 //Will enable for tune 3 and ideally within a range in the near future
-                pcs->frm_hdr.quantization_params.qm[AOM_PLANE_Y] = psy_get_qmlevel(base_qindex, min_qmlevel, max_qmlevel, 0);
-                pcs->frm_hdr.quantization_params.qm[AOM_PLANE_U] = psy_get_qmlevel(base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_U], min_chroma_qmlevel, max_chroma_qmlevel, 1);
-                pcs->frm_hdr.quantization_params.qm[AOM_PLANE_V] = psy_get_qmlevel(base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_V], min_chroma_qmlevel, max_chroma_qmlevel, 1);
+                pcs->frm_hdr.quantization_params.qm[AOM_PLANE_Y] = psy_get_qmlevel(base_qindex, min_qmlevel, max_qmlevel);
+                pcs->frm_hdr.quantization_params.qm[AOM_PLANE_U] = psy_get_qmlevel(base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_U], min_chroma_qmlevel, max_chroma_qmlevel);
+                pcs->frm_hdr.quantization_params.qm[AOM_PLANE_V] = psy_get_qmlevel(base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_V], min_chroma_qmlevel, max_chroma_qmlevel);
                 break;
             case 4:
                 pcs->frm_hdr.quantization_params.qm[AOM_PLANE_Y] = psy_still_get_qmlevel(base_qindex, min_qmlevel, max_qmlevel);
