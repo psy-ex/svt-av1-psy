@@ -196,8 +196,8 @@ static INLINE double sigmoid_qm_func(int qindex) {
     return 2 / (1 + exp(0.01 * qindex));
 }
 static INLINE int psy_get_qmlevel(int qindex, int first, int last) {
-    // mapping qindex(0, 255) to QM level(first, last)
-    return (int)rint(first + (pow((double)(qindex), sigmoid_qm_func(qindex)) * (last + 1 - first)) / pow(QINDEX_RANGE, sigmoid_qm_func(qindex)));
+    // mapping qindex(0, 255) to QM level(first, last), temporary(?) fix to avoid crash using CLIP3.
+    return CLIP3(first, last, (int)rint(first + (pow((double)(qindex), sigmoid_qm_func(qindex)) * (last + 1 - first)) / pow(QINDEX_RANGE, sigmoid_qm_func(qindex))));
 }
 
 // Polynomial to determine QM levels tuned for still images
