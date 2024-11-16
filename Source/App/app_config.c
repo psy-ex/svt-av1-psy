@@ -1010,7 +1010,7 @@ ConfigEntry config_entry_2p[] = {
 ConfigEntry config_entry_intra_refresh[] = {
     {SINGLE_INPUT,
      KEYINT_TOKEN,
-     "GOP size (frames), default is -2 [-2: ~5 seconds, -1: \"infinite\" and only applicable for "
+     "GOP size (frames), default is -2 [-2: ~10 seconds, -1: \"infinite\" and only applicable for "
      "CRF, 0: same as -1]",
      set_cfg_generic_token},
     {SINGLE_INPUT,
