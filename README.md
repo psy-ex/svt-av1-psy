@@ -110,6 +110,7 @@ SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide bet
 - Enable quantization matrices by default.
 - Set minimum QM level to 0 by default.
 - `--enable-variance-boost` enabled by default.
+- `--keyint -2` (the default) uses a ~10s GOP size instead of ~5s.
 
 *We are not in any way affiliated with the Alliance for Open Media or any upstream SVT-AV1 project contributors who have not also contributed here.*
 
