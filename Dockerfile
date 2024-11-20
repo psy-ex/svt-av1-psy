@@ -1,4 +1,4 @@
-FROM buildpack-deps:bookworm as BUILDER
+FROM buildpack-deps:bookworm AS builder
 
 WORKDIR /app
 
@@ -7,17 +7,17 @@ RUN apt-get update && apt-get install -y \
     yasm \
     && rm -rf /var/lib/apt/lists/*
 
-ENV LDFLAGS "-static -static-libgcc"
+ENV LDFLAGS="-static -static-libgcc"
 
-RUN git clone --branch thread_prio/warning --depth 1 https://gitlab.com/1480c1/SVT-AV1.git && \
-    cd ./SVT-AV1/Build/linux && \
-    ./build.sh release static
+RUN git clone --branch v2.3.0 --depth 1 https://github.com/gianni-rosato/svt-av1-psy && \
+    cd ./svt-av1-psy/Build/linux && \
+    ./build.sh static native enable-lto release
 
 
 
-FROM alpine as RELEASE
+FROM alpine AS release
 
-COPY --from=BUILDER /app/SVT-AV1/Bin/Release/SvtAv1EncApp /app/
+COPY --from=builder /app/svt-av1-psy/Bin/Release/SvtAv1EncApp /app/
 
 ENTRYPOINT ["/app/SvtAv1EncApp"]
 CMD [ "--help" ]
