@@ -10,8 +10,10 @@
 */
 
 #include "picture_operators_c.h"
+#include <stdio.h>
 #include "utility.h"
 #include "common_dsp_rtcd.h"
+#include "psy_rd.h"
 /*********************************
 * Picture Average
 *********************************/
@@ -76,6 +78,39 @@ uint64_t svt_spatial_full_distortion_kernel_c(uint8_t* input, uint32_t input_off
         input += input_stride;
         recon += recon_stride;
     }
+    return spatial_distortion;
+}
+
+uint64_t svt_spatial_psy_distortion_kernel_c(uint8_t* input, uint32_t input_offset, uint32_t input_stride,
+                                              uint8_t* recon, int32_t recon_offset, uint32_t recon_stride,
+                                              uint32_t area_width, uint32_t area_height) {
+    uint64_t spatial_distortion = 0;
+
+    const double psy_strength   = 2.0f;
+    const uint32_t count = area_width * area_height;
+
+    uint64_t psy_distortion = 0;
+
+    if (count == 64 && psy_strength > 0.0) {
+        uint64_t ac_distortion = svt_psy_distortion(input + input_offset, input_stride, recon + recon_offset, recon_stride, area_width, area_height);
+        psy_distortion = (uint64_t)(ac_distortion * psy_strength) >> 10;
+    }
+
+    input += input_offset;
+    recon += recon_offset;
+
+    for (uint32_t row_index = 0; row_index < area_height; ++row_index) {
+        uint32_t column_index = 0;
+        while (column_index < area_width) {
+            spatial_distortion += (int64_t)SQR((int64_t)(input[column_index]) - (recon[column_index]));
+            ++column_index;
+        }
+
+        input += input_stride;
+        recon += recon_stride;
+    }
+
+    spatial_distortion += psy_distortion;
     return spatial_distortion;
 }
 

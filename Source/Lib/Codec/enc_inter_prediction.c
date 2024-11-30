@@ -2284,7 +2284,7 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
         2;
 
     EbSpatialFullDistType spatial_full_dist_type_fun = bit_depth > 8 ? svt_full_distortion_kernel16_bits
-                                                                     : svt_spatial_full_distortion_kernel;
+                                                                     : svt_spatial_psy_distortion_kernel_c;
     const uint16_t        blk_height                 = ctx->blk_geom->bheight;
     const uint8_t         shift = (ctx->ifs_ctrls.subsampled_distortion && (blk_height > 16)) ? 1 : 0;
     for (int32_t plane = plane_from; plane <= plane_to; ++plane) {

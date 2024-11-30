@@ -4097,7 +4097,7 @@ static uint32_t filt_unfilt_dist(
 
     EbSpatialFullDistType spatial_full_dist_type_fun = is_highbd
         ? svt_full_distortion_kernel16_bits
-        : svt_spatial_full_distortion_kernel;
+        : svt_spatial_psy_distortion_kernel_c;
 
     uint32_t dist = 0;
     for (uint32_t y_b64_idx = 0; y_b64_idx < pic_height_in_b64; ++y_b64_idx) {
