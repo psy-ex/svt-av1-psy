@@ -13,10 +13,12 @@
 /***************************************
 * Includes
 ***************************************/
+#include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 
 #include "common_utils.h"
+#include "definitions.h"
 #include "sequence_control_set.h"
 #include "mode_decision.h"
 #include "md_process.h"
@@ -47,6 +49,18 @@ bool svt_av1_is_lossless_segment(PictureControlSet *pcs, int8_t segment_id) {
         return pcs->lossless[segment_id];
     else
         return pcs->lossless[0];
+}
+
+
+#define HADAMARD4(d0, d1, d2, d3, s0, s1, s2, s3) { \
+        uint32_t t0 = s0 + s1; \
+        uint32_t t1 = s0 - s1; \
+        uint32_t t2 = s2 + s3; \
+        uint32_t t3 = s2 - s3; \
+        d0 = t0 + t2; \
+        d2 = t0 - t2; \
+        d1 = t1 + t3; \
+        d3 = t1 - t3; \
 }
 
 static bool check_mv_validity(int16_t x_mv, int16_t y_mv, uint8_t need_shift) {
@@ -4848,20 +4862,113 @@ static double ssim_hbd(const uint16_t* s, uint32_t sp, const uint16_t* r, uint32
     }
 }
 
+int svt_sa8d_8x8(const uint8_t* pix1, uint32_t i_pix1, const uint8_t* pix2, uint32_t i_pix2) {
+    uint32_t tmp[8][4];
+    int64_t a0, a1, a2, a3, a4, a5, a6, a7, b0, b1, b2, b3;
+    uint32_t sum = 0;
+    const uint32_t BITS_PER_SUM = 8 * sizeof(uint16_t);
+
+    for (int i = 0; i < 8; i++, pix1 += i_pix1, pix2 += i_pix2)
+    {
+        a0 = pix1[0] - pix2[0];
+        a1 = pix1[1] - pix2[1];
+        b0 = (a0 + a1) + ((a0 - a1) << BITS_PER_SUM);
+        a2 = pix1[2] - pix2[2];
+        a3 = pix1[3] - pix2[3];
+        b1 = (a2 + a3) + ((a2 - a3) << BITS_PER_SUM);
+        a4 = pix1[4] - pix2[4];
+        a5 = pix1[5] - pix2[5];
+        b2 = (a4 + a5) + ((a4 - a5) << BITS_PER_SUM);
+        a6 = pix1[6] - pix2[6];
+        a7 = pix1[7] - pix2[7];
+        b3 = (a6 + a7) + ((a6 - a7) << BITS_PER_SUM);
+        HADAMARD4(tmp[i][0], tmp[i][1], tmp[i][2], tmp[i][3], b0, b1, b2, b3);
+    }
+
+    for (int i = 0; i < 4; i++)
+    {
+        HADAMARD4(a0, a1, a2, a3, tmp[0][i], tmp[1][i], tmp[2][i], tmp[3][i]);
+        HADAMARD4(a4, a5, a6, a7, tmp[4][i], tmp[5][i], tmp[6][i], tmp[7][i]);
+        b0  = labs(a0 + a4) + labs(a0 - a4);
+        b0 += labs(a1 + a5) + labs(a1 - a5);
+        b0 += labs(a2 + a6) + labs(a2 - a6);
+        b0 += labs(a3 + a7) + labs(a3 - a7);
+        sum += (uint16_t)b0 + (b0 >> BITS_PER_SUM);
+    }
+
+    int isum = (int)sum;
+    int fsum = (isum + 2) >> 2;
+
+    return fsum;
+}
+int svt_psy_sad8x8(const uint8_t* pix1, uint32_t stride_pix1, const uint8_t* pix2, uint32_t stride_pix2) {
+    int sum = 0;
+
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            sum += abs(pix1[j] - pix2[j]);
+        }
+        pix1 += stride_pix1;
+        pix2 += stride_pix2;
+    }
+
+    return sum;
+}
+uint64_t svt_psy_distortion(const uint8_t* input, uint32_t input_stride,
+                            const uint8_t* recon, uint32_t recon_stride,
+                            uint32_t width, uint32_t height) {
+
+    static uint8_t zero_buffer[8] = { 0 };
+
+    uint32_t total_nrg = 0;
+    for (uint64_t i = 0; i < height; i += 8) {
+        for (uint64_t j = 0; j < width; j += 8) {
+            int input_nrg = svt_sa8d_8x8(input + i * input_stride + j, input_stride, zero_buffer, 0) -
+                (svt_psy_sad8x8(input + i * input_stride + j, input_stride, zero_buffer, 0) >> 2);
+            int recon_nrg = svt_sa8d_8x8(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) -
+                (svt_psy_sad8x8(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 2);
+            total_nrg += (uint32_t)abs(input_nrg - recon_nrg);
+        }
+    }
+    return total_nrg;
+}
 uint64_t svt_spatial_full_distortion_ssim_kernel(uint8_t* input, uint32_t input_offset,
                                                    uint32_t input_stride, uint8_t* recon,
                                                    int32_t recon_offset, uint32_t recon_stride,
                                                    uint32_t area_width, uint32_t area_height, bool hbd) {
+    // PSY Strength
+    double psy_strength = 2.0;
+    uint8_t m = 1;
+
+    // SSIM
     uint64_t spatial_distortion = 0;
     const uint32_t count = area_width * area_height;
     double ssim_score;
+
+    // AC SAD
+    uint64_t psy_distortion = 0;
+
     if (!hbd) {
         ssim_score = ssim(input + input_offset, input_stride, recon + recon_offset, recon_stride, area_width, area_height);
-        spatial_distortion   = (uint64_t)((1 - ssim_score) * count * 100 * 7);
     } else {
+        m = 8;
         ssim_score = ssim_hbd((uint16_t *)input + input_offset, input_stride, (uint16_t *)recon + recon_offset, recon_stride, area_width, area_height);
-        spatial_distortion   = (uint64_t)((1 - ssim_score) * count * 100 * 7 * 8);
     }
 
-    return spatial_distortion;
+    // Only calculate for 8x8 or larger blocks
+    if (count >= 64) {
+        uint64_t ac_distortion = svt_psy_distortion(input + input_offset, input_stride, recon + recon_offset, recon_stride, area_width, area_height);
+        psy_distortion = (uint64_t)(ac_distortion * psy_strength) >> 10;
+        // fprintf(stderr, "AC Distortion: %ld ", ac_distortion);
+        // fprintf(stderr, "PSY Distortion: %f ", psy_distortion);
+    }
+    // fprintf(stderr, "SSIM Score: %f ", ssim_score);
+
+    spatial_distortion = (uint64_t)((1 - ssim_score) * count * 100 * 7 * m);
+    uint64_t total_distortion = spatial_distortion + psy_distortion;
+
+    // fprintf(stderr, "Spatial Distortion: %ld", spatial_distortion);
+    // fprintf(stderr, "Total Distortion: %ld \n", total_distortion);
+
+    return total_distortion;
 }
