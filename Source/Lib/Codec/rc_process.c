@@ -1394,6 +1394,12 @@ int variance_comp_int(const void *a, const void *b) { return (int)*(uint16_t *)a
 #define VAR_BOOST_MAX_DELTAQ_RANGE 80
 #define VAR_BOOST_MAX_QSTEP_RATIO_BOOST 8
 
+#define SUPERBLOCK_SIZE 64
+#define SUBBLOCK_SIZE 8
+#define SUBBLOCKS_IN_SB_DIM (SUPERBLOCK_SIZE / SUBBLOCK_SIZE)
+#define SUBBLOCKS_IN_SB (SUBBLOCKS_IN_SB_DIM * SUBBLOCKS_IN_SB_DIM)
+#define SUBBLOCKS_IN_OCTILE (SUBBLOCKS_IN_SB / 8)
+
 static int av1_get_deltaq_sb_variance_boost(uint8_t base_q_idx, uint16_t *variances, uint8_t strength,
                                             EbBitDepth bit_depth, uint8_t octile, uint8_t curve) {
     // boost q_index based on empirical visual testing, strength 2
@@ -1409,9 +1415,22 @@ static int av1_get_deltaq_sb_variance_boost(uint8_t base_q_idx, uint16_t *varian
     memcpy(&ordered_variances, variances + ME_TIER_ZERO_PU_8x8_0, sizeof(uint16_t) * 64);
     qsort(&ordered_variances, 64, sizeof(uint16_t), variance_comp_int);
 
-    // Take the 8x8 variance value in the specified octile
     assert(octile >= 1 && octile <= 8);
-    uint16_t variance = ordered_variances[octile * 8 - 1];
+
+    // Sample three 8x8 variance values:
+    // - at the specified octile
+    // - previous octile
+    // - next octile
+    // Make sure we use the last subblock in each octile as the
+    // representative of the octile.
+    const int mid_idx = octile * SUBBLOCKS_IN_OCTILE - 1;
+    const int low_idx = AOMMAX(SUBBLOCKS_IN_OCTILE - 1, mid_idx - SUBBLOCKS_IN_OCTILE);
+    const int upp_idx = AOMMIN(SUBBLOCKS_IN_SB - 1, mid_idx + SUBBLOCKS_IN_OCTILE);
+
+    // Weigh the three variances in a 1:2:1 ratio, with rounding (the +2 term).
+    // This allows for smoother delta-q transitions among superblocks with
+    // mixed-variance features.
+    uint16_t variance = (ordered_variances[low_idx] + (ordered_variances[mid_idx] << 1) + ordered_variances[upp_idx] + 2) >> 2;
 
 #if DEBUG_VAR_BOOST
     SVT_INFO("64x64 variance: %d\n", variances[ME_TIER_ZERO_PU_64x64]);
