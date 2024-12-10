@@ -1005,6 +1005,14 @@ typedef struct EbSvtAv1EncConfiguration {
      * 4: 10 + (4 - 4) = 10 (2x stronger) */
      uint8_t kf_tf_strength;
 
+    /**
+     * @brief Enable psychovisual rate distortion
+     * 0.00: disable PSY-RD
+     * 4.00: enable PSY-RD with a strength of 4.00
+     * Default is 0.00.
+     */
+     double psy_rd;
+
     /*Add 128 Byte Padding to Struct to avoid changing the size of the public configuration struct*/
     uint8_t padding[128];
 } EbSvtAv1EncConfiguration;
