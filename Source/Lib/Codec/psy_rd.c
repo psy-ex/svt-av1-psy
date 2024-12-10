@@ -10,6 +10,7 @@
 */
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #define BITS_PER_SUM 8 * sizeof(uint16_t)
 
@@ -87,9 +88,9 @@ uint64_t svt_psy_distortion(const uint8_t* input, uint32_t input_stride,
     uint32_t total_nrg = 0;
     for (uint64_t i = 0; i < height; i += 8) {
         for (uint64_t j = 0; j < width; j += 8) {
-            int input_nrg = svt_sa8d_8x8(input + i * input_stride + j, input_stride, zero_buffer, 0) -
+            int input_nrg = (svt_sa8d_8x8(input + i * input_stride + j, input_stride, zero_buffer, 0) / 300) -
                 (svt_psy_sad8x8(input + i * input_stride + j, input_stride, zero_buffer, 0) >> 2);
-            int recon_nrg = svt_sa8d_8x8(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) -
+            int recon_nrg = (svt_sa8d_8x8(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) / 300) -
                 (svt_psy_sad8x8(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 2);
             total_nrg += (uint32_t)abs(input_nrg - recon_nrg);
         }

@@ -902,6 +902,11 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
+    if (config->psy_rd > 4.0 || config->psy_rd < 0.0) {
+        SVT_ERROR("Instance %u: PSY-RD strength must be between 0.0 and 4.0\n", channel_number + 1);
+        return_error = EB_ErrorBadParameter;
+    }
+
     return return_error;
 }
 
@@ -1203,9 +1208,14 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
                 config->noise_norm_strength);
         }  
 
-        if (config->kf_tf_strength > 0) {
-            SVT_INFO("SVT [config]: Keyframe TF Strength \t\t\t\t\t\t: %d\n",
-                config->kf_tf_strength);
+                if (config->kf_tf_strength > 0 && config->enable_tf == 1) {
+                    SVT_INFO("SVT [config]: Keyframe TF Strength \t\t\t\t\t\t: %d\n",
+                            config->kf_tf_strength);
+                }
+        
+        if (config->psy_rd > 0.0) {
+            SVT_INFO("SVT [config]: PSY-RD Strength \t\t\t\t\t\t: %.2f\n",
+                    config->psy_rd);
         }
     }
 #ifdef DEBUG_BUFFERS
@@ -2120,6 +2130,21 @@ EB_API EbErrorType svt_av1_enc_parse_parameter(EbSvtAv1EncConfiguration *config_
     for (size_t i = 0; i < int64_opts_size; i++) {
         if (!strcmp(name, int64_opts[i].name)) {
             return str_to_int64(value, int64_opts[i].out, NULL);
+        }
+    }
+
+    // double fields
+    const struct {
+        const char *name;
+        double     *out;
+    } double_opts[] = {
+        {"psy-rd", &config_struct->psy_rd},
+    };
+    const size_t double_opts_size = sizeof(double_opts) / sizeof(double_opts[0]);
+
+    for (size_t i = 0; i < double_opts_size; i++) {
+        if (!strcmp(name, double_opts[i].name)) {
+            return str_to_double(value, double_opts[i].out, NULL);
         }
     }
 

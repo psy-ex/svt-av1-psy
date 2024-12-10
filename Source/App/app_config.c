@@ -213,6 +213,8 @@
 #define NOISE_NORM_STRENGTH_TOKEN "--noise-norm-strength"
 #define KF_TF_STRENGTH_FILTER_TOKEN "--kf-tf-strength"
 
+#define PSY_RD_TOKEN "--psy-rd"
+
 static EbErrorType validate_error(EbErrorType err, const char *token, const char *value) {
     switch (err) {
     case EB_ErrorNone: return EB_ErrorNone;
@@ -1264,6 +1266,8 @@ ConfigEntry config_entry_variance_boost[] = {
     {SINGLE_INPUT, NOISE_NORM_STRENGTH_TOKEN, "[PSY] Noise normalization strength, default is 0 [0-4]", set_cfg_generic_token},
     //Alt-ref temporal filtering strength on keyframes
     {SINGLE_INPUT, KF_TF_STRENGTH_FILTER_TOKEN, "[PSY] Adjust TF strength on keyframes, default is 1 (4x weaker than mainline) [0-4]", set_cfg_generic_token},
+    //Psy-rd
+    {SINGLE_INPUT, PSY_RD_TOKEN, "[PSY] Psychovisual rate distortion strength, default is 0 [0.0-4.0]", set_cfg_generic_token},
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};
 
@@ -1473,6 +1477,9 @@ ConfigEntry config_entry[] = {
 
     //Alt-ref temporal filtering strength on keyframes
     {SINGLE_INPUT, KF_TF_STRENGTH_FILTER_TOKEN, "KeyframeTemporalFilteringStrength", set_cfg_generic_token},
+
+    // Psy rd strength
+    {SINGLE_INPUT, PSY_RD_TOKEN, "PsyRd", set_cfg_generic_token},
 
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};

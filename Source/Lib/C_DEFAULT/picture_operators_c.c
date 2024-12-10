@@ -91,9 +91,9 @@ uint64_t svt_spatial_psy_distortion_kernel_c(uint8_t* input, uint32_t input_offs
 
     uint64_t psy_distortion = 0;
 
-    if (count == 64 && psy_strength > 0.0) {
+    if (count >= 64 && psy_strength > 0.0) {
         uint64_t ac_distortion = svt_psy_distortion(input + input_offset, input_stride, recon + recon_offset, recon_stride, area_width, area_height);
-        psy_distortion = (uint64_t)(ac_distortion * psy_strength) >> 10;
+        psy_distortion = (uint64_t)(ac_distortion * psy_strength);
     }
 
     input += input_offset;
