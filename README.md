@@ -102,7 +102,7 @@ Manually adjust temporal filtering strength specifically on keyframes. Each incr
 
 - `--psy-rd` *0.0 to 4.0*
 
-Configures psychovisual rate distortion strength to improve perceived quality by measuring and attempting to preserve the visual energy distribution of high-frequency details and textures. The default is 0.
+Configures psychovisual rate distortion strength to improve perceived quality by measuring and attempting to preserve the visual energy distribution of high-frequency details and textures. The default is 0. PSY-RD is only supported by Tune 2, Tune 3, & Tune 4.
 
 ### Modified Defaults
 
