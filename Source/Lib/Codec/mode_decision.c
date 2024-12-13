@@ -4857,36 +4857,40 @@ uint64_t svt_spatial_full_distortion_ssim_kernel(uint8_t* input, uint32_t input_
                                                    uint32_t area_width, uint32_t area_height,
                                                    bool hbd, double psy_strength) {
     uint8_t m = 1;
+    const uint32_t count = area_width * area_height;
 
     // SSIM
-    uint64_t spatial_distortion = 0;
-    const uint32_t count = area_width * area_height;
+    uint64_t spatial_distortion;
     double ssim_score;
 
     // AC SAD
     uint64_t psy_distortion = 0;
 
     if (!hbd) {
-        ssim_score = ssim(input + input_offset, input_stride, recon + recon_offset, recon_stride, area_width, area_height);
+        ssim_score = ssim(input + input_offset, input_stride,
+            recon + recon_offset, recon_stride,
+            area_width, area_height);
+        if (psy_strength > 0.0) {
+            uint64_t ac_distortion = svt_psy_distortion(input + input_offset, input_stride,
+                recon + recon_offset, recon_stride,
+                area_width, area_height, count);
+            psy_distortion = (uint64_t)(ac_distortion * psy_strength);
+        }
     } else {
         m = 8;
-        ssim_score = ssim_hbd((uint16_t *)input + input_offset, input_stride, (uint16_t *)recon + recon_offset, recon_stride, area_width, area_height);
+        ssim_score = ssim_hbd((uint16_t *)input + input_offset, input_stride,
+            (uint16_t *)recon + recon_offset, recon_stride,
+            area_width, area_height);
+        if (psy_strength > 0.0) {
+            uint64_t ac_distortion = svt_psy_distor_hbd((uint16_t *)input + input_offset, input_stride,
+                (uint16_t *)recon + recon_offset, recon_stride,
+                area_width, area_height, count);
+            psy_distortion = (uint64_t)(ac_distortion * psy_strength);
+        }
     }
-
-    // Only calculate for 8x8 blocks and larger
-    if (count >= 64 && psy_strength > 0.0) {
-        uint64_t ac_distortion = svt_psy_distortion(input + input_offset, input_stride, recon + recon_offset, recon_stride, area_width, area_height);
-        psy_distortion = (uint64_t)(ac_distortion * psy_strength);
-        // fprintf(stderr, "AC Distortion: %ld ", ac_distortion);
-        // fprintf(stderr, "PSY Distortion: %f ", psy_distortion);
-    }
-    // fprintf(stderr, "SSIM Score: %f ", ssim_score);
 
     spatial_distortion = (uint64_t)((1 - ssim_score) * count * 100 * 7 * m);
     uint64_t total_distortion = spatial_distortion + psy_distortion;
-
-    // fprintf(stderr, "Spatial Distortion: %ld", spatial_distortion);
-    // fprintf(stderr, "Total Distortion: %ld \n", total_distortion);
 
     return total_distortion;
 }

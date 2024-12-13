@@ -740,7 +740,7 @@ uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBufferDesc *r
             input_buffer = (uint8_t *)&(
                 (input_pic->buffer_y)[input_pic->org_x + input_pic->org_y * input_pic->stride_y]);
 
-            return svt_spatial_psy_distortion_kernel_c(input_buffer,
+            return svt_spatial_full_distortion_kernel(input_buffer,
                                                       0,
                                                       input_pic->stride_y,
                                                       recon_coeff_buffer,
@@ -748,13 +748,14 @@ uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBufferDesc *r
                                                       recon_ptr->stride_y,
                                                       input_align_width,
                                                       input_align_height);
+                                                      // pcs->scs->static_config.psy_rd);
         } else if (plane == 1) {
             recon_coeff_buffer = (uint8_t *)&(
                 (recon_ptr->buffer_cb)[recon_ptr->org_x / 2 + recon_ptr->org_y / 2 * recon_ptr->stride_cb]);
             input_buffer = (uint8_t *)&(
                 (input_pic->buffer_cb)[input_pic->org_x / 2 + input_pic->org_y / 2 * input_pic->stride_cb]);
 
-            return svt_spatial_psy_distortion_kernel_c(input_buffer,
+            return svt_spatial_full_distortion_kernel(input_buffer,
                                                       0,
                                                       input_pic->stride_cb,
                                                       recon_coeff_buffer,
@@ -762,13 +763,14 @@ uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBufferDesc *r
                                                       recon_ptr->stride_cb,
                                                       input_align_width >> ss_x,
                                                       input_align_height >> ss_y);
+                                                      // pcs->scs->static_config.psy_rd);
         } else if (plane == 2) {
             recon_coeff_buffer = (uint8_t *)&(
                 (recon_ptr->buffer_cr)[recon_ptr->org_x / 2 + recon_ptr->org_y / 2 * recon_ptr->stride_cr]);
             input_buffer = (uint8_t *)&(
                 (input_pic->buffer_cr)[input_pic->org_x / 2 + input_pic->org_y / 2 * input_pic->stride_cr]);
 
-            return svt_spatial_psy_distortion_kernel_c(input_buffer,
+            return svt_spatial_full_distortion_kernel(input_buffer,
                                                       0,
                                                       input_pic->stride_cr,
                                                       recon_coeff_buffer,
@@ -776,6 +778,7 @@ uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBufferDesc *r
                                                       recon_ptr->stride_cr,
                                                       input_align_width >> ss_x,
                                                       input_align_height >> ss_y);
+                                                      // pcs->scs->static_config.psy_rd);
         }
         return 0;
     } else {
