@@ -15,7 +15,8 @@
 extern "C" {
 #endif
 
-uint64_t svt_psy_distortion(const uint8_t* input, uint32_t input_stride, const uint8_t* recon, uint32_t recon_stride, uint32_t width, uint32_t height);
+uint64_t svt_psy_distortion(const uint8_t* input, uint32_t input_stride, const uint8_t* recon, uint32_t recon_stride, uint32_t width, uint32_t height, const uint32_t count);
+uint64_t svt_psy_distor_hbd(const uint16_t* input, uint32_t input_stride, const uint16_t* recon, uint32_t recon_stride, uint32_t width, uint32_t height, const uint32_t count);
 
 #ifdef __cplusplus
 }
