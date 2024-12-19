@@ -83,17 +83,17 @@ uint64_t svt_spatial_full_distortion_kernel_c(uint8_t* input, uint32_t input_off
 
 uint64_t svt_spatial_psy_distortion_kernel_c(uint8_t* input, uint32_t input_offset, uint32_t input_stride,
                                               uint8_t* recon, int32_t recon_offset, uint32_t recon_stride,
-                                              uint32_t area_width, uint32_t area_height, double psy_strength) {
+                                              uint32_t area_width, uint32_t area_height, double psy_rd) {
     uint64_t spatial_distortion = 0;
 
-    // const double psy_strength   = 2.0f;
+    // const double psy_rd   = 2.0f;
     const uint32_t count = area_width * area_height;
 
     uint64_t psy_distortion = 0;
 
-    if (count >= 64 && psy_strength > 0.0) {
+    if (count >= 64 && psy_rd > 0.0) {
         uint64_t ac_distortion = svt_psy_distortion(input + input_offset, input_stride, recon + recon_offset, recon_stride, area_width, area_height, count);
-        psy_distortion = (uint64_t)(ac_distortion * psy_strength);
+        psy_distortion = (uint64_t)(ac_distortion * psy_rd);
     }
 
     input += input_offset;
