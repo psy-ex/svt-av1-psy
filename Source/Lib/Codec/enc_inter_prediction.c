@@ -18,6 +18,8 @@
 #include "rd_cost.h"
 #include "resize.h"
 #include "av1me.h"
+#include "sequence_control_set.h"
+#include "psy_rd.h"
 
 void                 svt_aom_get_recon_pic(PictureControlSet *pcs, EbPictureBufferDesc **recon_ptr, bool is_highbd);
 EbPictureBufferDesc *svt_aom_get_ref_pic_buffer(PictureControlSet *pcs, uint8_t is_highbd, uint8_t list_idx,
@@ -2269,6 +2271,7 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
     // we need to divide by 8 before sending to modeling function.
     uint64_t rate_sum = 0;
     uint64_t dist_sum = 0;
+    SequenceControlSet *scs = pcs->ppcs->scs;
 
     EbPictureBufferDesc *input_pic    = bit_depth > 8 ? pcs->input_frame16bit : pcs->ppcs->enhanced_pic;
     const uint32_t       input_offset = (ctx->blk_org_y + input_pic->org_y) * input_pic->stride_y +
@@ -2282,8 +2285,8 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
                                               (prediction_ptr->org_y + ctx->blk_geom->org_y) *
                                                   prediction_ptr->stride_cb) /
         2;
-
-    EbSpatialFullDistType spatial_full_dist_type_fun = bit_depth > 8 ? svt_full_distortion_kernel16_bits
+    const uint8_t hbd = (bit_depth > 8) ? 1 : 0;
+    EbSpatialFullDistType spatial_full_dist_type_fun = hbd ? svt_full_distortion_kernel16_bits_c
                                                                      : svt_spatial_full_distortion_kernel;
     const uint16_t        blk_height                 = ctx->blk_geom->bheight;
     const uint8_t         shift = (ctx->ifs_ctrls.subsampled_distortion && (blk_height > 16)) ? 1 : 0;
@@ -2303,6 +2306,16 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
                                              ctx->blk_geom->bwidth,
                                              ctx->blk_geom->bheight >> shift)
                 << shift;
+            sse += get_svt_psy_full_dist(input_pic->buffer_y,
+                                         input_offset,
+                                         input_pic->stride_y << shift,
+                                         prediction_ptr->buffer_y,
+                                         prediction_offset,
+                                         prediction_ptr->stride_y << shift,
+                                         ctx->blk_geom->bwidth,
+                                         ctx->blk_geom->bheight >> shift,
+                                         hbd,
+                                         scs->static_config.psy_rd);
             break;
         case 1:
             sse = spatial_full_dist_type_fun(input_pic->buffer_cb,
@@ -2313,6 +2326,16 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
                                              prediction_ptr->stride_cb,
                                              ctx->blk_geom->bwidth_uv,
                                              ctx->blk_geom->bheight_uv);
+            sse += get_svt_psy_full_dist(input_pic->buffer_cb,
+                                         input_chroma_offset,
+                                         input_pic->stride_cb,
+                                         prediction_ptr->buffer_cb,
+                                         prediction_chroma_offset,
+                                         prediction_ptr->stride_cb,
+                                         ctx->blk_geom->bwidth_uv,
+                                         ctx->blk_geom->bheight_uv,
+                                         hbd,
+                                         scs->static_config.psy_rd);
             break;
         default:
             sse = spatial_full_dist_type_fun(input_pic->buffer_cr,
@@ -2323,6 +2346,16 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
                                              prediction_ptr->stride_cr,
                                              ctx->blk_geom->bwidth_uv,
                                              ctx->blk_geom->bheight_uv);
+            sse += get_svt_psy_full_dist(input_pic->buffer_cr,
+                                            input_chroma_offset,
+                                            input_pic->stride_cr,
+                                            prediction_ptr->buffer_cr,
+                                            prediction_chroma_offset,
+                                            prediction_ptr->stride_cr,
+                                            ctx->blk_geom->bwidth_uv,
+                                            ctx->blk_geom->bheight_uv,
+                                            hbd,
+                                            scs->static_config.psy_rd);
             break;
         }
         if (ctx->ifs_ctrls.skip_sse_rd_model) {

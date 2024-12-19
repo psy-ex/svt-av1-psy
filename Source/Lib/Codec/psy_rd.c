@@ -10,8 +10,8 @@
 */
 
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #define BITS_PER_SUM 8 * sizeof(uint16_t)
 
 #define HADAMARD4(d0, d1, d2, d3, s0, s1, s2, s3) { \
@@ -251,4 +251,27 @@ uint64_t svt_psy_distor_hbd(const uint16_t* input, uint32_t input_stride,
         total_nrg = (uint32_t)abs(input_nrg - recon_nrg);
     }
     return total_nrg;
+}
+
+/*
+ * Public function that mirrors the arguments of `spatial_full_dist_type_fun()`
+ */
+
+uint64_t get_svt_psy_full_dist(const void* s, uint32_t so, uint32_t sp,
+                            const void* r, uint32_t ro, uint32_t rp,
+                            uint32_t w, uint32_t h, double psy_rd,
+                            uint8_t is_hbd) {
+    uint32_t count = w * h;
+    uint64_t dist;
+
+    switch (is_hbd) {
+    case 1: // 10-bit
+        dist = svt_psy_distor_hbd((const uint16_t*)s + so, sp, (const uint16_t*)r + ro, rp, w, h, count);
+        break;
+    default: // 8-bit
+        dist = svt_psy_distortion((const uint8_t*)s + so, sp, (const uint8_t*)r + ro, rp, w, h, count);
+        break;
+    }
+
+    return (uint64_t)(dist * psy_rd);
 }

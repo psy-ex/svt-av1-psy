@@ -33,6 +33,7 @@
 #include "svt_log.h"
 #include <limits.h>
 #include "pack_unpack_c.h"
+#include "psy_rd.h"
 
 #undef _MM_HINT_T2
 #define _MM_HINT_T2 1
@@ -4118,6 +4119,17 @@ static uint32_t filt_unfilt_dist(
                 stride_y,
                 ppcs->scs->b64_size,
                 ppcs->scs->b64_size));
+            dist += (uint32_t)(get_svt_psy_full_dist(
+                filt,
+                buffer_index,
+                stride_y,
+                unfil,
+                buffer_index,
+                stride_y,
+                ppcs->scs->b64_size,
+                ppcs->scs->b64_size,
+                (uint8_t)is_highbd,
+                ppcs->scs->static_config.psy_rd));
 
         }
     }
