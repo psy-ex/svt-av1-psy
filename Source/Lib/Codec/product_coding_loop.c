@@ -8017,8 +8017,10 @@ static void estimate_ref_frames_num_bits(struct ModeDecisionContext *ctx, Pictur
 static void calc_scr_to_recon_dist_per_quadrant(ModeDecisionContext *ctx, EbPictureBufferDesc *input_pic,
                                                 const uint32_t               input_origin_index,
                                                 const uint32_t               input_cb_origin_in_index,
-                                                ModeDecisionCandidateBuffer *cand_bf, const uint32_t blk_origin_index,
-                                                const uint32_t blk_chroma_origin_index) {
+                                                ModeDecisionCandidateBuffer  *cand_bf,
+                                                const uint32_t               blk_origin_index,
+                                                const uint32_t               blk_chroma_origin_index,
+                                                const double                 psy_rd) {
     EbPictureBufferDesc *recon_ptr = cand_bf->recon;
 
     EbSpatialFullDistType spatial_full_dist_type_fun = ctx->hbd_md ? svt_full_distortion_kernel16_bits
@@ -8048,7 +8050,7 @@ static void calc_scr_to_recon_dist_per_quadrant(ModeDecisionContext *ctx, EbPict
                 (uint32_t)quadrant_size,
                 (uint32_t)quadrant_size,
                 ctx->hbd_md,
-                2.0f); // FIXME: pass psy_rd from `pcs->scs->static_config.psy_rd`
+                psy_rd);
             // If quadrant_size == 4 then rec_dist_per_quadrant will have luma only because spatial_full_dist_type_fun does not support smaller than 4x4
             if (ctx->blk_geom->has_uv && ctx->uv_ctrls.uv_mode <= CHROMA_MODE_1 && quadrant_size > 4) {
                 ctx->rec_dist_per_quadrant[c + (r << 1)] += spatial_full_dist_type_fun(
@@ -8074,7 +8076,7 @@ static void calc_scr_to_recon_dist_per_quadrant(ModeDecisionContext *ctx, EbPict
                     (uint32_t)(quadrant_size >> 1),
                     (uint32_t)(quadrant_size >> 1),
                     ctx->hbd_md,
-                    2.0f); // FIXME: pass psy_rd from `pcs->scs->static_config.psy_rd`
+                    psy_rd);
 
                 ctx->rec_dist_per_quadrant[c + (r << 1)] += spatial_full_dist_type_fun(
                     input_pic->buffer_cr,
@@ -8099,7 +8101,7 @@ static void calc_scr_to_recon_dist_per_quadrant(ModeDecisionContext *ctx, EbPict
                     (uint32_t)(quadrant_size >> 1),
                     (uint32_t)(quadrant_size >> 1),
                     ctx->hbd_md,
-                    2.0f); // FIXME: pass psy_rd from `pcs->scs->static_config.psy_rd`
+                    psy_rd);
             }
         }
     }
@@ -9566,7 +9568,8 @@ static void md_encode_block(PictureControlSet *pcs, ModeDecisionContext *ctx, ui
                                             loc.input_cb_origin_in_index,
                                             cand_bf,
                                             loc.blk_origin_index,
-                                            loc.blk_chroma_origin_index);
+                                            loc.blk_chroma_origin_index,
+                                            pcs->scs->static_config.psy_rd);
     if (ctx->encoder_bit_depth > EB_EIGHT_BIT && ctx->bypass_encdec && !org_hbd && ctx->pd_pass == PD_PASS_1 &&
         ctx->hbd_md) {
         if (!ctx->skip_intra)
