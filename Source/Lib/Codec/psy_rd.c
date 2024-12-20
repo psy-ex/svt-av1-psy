@@ -146,7 +146,7 @@ uint64_t svt_psy_distortion(const uint8_t* input, uint32_t input_stride,
             (svt_psy_sad_nxn(4, 4, recon, recon_stride, zero_buffer, 0) >> 2);
         total_nrg = (uint32_t)abs(input_nrg - recon_nrg);
     }
-    return total_nrg;
+    return (total_nrg << 2);
 }
 
 /*
@@ -250,7 +250,7 @@ uint64_t svt_psy_distor_hbd(const uint16_t* input, uint32_t input_stride,
             (svt_psy_sad_nxn_hbd(4, 4, recon, recon_stride, zero_buffer, 0) >> 2);
         total_nrg = (uint32_t)abs(input_nrg - recon_nrg);
     }
-    return total_nrg;
+    return (total_nrg << 2);
 }
 
 /*
