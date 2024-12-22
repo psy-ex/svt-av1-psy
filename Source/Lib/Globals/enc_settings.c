@@ -906,7 +906,7 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
-    if (config->psy_rd > 4.0 || config->psy_rd < 0.0) {
+    if (config->psy_rd > 6.0 || config->psy_rd < 0.0) {
         SVT_ERROR("Instance %u: PSY-RD strength must be between 0.0 and 4.0\n", channel_number + 1);
         return_error = EB_ErrorBadParameter;
     }
