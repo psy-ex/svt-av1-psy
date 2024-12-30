@@ -1169,9 +1169,11 @@ static void svt_av1_optimize_b(PictureControlSet *pcs, ModeDecisionContext *ctx,
     int           rweight       = 100;
     const int32_t sharpness_val = CLIP3(0, 7, pcs->scs->static_config.sharpness);
     const int     rshift        = MAX(2, (int)sharpness_val);
+    //use_sharpness = vq_ctrls.sharpness_ctrls.rdoq, so this function is enabled for tune 0 and tune 3
     if (use_sharpness && delta_q_present && plane == 0) {
         int diff = ctx->sb_ptr->qindex - quantizer_to_qindex[picture_qp];
-        if (diff < 0) {
+        //If sharpness>0, assume the user wants sharper transforms
+        if (diff < 0 || pcs->scs->static_config.sharpness > 0) {
             sharpness = 1;
             rweight   = 0;
         }
