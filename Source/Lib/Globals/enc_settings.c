@@ -934,8 +934,8 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
-    if (config->psy_rd != 0.0 && config->tune < 2) {
-        SVT_ERROR("Instance %u: PSY-RD is only supported by Tune 2 and above\n", channel_number + 1);
+    if (config->psy_rd != 0.0 && config->tune == 1) {
+        SVT_ERROR("Instance %u: PSY-RD is only supported by psycho-visually oriented tunes\n", channel_number + 1);
         return_error = EB_ErrorBadParameter;
     }
 
@@ -1281,7 +1281,7 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
                             config->kf_tf_strength);
                 }
         }
-        if (config->psy_rd > 0.0 && config->tune > 1) {
+        if (config->psy_rd > 0.0 && config->tune != 1) {
             SVT_INFO("SVT [config]: PSY-RD Strength \t\t\t\t\t\t: %.2f\n",
                     config->psy_rd);
         }
