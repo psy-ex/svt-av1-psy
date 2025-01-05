@@ -2837,10 +2837,10 @@ static int ref_pics_modulation(
         // we will not change the number of frames for key frame filtering, which is
         // to avoid visual quality drop.
             if (noise_levels_log1p_fp16 < 26572 /*FLOAT2FP(log1p(0.5), 16, int32_t)*/) {
-                offset = 6;
+                offset = 2;
             }
             else if (noise_levels_log1p_fp16 < 45426 /*FLOAT2FP(log1p(1.0), 16, int32_t)*/) {
-                offset = 4;
+                offset = 2;
             }
             else if (noise_levels_log1p_fp16 < 71998 /*FLOAT2FP(log1p(2.0), 16, int32_t)*/) {
                 offset = 2;
