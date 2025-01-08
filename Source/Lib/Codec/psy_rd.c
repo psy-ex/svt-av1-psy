@@ -24,8 +24,9 @@
         d1 = t1 + t3; \
         d3 = t1 - t3; \
 }
+//Replace or remove the variable with a better one if possible
 
-inline uint32_t ashft(uint32_t a);
+//inline uint32_t ashft(uint32_t a);
 
 // 8-bit
 static int svt_sa8d_8x8(const uint8_t* s, uint32_t sp, const uint8_t* r, uint32_t rp);
@@ -39,11 +40,13 @@ static int svt_satd_4x4_hbd(const uint16_t* s, uint32_t sp, const uint16_t* r, u
 static int svt_psy_sad_nxn_hbd(const uint8_t bw, const uint8_t bh, const uint16_t* s,
     uint32_t sp, const uint16_t* r, uint32_t rp);
 
+//Remove or replace following function with a better one if possible
+
 /* Performs absolute value operation quickly */
-inline uint32_t ashft(uint32_t a) {
-    uint32_t s = ((a >> (BITS_PER_SUM - 1)) & (((uint32_t)1 << BITS_PER_SUM) + 1)) * ((uint16_t)-1);
-    return (a + s) ^ s;
-}
+//inline uint32_t ashft(uint32_t a) {
+//    uint32_t s = ((a >> (BITS_PER_SUM - 1)) & (((uint32_t)1 << BITS_PER_SUM) + 1)) * ((uint16_t)-1);
+//    return (a + s) ^ s;
+//}
 
 /*
  * 8-bit functions
@@ -71,10 +74,10 @@ static int svt_sa8d_8x8(const uint8_t* s, uint32_t sp, const uint8_t* r, uint32_
     for (int i = 0; i < 4; i++) {
         HADAMARD4(a0, a1, a2, a3, tmp[0][i], tmp[1][i], tmp[2][i], tmp[3][i]);
         HADAMARD4(a4, a5, a6, a7, tmp[4][i], tmp[5][i], tmp[6][i], tmp[7][i]);
-        b0  = ashft(a0 + a4) + ashft(a0 - a4);
-        b0 += ashft(a1 + a5) + ashft(a1 - a5);
-        b0 += ashft(a2 + a6) + ashft(a2 - a6);
-        b0 += ashft(a3 + a7) + ashft(a3 - a7);
+        b0  = labs(a0 + a4) + labs(a0 - a4);
+        b0 += labs(a1 + a5) + labs(a1 - a5);
+        b0 += labs(a2 + a6) + labs(a2 - a6);
+        b0 += labs(a3 + a7) + labs(a3 - a7);
         sum += (uint16_t)b0 + (b0 >> BITS_PER_SUM);
     }
 
@@ -175,10 +178,10 @@ static int svt_sa8d_8x8_hbd(const uint16_t* s, uint32_t sp, const uint16_t* r, u
     for (int i = 0; i < 4; i++) {
         HADAMARD4(a0, a1, a2, a3, tmp[0][i], tmp[1][i], tmp[2][i], tmp[3][i]);
         HADAMARD4(a4, a5, a6, a7, tmp[4][i], tmp[5][i], tmp[6][i], tmp[7][i]);
-        b0  = ashft(a0 + a4) + ashft(a0 - a4);
-        b0 += ashft(a1 + a5) + ashft(a1 - a5);
-        b0 += ashft(a2 + a6) + ashft(a2 - a6);
-        b0 += ashft(a3 + a7) + ashft(a3 - a7);
+        b0  = labs(a0 + a4) + labs(a0 - a4);
+        b0 += labs(a1 + a5) + labs(a1 - a5);
+        b0 += labs(a2 + a6) + labs(a2 - a6);
+        b0 += labs(a3 + a7) + labs(a3 - a7);
         sum += (uint16_t)b0 + (b0 >> BITS_PER_SUM);
     }
 
