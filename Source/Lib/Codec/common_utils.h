@@ -64,6 +64,12 @@ static INLINE PredictionMode get_uv_mode(UvPredictionMode mode) {
     return uv2y[mode];
 }
 
+// CFL pred behaviorally maps to a unipred inter mode better than to DC intra mode,
+// so manually account for that case
+static INLINE PredictionMode get_uv_mode_cfl_aware(UvPredictionMode mode) {
+    return mode != UV_CFL_PRED ? get_uv_mode(mode) : NEARESTMV;
+}
+
 static INLINE TxType intra_mode_to_tx_type(PredictionMode pred_mode, UvPredictionMode pred_mode_uv,
                                            PlaneType plane_type) {
     static const TxType _intra_mode_to_tx_type[INTRA_MODES] = {
