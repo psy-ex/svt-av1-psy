@@ -1266,7 +1266,8 @@ typedef struct PictureControlSetInitData {
     bool    max_32_tx_size;
     uint8_t noise_norm_strength;
     uint8_t kf_tf_strength;
-    double     psy_rd;
+    double  psy_rd;
+    bool    spy_rd;
 } PictureControlSetInitData;
 
 typedef struct Av1Comp {
