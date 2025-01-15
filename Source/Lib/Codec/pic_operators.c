@@ -232,6 +232,27 @@ void svt_aom_picture_full_distortion32_bits_single(int32_t *coeff, int32_t *reco
         svt_full_distortion_kernel_cbf_zero32_bits(coeff, stride, distortion, bwidth, bheight);
     }
 }
+
+// Facade that wraps the distortion metric formula with "spy-rd" adjustments
+void svt_aom_picture_full_distortion32_bits_single_facade(int32_t *coeff, int32_t *recon_coeff, uint32_t stride,
+                                                          uint32_t bwidth, uint32_t bheight, uint64_t *distortion,
+                                                          uint32_t cnt_nz_coeff, PredictionMode mode, Bool spy_rd)
+{
+    svt_aom_picture_full_distortion32_bits_single(coeff, recon_coeff, stride,
+                                                    bwidth, bheight, distortion,
+                                                    cnt_nz_coeff);
+
+    if (spy_rd) {
+        if (mode == DC_PRED || mode == SMOOTH_PRED || mode == SMOOTH_V_PRED || mode == SMOOTH_H_PRED) {
+            distortion[DIST_CALC_RESIDUAL] = (distortion[0] * 3) / 2;
+            distortion[DIST_CALC_PREDICTION] = (distortion[1] * 3) / 2;
+        } else if (mode == H_PRED || mode == V_PRED || mode == PAETH_PRED) {
+            distortion[DIST_CALC_RESIDUAL] = (distortion[0] * 9) / 8;
+            distortion[DIST_CALC_PREDICTION] = (distortion[1] * 9) / 8;
+        }
+    }
+}
+
 void svt_aom_un_pack2d(uint16_t *in16_bit_buffer, uint32_t in_stride, uint8_t *out8_bit_buffer, uint32_t out8_stride,
                        uint8_t *outn_bit_buffer, uint32_t outn_stride, uint32_t width, uint32_t height) {
     if (((width & 3) == 0) && ((height & 1) == 0)) {

@@ -9,6 +9,7 @@
 * PATENTS file, you can obtain it at https://www.aomedia.org/license/patent-license.
 */
 
+#include "aom_dsp_rtcd.h"
 #include "picture_operators_c.h"
 #include <stdio.h>
 #include "utility.h"
@@ -111,6 +112,36 @@ uint64_t svt_spatial_psy_distortion_kernel_c(uint8_t* input, uint32_t input_offs
     }
 
     spatial_distortion += psy_distortion;
+    return spatial_distortion;
+}
+
+// Facade that wraps the distortion metric formula with "spy-rd" adjustments
+uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t input_offset, uint32_t input_stride,
+                                                   uint8_t* recon, int32_t recon_offset, uint32_t recon_stride,
+                                                   uint32_t area_width, uint32_t area_height, bool hbd_md, PredictionMode mode,
+                                                   Bool spy_rd) {
+
+    EbSpatialFullDistType spatial_full_dist_type_fun = hbd_md ? svt_full_distortion_kernel16_bits
+                                                              : svt_spatial_full_distortion_kernel;
+
+    int64_t spatial_distortion = spatial_full_dist_type_fun(
+                        input,
+                        input_offset,
+                        input_stride,
+                        recon,
+                        recon_offset,
+                        recon_stride,
+                        area_width,
+                        area_height);
+
+    if (spy_rd) {
+        if (mode == DC_PRED || mode == SMOOTH_PRED || mode == SMOOTH_V_PRED || mode == SMOOTH_H_PRED) {
+            spatial_distortion = (spatial_distortion * 3) / 2;
+        } else if (mode == H_PRED || mode == V_PRED || mode == PAETH_PRED) {
+            spatial_distortion = (spatial_distortion * 9) / 8;
+        }
+    }
+
     return spatial_distortion;
 }
 
