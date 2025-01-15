@@ -1085,11 +1085,20 @@ typedef struct EbSvtAv1EncConfiguration {
      */
     double psy_rd;
 
+    /**
+     * @brief Enable spy-rd, an alternate RD metric that biases towards sharpness/detail retention,
+     * at the possible expense of increased blocking and banding
+     * 0: disabled
+     * 1: enabled
+     * Default is 0
+     */
+    Bool spy_rd;
+
     /*Add 128 Byte Padding to Struct to avoid changing the size of the public configuration struct*/
 #if CLN_LP_LVLS
-    uint8_t padding[128 - sizeof(Bool) - 2 * sizeof(uint8_t) - sizeof(uint32_t)];
+    uint8_t padding[128 - 4 * sizeof(Bool) - 11 * sizeof(uint8_t) - sizeof(int8_t) - sizeof(uint32_t) - sizeof(double)];
 #else
-    uint8_t padding[128 - 3 * sizeof(Bool) - 11 * sizeof(uint8_t) - sizeof(int8_t) - sizeof(double)];
+    uint8_t padding[128 - 4 * sizeof(Bool) - 11 * sizeof(uint8_t) - sizeof(int8_t) - sizeof(double)];
 #endif
 
 } EbSvtAv1EncConfiguration;

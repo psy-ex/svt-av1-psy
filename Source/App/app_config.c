@@ -224,6 +224,7 @@
 #define NOISE_NORM_STRENGTH_TOKEN "--noise-norm-strength"
 
 #define PSY_RD_TOKEN "--psy-rd"
+#define SPY_RD_TOKEN "--spy-rd"
 
 static EbErrorType validate_error(EbErrorType err, const char *token, const char *value) {
     switch (err) {
@@ -1325,6 +1326,10 @@ ConfigEntry config_entry_psy[] = {
      PSY_RD_TOKEN,
      "[PSY] Psychovisual rate distortion strength, default is 0 [0.0-6.0]",
      set_cfg_generic_token},
+    {SINGLE_INPUT,
+     SPY_RD_TOKEN,
+     "[PSY] Alternative psychovisual rate distortion, default is 0 [0-1]",
+     set_cfg_generic_token},
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};
 
@@ -1544,6 +1549,9 @@ ConfigEntry config_entry[] = {
 
     // Psy rd strength
     {SINGLE_INPUT, PSY_RD_TOKEN, "PsyRd", set_cfg_generic_token},
+
+    // Spy rd
+    {SINGLE_INPUT, SPY_RD_TOKEN, "SpyRd", set_cfg_generic_token},
 
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};
