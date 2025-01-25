@@ -119,7 +119,7 @@ uint64_t svt_spatial_psy_distortion_kernel_c(uint8_t* input, uint32_t input_offs
 uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t input_offset, uint32_t input_stride,
                                                    uint8_t* recon, int32_t recon_offset, uint32_t recon_stride,
                                                    uint32_t area_width, uint32_t area_height, bool hbd_md, PredictionMode mode,
-                                                   Bool spy_rd) {
+                                                   CompoundType compound_type, Bool spy_rd) {
 
     EbSpatialFullDistType spatial_full_dist_type_fun = hbd_md ? svt_full_distortion_kernel16_bits
                                                               : svt_spatial_full_distortion_kernel;
@@ -136,9 +136,26 @@ uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t inpu
 
     if (spy_rd) {
         if (mode == DC_PRED || mode == SMOOTH_PRED || mode == SMOOTH_V_PRED || mode == SMOOTH_H_PRED) {
+            // Strong bias against "visually blurry" intra prediction modes
             spatial_distortion = (spatial_distortion * 3) / 2;
         } else if (mode == H_PRED || mode == V_PRED || mode == PAETH_PRED) {
+            // Mild bias against "visually neutral" intra prediction modes
             spatial_distortion = (spatial_distortion * 9) / 8;
+        } else if (mode >= COMP_INTER_MODE_START && mode < COMP_INTER_MODE_END) {
+            if (compound_type == COMPOUND_AVERAGE || compound_type == COMPOUND_DISTWTD) {
+                // Mild bias against "visually blurry" compound inter prediction modes
+                spatial_distortion = (spatial_distortion * 9) / 8;
+            } else if (compound_type == COMPOUND_DIFFWTD) {
+                // Very mild bias against difference-weighted inter prediction mode
+                spatial_distortion = (spatial_distortion * 17) / 16;
+            }
+        }
+
+        uint32_t area = area_width * area_height;
+        if (area <= 64 * 16) {
+            // Very mild large block bias to compensate for pred mode rebalancing picking smaller
+            // blocks slightly more often
+            spatial_distortion = (spatial_distortion * 17) / 16;
         }
     }
 
