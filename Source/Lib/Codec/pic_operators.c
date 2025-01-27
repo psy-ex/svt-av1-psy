@@ -237,7 +237,7 @@ void svt_aom_picture_full_distortion32_bits_single(int32_t *coeff, int32_t *reco
 void svt_aom_picture_full_distortion32_bits_single_facade(int32_t *coeff, int32_t *recon_coeff, uint32_t stride,
                                                           uint32_t bwidth, uint32_t bheight, uint64_t *distortion,
                                                           uint32_t cnt_nz_coeff, PredictionMode mode, CompoundType compound_type,
-                                                          Bool spy_rd)
+                                                          uint8_t temporal_layer_index, Bool spy_rd)
 {
     svt_aom_picture_full_distortion32_bits_single(coeff, recon_coeff, stride,
                                                     bwidth, bheight, distortion,
@@ -246,30 +246,38 @@ void svt_aom_picture_full_distortion32_bits_single_facade(int32_t *coeff, int32_
     if (spy_rd) {
         if (mode == DC_PRED || mode == SMOOTH_PRED || mode == SMOOTH_V_PRED || mode == SMOOTH_H_PRED) {
             // Strong bias against "visually blurry" intra prediction modes
-            distortion[DIST_CALC_RESIDUAL] = (distortion[0] * 3) / 2;
-            distortion[DIST_CALC_PREDICTION] = (distortion[1] * 3) / 2;
+            distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * 3) / 2;
+            distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 3) / 2;
         } else if (mode == H_PRED || mode == V_PRED || mode == PAETH_PRED) {
             // Mild bias against "visually neutral" intra prediction modes
-            distortion[DIST_CALC_RESIDUAL] = (distortion[0] * 9) / 8;
-            distortion[DIST_CALC_PREDICTION] = (distortion[1] * 9) / 8;
+            distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * 9) / 8;
+            distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 9) / 8;
         } else if (mode >= COMP_INTER_MODE_START && mode < COMP_INTER_MODE_END) {
             if (compound_type == COMPOUND_AVERAGE || compound_type == COMPOUND_DISTWTD) {
                 // Mild bias against "visually blurry" compound inter prediction modes
-                distortion[DIST_CALC_RESIDUAL] = (distortion[0] * 9) / 8;
-                distortion[DIST_CALC_PREDICTION] = (distortion[1] * 9) / 8;
+                distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * 9) / 8;
+                distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 9) / 8;
             } else if (compound_type == COMPOUND_DIFFWTD) {
                 // Very mild bias against difference-weighted inter prediction mode
-                distortion[DIST_CALC_RESIDUAL] = (distortion[0] * 17) / 16;
-                distortion[DIST_CALC_PREDICTION] = (distortion[1] * 17) / 16;
+                distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * 17) / 16;
+                distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 17) / 16;
             }
+        }
+
+        if (mode >= INTRA_MODE_START && mode < INTRA_MODE_END && temporal_layer_index >= 2) {
+            // Increasingly bias against intra prediction modes the deeper the temporal layer
+            uint8_t weights[] = {8, 8, 9, 10, 11, 12};
+
+            distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * weights[temporal_layer_index]) / 8;
+            distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * weights[temporal_layer_index]) / 8;
         }
 
         uint32_t area = bwidth * bheight;
         if (area <= 32 * 16) {
             // Very mild large block bias to compensate for pred mode rebalancing picking smaller
             // blocks slightly more often
-            distortion[DIST_CALC_RESIDUAL] = (distortion[0] * 17) / 16;
-            distortion[DIST_CALC_PREDICTION] = (distortion[1] * 17) / 16;
+            distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * 17) / 16;
+            distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 17) / 16;
         }
     }
 }
