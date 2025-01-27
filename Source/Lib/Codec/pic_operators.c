@@ -273,9 +273,9 @@ void svt_aom_picture_full_distortion32_bits_single_facade(int32_t *coeff, int32_
         }
 
         uint32_t area = bwidth * bheight;
-        if (area <= 32 * 16) {
-            // Very mild large block bias to compensate for pred mode rebalancing picking smaller
-            // blocks slightly more often
+        if (area <= 32 * 16 && mode < INTRA_MODE_END) {
+            // Very mild large block intra bias to compensate for pred mode rebalancing picking
+            // smaller blocks slightly more often
             distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * 17) / 16;
             distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 17) / 16;
         }
