@@ -159,9 +159,9 @@ uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t inpu
         }
 
         uint32_t area = area_width * area_height;
-        if (area <= 64 * 16) {
-            // Very mild large block bias to compensate for pred mode rebalancing picking smaller
-            // blocks slightly more often
+        if (area <= 64 * 16 && mode < INTRA_MODE_END) {
+            // Very mild large block intra bias to compensate for pred mode rebalancing picking
+            // smaller blocks slightly more often
             spatial_distortion = (spatial_distortion * 17) / 16;
         }
     }
