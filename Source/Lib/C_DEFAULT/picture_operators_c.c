@@ -151,18 +151,23 @@ uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t inpu
             }
         }
 
-        if (mode >= INTRA_MODE_START && mode < INTRA_MODE_END && temporal_layer_index >= 2) {
-            // Increasingly bias against intra prediction modes the deeper the temporal layer
-            uint8_t weights[] = {8, 8, 9, 10, 11, 12};
+        if (mode >= INTRA_MODE_START && mode < INTRA_MODE_END) {
+            if (temporal_layer_index >= 2) {
+                // Increasingly bias against intra prediction modes the deeper the temporal layer
+                uint8_t weights[] = {8, 8, 9, 10, 11, 12};
 
-            spatial_distortion = (spatial_distortion * weights[temporal_layer_index]) / 8;
-        }
+                spatial_distortion = (spatial_distortion * weights[temporal_layer_index]) / 8;
+            }
 
-        uint32_t area = area_width * area_height;
-        if (area <= 64 * 16 && mode < INTRA_MODE_END) {
-            // Very mild large block intra bias to compensate for pred mode rebalancing picking
-            // smaller blocks slightly more often
-            spatial_distortion = (spatial_distortion * 17) / 16;
+            if (area_width == 64 && area_height == 64) {
+                // Strong bias against intra 64x64 blocks, as those often tend to be visually blurry
+                spatial_distortion = (spatial_distortion * 3) / 2;
+            } else if (area_width * area_height <= 32 * 32) {
+                // Very mild large block intra bias to compensate for pred mode rebalancing picking
+                // smaller blocks slightly more often
+                spatial_distortion = (spatial_distortion * 17) / 16;
+            }
+            //printf("Spatial: w %i, h %i\n", area_width, area_height);
         }
     }
 
