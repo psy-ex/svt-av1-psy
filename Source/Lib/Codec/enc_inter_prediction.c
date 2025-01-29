@@ -2328,7 +2328,8 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
                                          ctx->blk_geom->bwidth,
                                          ctx->blk_geom->bheight >> shift,
                                          hbd,
-                                         scs->static_config.psy_rd);
+                                         scs->static_config.psy_rd)
+                << shift;
             break;
         case 1:
             sse = spatial_full_dist_type_fun(input_pic->buffer_cb,
@@ -2360,15 +2361,15 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
                                              ctx->blk_geom->bwidth_uv,
                                              ctx->blk_geom->bheight_uv);
             sse += get_svt_psy_full_dist(input_pic->buffer_cr,
-                                            input_chroma_offset,
-                                            input_pic->stride_cr,
-                                            prediction_ptr->buffer_cr,
-                                            prediction_chroma_offset,
-                                            prediction_ptr->stride_cr,
-                                            ctx->blk_geom->bwidth_uv,
-                                            ctx->blk_geom->bheight_uv,
-                                            hbd,
-                                            scs->static_config.psy_rd);
+                                         input_chroma_offset,
+                                         input_pic->stride_cr,
+                                         prediction_ptr->buffer_cr,
+                                         prediction_chroma_offset,
+                                         prediction_ptr->stride_cr,
+                                         ctx->blk_geom->bwidth_uv,
+                                         ctx->blk_geom->bheight_uv,
+                                         hbd,
+                                         scs->static_config.psy_rd);
             break;
         }
         if (ctx->ifs_ctrls.skip_sse_rd_model) {
