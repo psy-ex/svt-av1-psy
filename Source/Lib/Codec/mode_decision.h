@@ -127,8 +127,8 @@ typedef struct ModeDecisionCandidateBuffer {
     uint64_t    fast_luma_rate;
     uint64_t    fast_chroma_rate;
     uint64_t    total_rate;
-    uint32_t    luma_fast_dist;
-    uint32_t    full_dist;
+    uint64_t    luma_fast_dist;
+    uint64_t    full_dist;
     uint16_t    cnt_nz_coeff;
     QuantDcData quant_dc;
     EobData     eob;
