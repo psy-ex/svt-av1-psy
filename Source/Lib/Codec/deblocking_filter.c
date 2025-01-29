@@ -756,8 +756,7 @@ static uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBuffer
                                               recon_coeff_buffer,
                                               recon_ptr->stride_y,
                                               input_align_width,
-                                              input_align_height,
-                                              input_align_width * input_align_height);
+                                              input_align_height);
             psy *= scs->static_config.psy_rd;
             uint64_t spatial_distortion = sse + psy;
             return spatial_distortion;
@@ -780,8 +779,7 @@ static uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBuffer
                                               recon_coeff_buffer,
                                               recon_ptr->stride_cb,
                                               input_align_width >> ss_x,
-                                              input_align_height >> ss_y,
-                                              (input_align_width >> ss_x) * (input_align_height >> ss_y));
+                                              input_align_height >> ss_y);
             psy *= scs->static_config.psy_rd;
             uint64_t spatial_distortion = sse + psy;
             return spatial_distortion;
@@ -803,8 +801,7 @@ static uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBuffer
                                               recon_coeff_buffer,
                                               recon_ptr->stride_cr,
                                               input_align_width >> ss_x,
-                                              input_align_height >> ss_y,
-                                              (input_align_width >> ss_x) * (input_align_height >> ss_y));
+                                              input_align_height >> ss_y);
             psy *= scs->static_config.psy_rd;
             uint64_t spatial_distortion = sse + psy;
             return spatial_distortion;
@@ -832,8 +829,7 @@ static uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBuffer
                                               (uint16_t*)recon_coeff_buffer,
                                               recon_ptr->stride_y,
                                               input_align_width,
-                                              input_align_height,
-                                              input_align_width * input_align_height);
+                                              input_align_height);
             psy *= scs->static_config.psy_rd;
             uint64_t spatial_distortion = sse + psy;
             return spatial_distortion;
@@ -859,8 +855,7 @@ static uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBuffer
                                               (uint16_t*)recon_coeff_buffer,
                                               recon_ptr->stride_cb,
                                               (input_align_width + ss_x) >> ss_x,
-                                              (input_align_height + ss_y) >> ss_y,
-                                              ((input_align_width + ss_x) >> ss_x) * ((input_align_height + ss_y) >> ss_y));
+                                              (input_align_height + ss_y) >> ss_y);
             psy *= scs->static_config.psy_rd;
             uint64_t spatial_distortion = sse + psy;
             return spatial_distortion;
@@ -885,8 +880,7 @@ static uint64_t picture_sse_calculations(PictureControlSet *pcs, EbPictureBuffer
                                                 (uint16_t*)recon_coeff_buffer,
                                                 recon_ptr->stride_cr,
                                                 (input_align_width + ss_x) >> ss_x,
-                                                (input_align_height + ss_y) >> ss_y,
-                                                ((input_align_width + ss_x) >> ss_x) * ((input_align_height + ss_y) >> ss_y));
+                                                (input_align_height + ss_y) >> ss_y);
             psy *= scs->static_config.psy_rd;
             uint64_t spatial_distortion = sse + psy;
             return spatial_distortion;

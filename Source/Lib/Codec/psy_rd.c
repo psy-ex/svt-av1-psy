@@ -125,29 +125,31 @@ static int svt_psy_sad_nxn(const uint8_t bw, const uint8_t bh, const uint8_t* s,
 }
 uint64_t svt_psy_distortion(const uint8_t* input, uint32_t input_stride,
                             const uint8_t* recon, uint32_t recon_stride,
-                            uint32_t width, uint32_t height,
-                            const uint32_t count) {
+                            uint32_t width, uint32_t height) {
 
     static uint8_t zero_buffer[8] = { 0 };
+    uint64_t total_nrg = 0;
 
-    uint32_t total_nrg = 0;
-
-    if (count >= 64) { /* 8x8 or larger */
+    if (width >= 8 && height >= 8) { /* 8x8 or larger */
         for (uint64_t i = 0; i < height; i += 8) {
             for (uint64_t j = 0; j < width; j += 8) {
-                int input_nrg = (svt_sa8d_8x8(input + i * input_stride + j, input_stride, zero_buffer, 0) >> 8) -
+                int32_t input_nrg = (svt_sa8d_8x8(input + i * input_stride + j, input_stride, zero_buffer, 0) >> 8) -
                     (svt_psy_sad_nxn(8, 8, input + i * input_stride + j, input_stride, zero_buffer, 0) >> 2);
-                int recon_nrg = (svt_sa8d_8x8(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 8) -
+                int32_t recon_nrg = (svt_sa8d_8x8(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 8) -
                     (svt_psy_sad_nxn(8, 8, recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 2);
-                total_nrg += (uint32_t)abs(input_nrg - recon_nrg);
+                total_nrg += abs(input_nrg - recon_nrg);
             }
         }
-    } else { /* 4x4 */
-        int input_nrg = svt_satd_4x4(input, input_stride, recon, recon_stride) -
-            (svt_psy_sad_nxn(4, 4, input, input_stride, zero_buffer, 0) >> 2);
-        int recon_nrg = svt_satd_4x4(recon, recon_stride, zero_buffer, 0) -
-            (svt_psy_sad_nxn(4, 4, recon, recon_stride, zero_buffer, 0) >> 2);
-        total_nrg = (uint32_t)abs(input_nrg - recon_nrg);
+    } else { /* 4x4, 4x8, 4x16, 8x4, and 16x4 */
+        for (uint64_t i = 0; i < height; i += 4) {
+            for (uint64_t j = 0; j < width; j += 4) {
+                int32_t input_nrg = svt_satd_4x4(input + i * input_stride + j, input_stride, zero_buffer, 0) -
+                    (svt_psy_sad_nxn(4, 4, input + i * input_stride + j, input_stride, zero_buffer, 0) >> 2);
+                int32_t recon_nrg = svt_satd_4x4(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) -
+                    (svt_psy_sad_nxn(4, 4, recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 2);
+                total_nrg += abs(input_nrg - recon_nrg);
+            }
+        }
     }
     return (total_nrg << 2);
 }
@@ -229,36 +231,38 @@ static int svt_psy_sad_nxn_hbd(const uint8_t bw, const uint8_t bh, const uint16_
 }
 uint64_t svt_psy_distor_hbd(const uint16_t* input, uint32_t input_stride,
                             const uint16_t* recon, uint32_t recon_stride,
-                            uint32_t width, uint32_t height,
-                            const uint32_t count) {
+                            uint32_t width, uint32_t height) {
 
     static uint16_t zero_buffer[8] = { 0 };
-
-    uint32_t total_nrg = 0;
+    uint64_t total_nrg = 0;
 
     // Define SATD and SA8D weights as bitwise shift factors for psy weighting
     // TODO: Add corresponding user controllable parameters
     uint32_t psy_sa8d_shift = 0; // Default: no shift for SA8D (equivalent to weight 1.0)
     uint32_t psy_satd_shift = 0; // Default: no shift for SATD (equivalent to weight 1.0)
 
-    if (count >= 64) { /* 8x8 or larger */
+    if (width >= 8 && height >= 8) { /* 8x8 or larger */
         for (uint64_t i = 0; i < height; i += 8) {
             for (uint64_t j = 0; j < width; j += 8) {
-                int input_nrg = (svt_sa8d_8x8_hbd(input + i * input_stride + j, input_stride, zero_buffer, 0) >> 8) -
+                int32_t input_nrg = (svt_sa8d_8x8_hbd(input + i * input_stride + j, input_stride, zero_buffer, 0) >> 8) -
                     (svt_psy_sad_nxn_hbd(8, 8, input + i * input_stride + j, input_stride, zero_buffer, 0) >> 2);
-                    int recon_nrg = (svt_sa8d_8x8_hbd(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 8) -
+                int32_t recon_nrg = (svt_sa8d_8x8_hbd(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 8) -
                     (svt_psy_sad_nxn_hbd(8, 8, recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 2);
                 // Apply SA8D scaling directly during the calculation, no need to do a separate operation
-                total_nrg += ((uint32_t)abs(input_nrg - recon_nrg)) >> psy_sa8d_shift;
+                total_nrg += abs(input_nrg - recon_nrg) >> psy_sa8d_shift;
             }
         }
-    } else { /* 4x4 */
-        int input_nrg = svt_satd_4x4_hbd(input, input_stride, recon, recon_stride) -
-            (svt_psy_sad_nxn_hbd(4, 4, input, input_stride, zero_buffer, 0) >> 2);
-        int recon_nrg = svt_satd_4x4_hbd(recon, recon_stride, zero_buffer, 0) -
-            (svt_psy_sad_nxn_hbd(4, 4, recon, recon_stride, zero_buffer, 0) >> 2);
-        // Apply SATD scaling directly to the result, no need to do a separate opeartion
-        total_nrg = ((uint32_t)abs(input_nrg - recon_nrg)) >> psy_satd_shift;
+    } else { /* 4x4, 4x8, 4x16, 8x4, and 16x4 */
+        for (uint64_t i = 0; i < height; i += 4) {
+            for (uint64_t j = 0; j < width; j += 4) {
+                int32_t input_nrg = svt_satd_4x4_hbd(input + i * input_stride + j, input_stride, zero_buffer, 0) -
+                    (svt_psy_sad_nxn_hbd(4, 4, input + i * input_stride + j, input_stride, zero_buffer, 0) >> 2);
+                int32_t recon_nrg = svt_satd_4x4_hbd(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) -
+                    (svt_psy_sad_nxn_hbd(4, 4, recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 2);
+                // Apply SATD scaling directly to the result, no need to do a separate opeartion
+                total_nrg += abs(input_nrg - recon_nrg) >> psy_satd_shift;
+            }
+        }
     }
     return (total_nrg << 2);
 }
@@ -271,15 +275,14 @@ uint64_t get_svt_psy_full_dist(const void* s, uint32_t so, uint32_t sp,
                             const void* r, uint32_t ro, uint32_t rp,
                             uint32_t w, uint32_t h, uint8_t is_hbd,
                             double psy_rd) {
-    uint32_t count = w * h;
     uint64_t dist;
 
     switch (is_hbd) {
     case 1: // 10-bit
-        dist = svt_psy_distor_hbd((const uint16_t*)s + so, sp, (const uint16_t*)r + ro, rp, w, h, count);
+        dist = svt_psy_distor_hbd((const uint16_t*)s + so, sp, (const uint16_t*)r + ro, rp, w, h);
         break;
     default: // 8-bit
-        dist = svt_psy_distortion((const uint8_t*)s + so, sp, (const uint8_t*)r + ro, rp, w, h, count);
+        dist = svt_psy_distortion((const uint8_t*)s + so, sp, (const uint8_t*)r + ro, rp, w, h);
         break;
     }
 
