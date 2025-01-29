@@ -2296,13 +2296,26 @@ void svt_aom_full_loop_uv(PictureControlSet *pcs, ModeDecisionContext *ctx, Mode
                     cand_bf->cand->interinter_comp.type,
                     pcs->temporal_layer_index,
                     pcs->scs->static_config.spy_rd);
-                txb_full_distortion[DIST_SSD][1][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(
+                /*txb_full_distortion[DIST_SSD][1][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(
                     input_pic->buffer_cb,
                     input_chroma_txb_origin_index,
                     input_pic->stride_cb,
                     cand_bf->recon->buffer_cb,
                     txb_uv_origin_index,
                     cand_bf->recon->stride_cb,
+                    cropped_tx_width_uv,
+                    cropped_tx_height_uv,
+                    ctx->hbd_md,
+                    pcs->scs->static_config.psy_rd);*/
+                // Workaround: re-use prediction psy distortion for the residual until we figure out why psy-rd
+                // is misbehaving at low CRFs and high presets with inter pred
+                txb_full_distortion[DIST_SSD][1][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(
+                    input_pic->buffer_cb,
+                    input_chroma_txb_origin_index,
+                    input_pic->stride_cb,
+                    cand_bf->pred->buffer_cb,
+                    txb_uv_origin_index,
+                    cand_bf->pred->stride_cb,
                     cropped_tx_width_uv,
                     cropped_tx_height_uv,
                     ctx->hbd_md,
@@ -2513,13 +2526,26 @@ void svt_aom_full_loop_uv(PictureControlSet *pcs, ModeDecisionContext *ctx, Mode
                     cand_bf->cand->interinter_comp.type,
                     pcs->temporal_layer_index,
                     pcs->scs->static_config.spy_rd);
-                txb_full_distortion[DIST_SSD][2][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(
+                /*txb_full_distortion[DIST_SSD][2][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(
                     input_pic->buffer_cr,
                     input_chroma_txb_origin_index,
                     input_pic->stride_cr,
                     cand_bf->recon->buffer_cr,
                     txb_uv_origin_index,
                     cand_bf->recon->stride_cr,
+                    cropped_tx_width_uv,
+                    cropped_tx_height_uv,
+                    ctx->hbd_md,
+                    pcs->scs->static_config.psy_rd);*/
+                // Workaround: re-use prediction psy distortion for the residual until we figure out why psy-rd
+                // is misbehaving at low CRFs and high presets with inter pred
+                txb_full_distortion[DIST_SSD][2][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(
+                    input_pic->buffer_cr,
+                    input_chroma_txb_origin_index,
+                    input_pic->stride_cr,
+                    cand_bf->pred->buffer_cr,
+                    txb_uv_origin_index,
+                    cand_bf->pred->stride_cr,
                     cropped_tx_width_uv,
                     cropped_tx_height_uv,
                     ctx->hbd_md,
