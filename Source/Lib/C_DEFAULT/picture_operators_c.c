@@ -143,11 +143,11 @@ uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t inpu
             spatial_distortion = (spatial_distortion * 9) / 8;
         } else if (mode >= COMP_INTER_MODE_START && mode < COMP_INTER_MODE_END) {
             if (compound_type == COMPOUND_AVERAGE || compound_type == COMPOUND_DISTWTD) {
-                // Mild bias against "visually blurry" compound inter prediction modes
-                spatial_distortion = (spatial_distortion * 9) / 8;
+                // Medium bias against "visually blurry" compound inter prediction modes
+                spatial_distortion = (spatial_distortion * 5) / 4;
             } else if (compound_type == COMPOUND_DIFFWTD) {
-                // Very mild bias against difference-weighted inter prediction mode
-                spatial_distortion = (spatial_distortion * 17) / 16;
+                // Mild bias against difference-weighted inter prediction mode
+                spatial_distortion = (spatial_distortion * 9) / 8;
             }
         }
 

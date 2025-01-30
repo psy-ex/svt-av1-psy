@@ -255,13 +255,13 @@ void svt_aom_picture_full_distortion32_bits_single_facade(int32_t *coeff, int32_
             distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 9) / 8;
         } else if (mode >= COMP_INTER_MODE_START && mode < COMP_INTER_MODE_END) {
             if (compound_type == COMPOUND_AVERAGE || compound_type == COMPOUND_DISTWTD) {
-                // Mild bias against "visually blurry" compound inter prediction modes
+                // Medium bias against "visually blurry" compound inter prediction modes
+                distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * 5) / 4;
+                distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 5) / 4;
+            } else if (compound_type == COMPOUND_DIFFWTD) {
+                // Mild bias against difference-weighted inter prediction mode
                 distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * 9) / 8;
                 distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 9) / 8;
-            } else if (compound_type == COMPOUND_DIFFWTD) {
-                // Very mild bias against difference-weighted inter prediction mode
-                distortion[DIST_CALC_RESIDUAL] = (distortion[DIST_CALC_RESIDUAL] * 17) / 16;
-                distortion[DIST_CALC_PREDICTION] = (distortion[DIST_CALC_PREDICTION] * 17) / 16;
             }
         }
 
