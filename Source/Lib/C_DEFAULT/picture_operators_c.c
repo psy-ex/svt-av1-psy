@@ -136,8 +136,8 @@ uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t inpu
 
     if (spy_rd) {
         if (mode == DC_PRED || mode == SMOOTH_PRED || mode == SMOOTH_V_PRED || mode == SMOOTH_H_PRED) {
-            // Strong bias against "visually blurry" intra prediction modes
-            spatial_distortion = (spatial_distortion * 3) / 2;
+            // Medium bias against "visually blurry" intra prediction modes
+            spatial_distortion = (spatial_distortion * 5) / 4;
         } else if (mode == H_PRED || mode == V_PRED || mode == PAETH_PRED) {
             // Mild bias against "visually neutral" intra prediction modes
             spatial_distortion = (spatial_distortion * 9) / 8;
