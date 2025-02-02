@@ -4916,7 +4916,7 @@ uint64_t svt_spatial_full_distortion_ssim_kernel(uint8_t* input, uint32_t input_
         if (psy_rd > 0.0) {
             uint64_t ac_distortion = svt_psy_distortion(input + input_offset, input_stride,
                 recon + recon_offset, recon_stride,
-                area_width, area_height, count);
+                area_width, area_height);
             psy_distortion = (uint64_t)(ac_distortion * psy_rd);
         }
     } else {
@@ -4925,9 +4925,9 @@ uint64_t svt_spatial_full_distortion_ssim_kernel(uint8_t* input, uint32_t input_
             (uint16_t *)recon + recon_offset, recon_stride,
             area_width, area_height);
         if (psy_rd > 0.0) {
-            uint64_t ac_distortion = svt_psy_distor_hbd((uint16_t *)input + input_offset, input_stride,
-                (uint16_t *)recon + recon_offset, recon_stride,
-                area_width, area_height, count);
+            uint64_t ac_distortion = svt_psy_distortion_hbd((uint16_t *)input + input_offset,
+                input_stride, (uint16_t *)recon + recon_offset, recon_stride,
+                area_width, area_height);
             psy_distortion = (uint64_t)(ac_distortion * psy_rd);
         }
     }
