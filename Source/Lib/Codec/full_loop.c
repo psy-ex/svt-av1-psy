@@ -1173,7 +1173,7 @@ static void svt_av1_optimize_b(ModeDecisionContext *ctx, int16_t txb_skip_contex
     if (use_sharpness && delta_q_present && plane == 0) {
         int diff = ctx->sb_ptr->qindex - quantizer_to_qindex[picture_qp];
         //If sharpness>0, assume the user wants sharper transforms
-        if (diff < 0 || pcs->scs->static_config.sharpness > 0 ) {
+        if (diff < 0 || pcs->scs->static_config.sharpness > 0) {
             sharpness = 1;
             rweight   = 0;
         }
