@@ -1008,6 +1008,7 @@ static void fast_loop_core_light_pd0(ModeDecisionCandidateBuffer *cand_bf, Pictu
                                                                               cand_bf->cand->pred_mode,
                                                                               cand_bf->cand->interinter_comp.type,
                                                                               pcs->temporal_layer_index,
+                                                                              pcs->scs->static_config.psy_rd,
                                                                               pcs->scs->static_config.spy_rd)
                 << 1;
             *(cand_bf->fast_cost) += get_svt_psy_full_dist(input_pic->buffer_y,
@@ -1170,6 +1171,7 @@ static void obmc_trans_face_off(ModeDecisionCandidateBuffer *cand_bf, PictureCon
                     cand_bf->cand->pred_mode,
                     cand_bf->cand->interinter_comp.type,
                     pcs->temporal_layer_index,
+                    pcs->scs->static_config.psy_rd,
                     pcs->scs->static_config.spy_rd);
                 luma_fast_dist += get_svt_psy_full_dist(input_pic->buffer_y,
                                                         input_origin_index,
@@ -4486,6 +4488,7 @@ static void perform_tx_light_pd0(PictureControlSet *pcs, ModeDecisionContext *ct
                                                   cand_bf->cand->pred_mode,
                                                   cand_bf->cand->interinter_comp.type,
                                                   pcs->temporal_layer_index,
+                                                  pcs->scs->static_config.psy_rd,
                                                   pcs->scs->static_config.spy_rd);
     y_full_distortion[DIST_CALC_RESIDUAL] += ctx->three_quad_energy;
     const int32_t shift                   = (MAX_TX_SCALE - av1_get_tx_scale_tab[tx_size]) * 2;
@@ -4810,6 +4813,7 @@ static void tx_type_search(PictureControlSet *pcs, ModeDecisionContext *ctx, Mod
                     cand_bf->cand->pred_mode,
                     cand_bf->cand->interinter_comp.type,
                     pcs->temporal_layer_index,
+                    pcs->scs->static_config.psy_rd,
                     pcs->scs->static_config.spy_rd);
                 txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_PREDICTION] += get_svt_psy_full_dist(
                     input_pic->buffer_y,
@@ -4835,6 +4839,7 @@ static void tx_type_search(PictureControlSet *pcs, ModeDecisionContext *ctx, Mod
                     cand_bf->cand->pred_mode,
                     cand_bf->cand->interinter_comp.type,
                     pcs->temporal_layer_index,
+                    pcs->scs->static_config.psy_rd,
                     pcs->scs->static_config.spy_rd);
                 txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(
                     input_pic->buffer_y,
@@ -4872,6 +4877,7 @@ static void tx_type_search(PictureControlSet *pcs, ModeDecisionContext *ctx, Mod
                     cand_bf->cand->pred_mode,
                     cand_bf->cand->interinter_comp.type,
                     pcs->temporal_layer_index,
+                    pcs->scs->static_config.psy_rd,
                     pcs->scs->static_config.spy_rd);
                 txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_RESIDUAL] += ctx->three_quad_energy;
                 txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_PREDICTION] += ctx->three_quad_energy;
@@ -5501,6 +5507,7 @@ static void perform_dct_dct_tx_light_pd1(PictureControlSet *pcs, ModeDecisionCon
                                                   cand_bf->cand->pred_mode,
                                                   cand_bf->cand->interinter_comp.type,
                                                   pcs->temporal_layer_index,
+                                                  pcs->scs->static_config.psy_rd,
                                                   pcs->scs->static_config.spy_rd);
     const int32_t shift                   = (MAX_TX_SCALE - av1_get_tx_scale_tab[tx_size]) * 2;
     y_full_distortion[DIST_CALC_RESIDUAL] = RIGHT_SIGNED_SHIFT(
@@ -5754,6 +5761,7 @@ static void perform_dct_dct_tx(PictureControlSet *pcs, ModeDecisionContext *ctx,
                                                                                        cand_bf->cand->pred_mode,
                                                                                        cand_bf->cand->interinter_comp.type,
                                                                                        pcs->temporal_layer_index,
+                                                                                       pcs->scs->static_config.psy_rd,
                                                                                        pcs->scs->static_config.spy_rd);
         y_full_distortion[DIST_SSD][DIST_CALC_PREDICTION] += get_svt_psy_full_dist(input_pic->buffer_y,
                                                                                    input_txb_origin_index,
@@ -5777,6 +5785,7 @@ static void perform_dct_dct_tx(PictureControlSet *pcs, ModeDecisionContext *ctx,
                                                                                      cand_bf->cand->pred_mode,
                                                                                      cand_bf->cand->interinter_comp.type,
                                                                                      pcs->temporal_layer_index,
+                                                                                     pcs->scs->static_config.psy_rd,
                                                                                      pcs->scs->static_config.spy_rd);
         y_full_distortion[DIST_SSD][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(input_pic->buffer_y,
                                                                                  input_txb_origin_index,
@@ -5816,6 +5825,7 @@ static void perform_dct_dct_tx(PictureControlSet *pcs, ModeDecisionContext *ctx,
                                                       cand_bf->cand->pred_mode,
                                                       cand_bf->cand->interinter_comp.type,
                                                       pcs->temporal_layer_index,
+                                                      pcs->scs->static_config.psy_rd,
                                                       pcs->scs->static_config.spy_rd);
         y_full_distortion[DIST_SSD][DIST_CALC_RESIDUAL] += ctx->three_quad_energy;
         y_full_distortion[DIST_SSD][DIST_CALC_PREDICTION] += ctx->three_quad_energy;

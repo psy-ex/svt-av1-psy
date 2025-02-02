@@ -28,7 +28,7 @@ void svt_aom_picture_full_distortion32_bits_single_facade(int32_t *coeff, int32_
                                                    uint32_t bwidth, uint32_t bheight, uint32_t area_width,
                                                    uint32_t area_height, uint64_t *distortion, uint32_t cnt_nz_coeff,
                                                    PredictionMode mode, CompoundType compound_type, uint8_t temporal_layer_index,
-                                                   Bool spy_rd);
+                                                   double psy_rd, Bool spy_rd);
 
 //Residual Data
 
