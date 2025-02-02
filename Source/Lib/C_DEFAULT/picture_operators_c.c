@@ -119,7 +119,8 @@ uint64_t svt_spatial_psy_distortion_kernel_c(uint8_t* input, uint32_t input_offs
 uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t input_offset, uint32_t input_stride,
                                                    uint8_t* recon, int32_t recon_offset, uint32_t recon_stride,
                                                    uint32_t area_width, uint32_t area_height, bool hbd_md, PredictionMode mode,
-                                                   CompoundType compound_type, uint8_t temporal_layer_index, bool spy_rd) {
+                                                   CompoundType compound_type, uint8_t temporal_layer_index,
+                                                   double psy_rd, bool spy_rd) {
 
     EbSpatialFullDistType spatial_full_dist_type_fun = hbd_md ? svt_full_distortion_kernel16_bits
                                                               : svt_spatial_full_distortion_kernel;
@@ -136,8 +137,10 @@ uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t inpu
 
     if (spy_rd) {
         if (mode == DC_PRED || mode == SMOOTH_PRED || mode == SMOOTH_V_PRED || mode == SMOOTH_H_PRED) {
-            // Medium bias against "visually blurry" intra prediction modes
-            spatial_distortion = (spatial_distortion * 5) / 4;
+            if (psy_rd == 0.0) {
+                // Medium bias against "visually blurry" intra prediction modes
+                spatial_distortion = (spatial_distortion * 5) / 4;
+            }
         } else if (mode == H_PRED || mode == V_PRED || mode == PAETH_PRED) {
             // Mild bias against "visually neutral" intra prediction modes
             spatial_distortion = (spatial_distortion * 9) / 8;
