@@ -4100,7 +4100,7 @@ static uint32_t filt_unfilt_dist(
         ? svt_full_distortion_kernel16_bits
         : svt_spatial_full_distortion_kernel;
 
-    uint32_t dist = 0;
+    uint64_t dist = 0;
     for (uint32_t y_b64_idx = 0; y_b64_idx < pic_height_in_b64; ++y_b64_idx) {
         for (uint32_t x_b64_idx = 0; x_b64_idx < pic_width_in_b64; ++x_b64_idx) {
 
@@ -4109,8 +4109,7 @@ static uint32_t filt_unfilt_dist(
 
             uint32_t buffer_index = b64_origin_y * stride_y + b64_origin_x;
 
-
-            dist += (uint32_t)(spatial_full_dist_type_fun(
+            dist += spatial_full_dist_type_fun(
                 filt,
                 buffer_index,
                 stride_y,
@@ -4118,8 +4117,8 @@ static uint32_t filt_unfilt_dist(
                 buffer_index,
                 stride_y,
                 ppcs->scs->b64_size,
-                ppcs->scs->b64_size));
-            dist += (uint32_t)(get_svt_psy_full_dist(
+                ppcs->scs->b64_size);
+            dist += get_svt_psy_full_dist(
                 filt,
                 buffer_index,
                 stride_y,
@@ -4129,7 +4128,7 @@ static uint32_t filt_unfilt_dist(
                 ppcs->scs->b64_size,
                 ppcs->scs->b64_size,
                 (uint8_t)is_highbd,
-                ppcs->scs->static_config.psy_rd));
+                ppcs->scs->static_config.psy_rd);
 
         }
     }
