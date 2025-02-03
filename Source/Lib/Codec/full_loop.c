@@ -1483,12 +1483,17 @@ void svt_av1_perform_noise_normalization(MacroblockPlane *p,
         return;
     }
 
-    uint8_t noisenorm_strength = pcs->scs->static_config.noise_norm_strength;
+    uint8_t noisenorm_strength;
 
-    // If tune is 3 & noisenorm_strength is 0, set noisenorm_strength to 3
-    if (noisenorm_strength < 1 && tune == 3) {
+    // If noise_norm_strength wasn't explicitly set (255) and tune is 3, use strength 3
+    if (pcs->scs->static_config.noise_norm_strength == 255 && tune == 3) {
         noisenorm_strength = 3;
+    } else {
+        noisenorm_strength = pcs->scs->static_config.noise_norm_strength;
     }
+
+    // If strength is 255 (not set) and tune isn't 3, use 0
+    if (noisenorm_strength == 255) noisenorm_strength = 0;
 
     // If noisenorm_strength is 0, terminate early
     if (noisenorm_strength < 1) {

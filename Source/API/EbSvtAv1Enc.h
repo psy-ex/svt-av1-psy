@@ -1073,7 +1073,8 @@ typedef struct EbSvtAv1EncConfiguration {
      * to boost AC coefficients in low-noise blocks.
      * Min value is 0.
      * Max value is 4.
-     * Default is 3.
+     * Default is 0, or 3 when tune=3.
+     * Set to 255 to indicate not explicitly set by user.
      */
     uint8_t noise_norm_strength;
 

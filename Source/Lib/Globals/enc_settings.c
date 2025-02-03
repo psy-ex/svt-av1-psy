@@ -924,7 +924,7 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
-    if (config->noise_norm_strength > 4) {
+    if (config->noise_norm_strength != 255 && config->noise_norm_strength > 4) {
         SVT_ERROR("Instance %u: Noise normalization strength must be between 0 and 4\n", channel_number + 1);
         return_error = EB_ErrorBadParameter;
     }
@@ -1106,7 +1106,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->adaptive_film_grain               = TRUE;
     config_ptr->tf_strength                       = 1;
     config_ptr->kf_tf_strength                    = 1;
-    config_ptr->noise_norm_strength               = 0;
+    config_ptr->noise_norm_strength               = 255; // Special value indicating not set
     return return_error;
 }
 
@@ -1243,37 +1243,47 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
 
         switch (config->enable_tf) {
             case 2:
-                if (config->noise_norm_strength < 1 && config->tune == 3) {
-                    SVT_INFO("SVT [config]: Temporal Filtering Strength / Noise Normalization Strength \t: %s / 3\n",
-                            "auto");
-                } else if (config->noise_norm_strength < 1) {
+                if (config->noise_norm_strength == 255 && config->tune != 3) {
+                    // Noise normalization strength is unset and tune is not 3
                     SVT_INFO("SVT [config]: Temporal Filtering Strength \t\t\t\t\t: %s\n",
                             "auto");
-                } else {
+                } else if (config->noise_norm_strength != 0) {
+                    // Print both TF and noise normalization strength
                     SVT_INFO("SVT [config]: Temporal Filtering Strength / Noise Normalization Strength \t: %s / %d\n",
                             "auto",
-                            config->noise_norm_strength);
+                            (config->noise_norm_strength == 255 && config->tune == 3) ? 3 : config->noise_norm_strength);
+                } else {
+                    // Noise normalization strength is zero
+                    SVT_INFO("SVT [config]: Temporal Filtering Strength \t\t\t\t\t: %s\n",
+                            "auto");
                 }
 
                 SVT_INFO("SVT [config]: Keyframe TF Strength \t\t\t\t\t\t: %s\n",
                         "auto");
                 break;
             default:
-                if (config->enable_tf == 0 && config->noise_norm_strength < 1) {
-                    // don't print anything
-                } else if (config->enable_tf == 0) {
-                    SVT_INFO("SVT [config]: Noise Normalization Strength \t\t\t\t\t: %d\n",
-                            config->noise_norm_strength);
-                } else if (config->noise_norm_strength < 1 && config->tune == 3) {
-                    SVT_INFO("SVT [config]: Temporal Filtering Strength / Noise Normalization Strength \t: %d / 3\n",
-                            config->tf_strength);
-                } else if (config->noise_norm_strength < 1) {
+                if (config->enable_tf == 0) {
+                    if (config->noise_norm_strength == 255 && config->tune == 3) {
+                        // Noise normalization strength is unset and tune is 3
+                        SVT_INFO("SVT [config]: Noise Normalization Strength \t\t\t\t\t: 3\n");
+                    } else if (config->noise_norm_strength != 255 && config->noise_norm_strength != 0) {
+                        // Noise normalization strength is explicitly set and not zero
+                        SVT_INFO("SVT [config]: Noise Normalization Strength \t\t\t\t\t: %d\n",
+                                config->noise_norm_strength);
+                    }
+                } else if (config->noise_norm_strength == 255 && config->tune != 3) {
+                    // Noise normalization strength is unset and tune is not 3
                     SVT_INFO("SVT [config]: Temporal Filtering Strength \t\t\t\t\t: %d\n",
                             config->tf_strength);
-                } else {
+                } else if (config->noise_norm_strength != 0) {
+                    // Print both TF and noise normalization strength
                     SVT_INFO("SVT [config]: Temporal Filtering Strength / Noise Normalization Strength \t: %d / %d\n",
                             config->tf_strength,
-                            config->noise_norm_strength);
+                            (config->noise_norm_strength == 255 && config->tune == 3) ? 3 : config->noise_norm_strength);
+                } else {
+                    // Noise normalization strength is zero
+                    SVT_INFO("SVT [config]: Temporal Filtering Strength \t\t\t\t\t: %d\n",
+                            config->tf_strength);
                 }
 
                 if (config->kf_tf_strength > 0 && config->enable_tf == 1) {
