@@ -3094,11 +3094,13 @@ static void write_film_grain_params(PictureParentControlSet *pcs, struct AomWrit
     } else
         pars->update_parameters = 1;
 
+    double strength = 0.75;
+
     // Scaling functions parameters
     svt_aom_wb_write_literal(wb, pars->num_y_points, 4); // max 14
     for (int32_t i = 0; i < pars->num_y_points; i++) {
         svt_aom_wb_write_literal(wb, pars->scaling_points_y[i][0], 8);
-        svt_aom_wb_write_literal(wb, pars->scaling_points_y[i][1], 8);
+        svt_aom_wb_write_literal(wb, (int32_t)(pars->scaling_points_y[i][1] * strength), 8);
     }
 
     if (!pcs->scs->seq_header.color_config.mono_chrome)
@@ -3115,13 +3117,13 @@ static void write_film_grain_params(PictureParentControlSet *pcs, struct AomWrit
         svt_aom_wb_write_literal(wb, pars->num_cb_points, 4); // max 10
         for (int32_t i = 0; i < pars->num_cb_points; i++) {
             svt_aom_wb_write_literal(wb, pars->scaling_points_cb[i][0], 8);
-            svt_aom_wb_write_literal(wb, pars->scaling_points_cb[i][1], 8);
+            svt_aom_wb_write_literal(wb, (int32_t)(pars->scaling_points_cb[i][1] * strength), 8);
         }
 
         svt_aom_wb_write_literal(wb, pars->num_cr_points, 4); // max 10
         for (int32_t i = 0; i < pars->num_cr_points; i++) {
             svt_aom_wb_write_literal(wb, pars->scaling_points_cr[i][0], 8);
-            svt_aom_wb_write_literal(wb, pars->scaling_points_cr[i][1], 8);
+            svt_aom_wb_write_literal(wb, (int32_t)(pars->scaling_points_cr[i][1] * strength), 8);
         }
     }
 
@@ -3139,13 +3141,19 @@ static void write_film_grain_params(PictureParentControlSet *pcs, struct AomWrit
         ++num_pos_chroma;
 
     if (pars->num_y_points)
-        for (int32_t i = 0; i < num_pos_luma; i++) svt_aom_wb_write_literal(wb, pars->ar_coeffs_y[i] + 128, 8);
+        for (int32_t i = 0; i < num_pos_luma; i++) {
+            svt_aom_wb_write_literal(wb, (int32_t)(pars->ar_coeffs_y[i] * strength / 2) + 128, 8);
+        }
 
     if (pars->num_cb_points || pars->chroma_scaling_from_luma)
-        for (int32_t i = 0; i < num_pos_chroma; i++) svt_aom_wb_write_literal(wb, pars->ar_coeffs_cb[i] + 128, 8);
+        for (int32_t i = 0; i < num_pos_chroma; i++) {
+            svt_aom_wb_write_literal(wb, (int32_t)(pars->ar_coeffs_cb[i] * strength / 2) + 128, 8);
+        }
 
     if (pars->num_cr_points || pars->chroma_scaling_from_luma)
-        for (int32_t i = 0; i < num_pos_chroma; i++) svt_aom_wb_write_literal(wb, pars->ar_coeffs_cr[i] + 128, 8);
+        for (int32_t i = 0; i < num_pos_chroma; i++) {
+            svt_aom_wb_write_literal(wb, (int32_t)(pars->ar_coeffs_cr[i] * strength / 2) + 128, 8);
+        }
 
     svt_aom_wb_write_literal(wb, pars->ar_coeff_shift - 6, 2); // 8 + value
 
