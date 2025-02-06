@@ -2328,7 +2328,8 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
                                          ctx->blk_geom->bwidth,
                                          ctx->blk_geom->bheight >> shift,
                                          hbd,
-                                         scs->static_config.psy_rd);
+                                         scs->static_config.psy_rd)
+                << shift;
             break;
         case 1:
             sse = spatial_full_dist_type_fun(input_pic->buffer_cb,
@@ -2360,15 +2361,15 @@ static void model_rd_for_sb(PictureControlSet *pcs, EbPictureBufferDesc *predict
                                              ctx->blk_geom->bwidth_uv,
                                              ctx->blk_geom->bheight_uv);
             sse += get_svt_psy_full_dist(input_pic->buffer_cr,
-                                            input_chroma_offset,
-                                            input_pic->stride_cr,
-                                            prediction_ptr->buffer_cr,
-                                            prediction_chroma_offset,
-                                            prediction_ptr->stride_cr,
-                                            ctx->blk_geom->bwidth_uv,
-                                            ctx->blk_geom->bheight_uv,
-                                            hbd,
-                                            scs->static_config.psy_rd);
+                                         input_chroma_offset,
+                                         input_pic->stride_cr,
+                                         prediction_ptr->buffer_cr,
+                                         prediction_chroma_offset,
+                                         prediction_ptr->stride_cr,
+                                         ctx->blk_geom->bwidth_uv,
+                                         ctx->blk_geom->bheight_uv,
+                                         hbd,
+                                         scs->static_config.psy_rd);
             break;
         }
         if (ctx->ifs_ctrls.skip_sse_rd_model) {
@@ -2555,6 +2556,17 @@ static void interpolation_filter_search(PictureControlSet *pcs, ModeDecisionCont
         if (scs->vq_ctrls.sharpness_ctrls.ifs && pcs->ppcs->is_noise_level) {
             if (filter_sets[i][0] == 1 || filter_sets[i][1] == 1)
                 tmp_rd = (tmp_rd * ifs_smooth_bias[pcs->picture_qp]) / 100;
+        }
+
+        // spy-rd: bias RD towards picking sharper interpolation filters
+        if (scs->static_config.spy_rd) {
+            // SHARP filter on either x or y axis
+            if (filter_sets[i][0] == 2 || filter_sets[i][1] == 2)
+                tmp_rd = (tmp_rd * 75) / 100;
+
+            // REG filter on either x or y axis
+            if (filter_sets[i][0] == 0 || filter_sets[i][1] == 0)
+                tmp_rd = (tmp_rd * 80) / 100;
         }
 
         // Update best interpoaltion filter

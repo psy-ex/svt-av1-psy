@@ -996,25 +996,31 @@ static void fast_loop_core_light_pd0(ModeDecisionCandidateBuffer *cand_bf, Pictu
             uint8_t                *src_y  = input_pic->buffer_y + input_origin_index;
             *(cand_bf->fast_cost)          = fn_ptr->vf(pred_y, ref_pic->stride_y, src_y, input_pic->stride_y, &sse);
         } else {
-            *(cand_bf->fast_cost) = (uint32_t)(svt_spatial_full_distortion_kernel(input_pic->buffer_y,
-                                                                                  input_origin_index,
-                                                                                  input_pic->stride_y << 1,
-                                                                                  ref_pic->buffer_y,
-                                                                                  ref_origin_index,
-                                                                                  ref_pic->stride_y << 1,
-                                                                                  ctx->blk_geom->bwidth,
-                                                                                  ctx->blk_geom->bheight >> 1))
+            *(cand_bf->fast_cost) = svt_spatial_full_distortion_kernel_facade(input_pic->buffer_y,
+                                                                              input_origin_index,
+                                                                              input_pic->stride_y << 1,
+                                                                              ref_pic->buffer_y,
+                                                                              ref_origin_index,
+                                                                              ref_pic->stride_y << 1,
+                                                                              ctx->blk_geom->bwidth,
+                                                                              ctx->blk_geom->bheight >> 1,
+                                                                              ctx->hbd_md,
+                                                                              cand_bf->cand->pred_mode,
+                                                                              cand_bf->cand->interinter_comp.type,
+                                                                              pcs->temporal_layer_index,
+                                                                              pcs->scs->static_config.psy_rd,
+                                                                              pcs->scs->static_config.spy_rd)
                 << 1;
-            *(cand_bf->fast_cost) += (uint32_t)(get_svt_psy_full_dist(input_pic->buffer_y,
-                                                                      input_origin_index,
-                                                                      input_pic->stride_y << 1,
-                                                                      ref_pic->buffer_y,
-                                                                      ref_origin_index,
-                                                                      ref_pic->stride_y << 1,
-                                                                      ctx->blk_geom->bwidth,
-                                                                      ctx->blk_geom->bheight >> 1,
-                                                                      ctx->hbd_md,
-                                                                      pcs->ppcs->scs->static_config.psy_rd))
+            *(cand_bf->fast_cost) += get_svt_psy_full_dist(input_pic->buffer_y,
+                                                           input_origin_index,
+                                                           input_pic->stride_y << 1,
+                                                           ref_pic->buffer_y,
+                                                           ref_origin_index,
+                                                           ref_pic->stride_y << 1,
+                                                           ctx->blk_geom->bwidth,
+                                                           ctx->blk_geom->bheight >> 1,
+                                                           ctx->hbd_md,
+                                                           pcs->ppcs->scs->static_config.psy_rd)
                 << 1;
         }
     } else {
@@ -1044,7 +1050,7 @@ static void fast_loop_core_light_pd0(ModeDecisionCandidateBuffer *cand_bf, Pictu
 // Light PD1 fast loop core; assumes luma only, 8bit only, and that SSD is not used.
 static void fast_loop_core_light_pd1(ModeDecisionCandidateBuffer *cand_bf, PictureControlSet *pcs,
                                      ModeDecisionContext *ctx, EbPictureBufferDesc *input_pic, BlockLocation *loc) {
-    uint32_t       luma_fast_dist;
+    uint64_t       luma_fast_dist;
     const uint32_t fast_lambda = ctx->fast_lambda_md[EB_8_BIT_MD];
 
     ModeDecisionCandidate *cand = cand_bf->cand;
@@ -1134,8 +1140,8 @@ static void obmc_trans_face_off(ModeDecisionCandidateBuffer *cand_bf, PictureCon
 
         if (is_inter_mode(cand_bf->cand->pred_mode) && is_obmc_allowed && cand->motion_mode == SIMPLE_TRANSLATION &&
             cand->is_interintra_used == 0) {
-            uint32_t luma_fast_dist;
-            uint32_t chroma_fast_distortion = 0;
+            uint64_t luma_fast_dist;
+            uint64_t chroma_fast_distortion = 0;
 
             // Take a copy of the simple-translation results
             uint64_t simple_translation_cost                 = *(cand_bf->fast_cost);
@@ -1152,9 +1158,7 @@ static void obmc_trans_face_off(ModeDecisionCandidateBuffer *cand_bf, PictureCon
 
             // Distortion
             if (ctx->mds0_ctrls.mds0_dist_type == SSD) {
-                EbSpatialFullDistType spatial_full_dist_type_fun = ctx->hbd_md ? svt_full_distortion_kernel16_bits
-                                                                               : svt_spatial_full_distortion_kernel;
-                luma_fast_dist = (uint32_t)(spatial_full_dist_type_fun(
+                luma_fast_dist = svt_spatial_full_distortion_kernel_facade(
                     input_pic->buffer_y,
                     input_origin_index,
                     input_pic->stride_y,
@@ -1162,17 +1166,23 @@ static void obmc_trans_face_off(ModeDecisionCandidateBuffer *cand_bf, PictureCon
                     (int32_t)cu_origin_index,
                     pred->stride_y,
                     ctx->blk_geom->bwidth,
-                    ctx->blk_geom->bheight));
-                luma_fast_dist += (uint32_t)(get_svt_psy_full_dist(input_pic->buffer_y,
-                                                                   input_origin_index,
-                                                                   input_pic->stride_y,
-                                                                   pred->buffer_y,
-                                                                   cu_origin_index,
-                                                                   pred->stride_y,
-                                                                   ctx->blk_geom->bwidth,
-                                                                   ctx->blk_geom->bheight,
-                                                                   ctx->hbd_md,
-                                                                   pcs->scs->static_config.psy_rd));
+                    ctx->blk_geom->bheight,
+                    ctx->hbd_md,
+                    cand_bf->cand->pred_mode,
+                    cand_bf->cand->interinter_comp.type,
+                    pcs->temporal_layer_index,
+                    pcs->scs->static_config.psy_rd,
+                    pcs->scs->static_config.spy_rd);
+                luma_fast_dist += get_svt_psy_full_dist(input_pic->buffer_y,
+                                                        input_origin_index,
+                                                        input_pic->stride_y,
+                                                        pred->buffer_y,
+                                                        cu_origin_index,
+                                                        pred->stride_y,
+                                                        ctx->blk_geom->bwidth,
+                                                        ctx->blk_geom->bheight,
+                                                        ctx->hbd_md,
+                                                        pcs->scs->static_config.psy_rd);
                 cand_bf->luma_fast_dist = luma_fast_dist;
             } else if (ctx->mds0_ctrls.mds0_dist_type == VAR) {
                 if (!ctx->hbd_md) {
@@ -1198,63 +1208,63 @@ static void obmc_trans_face_off(ModeDecisionCandidateBuffer *cand_bf, PictureCon
                 assert(ctx->mds0_ctrls.mds0_dist_type == SAD);
                 assert((ctx->blk_geom->bwidth >> 3) < 17);
                 if (!ctx->hbd_md) {
-                    cand_bf->luma_fast_dist = (uint32_t)(luma_fast_dist = svt_nxm_sad_kernel_sub_sampled(
+                    cand_bf->luma_fast_dist = luma_fast_dist = svt_nxm_sad_kernel_sub_sampled(
                                                              input_pic->buffer_y + input_origin_index,
                                                              input_pic->stride_y,
                                                              pred->buffer_y + cu_origin_index,
                                                              pred->stride_y,
                                                              ctx->blk_geom->bheight,
-                                                             ctx->blk_geom->bwidth));
+                                                             ctx->blk_geom->bwidth);
                 } else {
-                    cand_bf->luma_fast_dist = (uint32_t)(luma_fast_dist = sad_16b_kernel(
+                    cand_bf->luma_fast_dist = luma_fast_dist = sad_16b_kernel(
                                                              ((uint16_t *)input_pic->buffer_y) + input_origin_index,
                                                              input_pic->stride_y,
                                                              ((uint16_t *)pred->buffer_y) + cu_origin_index,
                                                              pred->stride_y,
                                                              ctx->blk_geom->bheight,
-                                                             ctx->blk_geom->bwidth));
+                                                             ctx->blk_geom->bwidth);
                 }
             }
             if (ctx->blk_geom->has_uv && ctx->uv_ctrls.uv_mode <= CHROMA_MODE_1 && ctx->mds_skip_uv_pred == FALSE) {
+                EbSpatialFullDistType spatial_full_dist_type_fun = ctx->hbd_md ? svt_full_distortion_kernel16_bits
+                                                                       : svt_spatial_full_distortion_kernel;
                 if (ctx->mds0_ctrls.mds0_dist_type == SSD) {
-                    EbSpatialFullDistType spatial_full_dist_type_fun = ctx->hbd_md ? svt_full_distortion_kernel16_bits
-                                                                                   : svt_spatial_full_distortion_kernel;
-                    chroma_fast_distortion = (uint32_t)spatial_full_dist_type_fun(input_pic->buffer_cb,
-                                                                                  input_cb_origin_in_index,
-                                                                                  input_pic->stride_cb,
-                                                                                  cand_bf->pred->buffer_cb,
-                                                                                  (int32_t)cu_chroma_origin_index,
-                                                                                  pred->stride_cb,
-                                                                                  ctx->blk_geom->bwidth_uv,
-                                                                                  ctx->blk_geom->bheight_uv);
-                    chroma_fast_distortion += (uint32_t)get_svt_psy_full_dist(input_pic->buffer_cb,
-                                                                              input_cb_origin_in_index,
-                                                                              input_pic->stride_cb,
-                                                                              cand_bf->pred->buffer_cb,
-                                                                              cu_chroma_origin_index,
-                                                                              pred->stride_cb,
-                                                                              ctx->blk_geom->bwidth_uv,
-                                                                              ctx->blk_geom->bheight_uv,
-                                                                              ctx->hbd_md,
-                                                                              pcs->scs->static_config.psy_rd);
-                    chroma_fast_distortion += (uint32_t)spatial_full_dist_type_fun(input_pic->buffer_cr,
-                                                                                   input_cr_origin_in_index,
-                                                                                   input_pic->stride_cb,
-                                                                                   cand_bf->pred->buffer_cr,
-                                                                                   (int32_t)cu_chroma_origin_index,
-                                                                                   pred->stride_cr,
-                                                                                   ctx->blk_geom->bwidth_uv,
-                                                                                   ctx->blk_geom->bheight_uv);
-                    chroma_fast_distortion += (uint32_t)get_svt_psy_full_dist(input_pic->buffer_cr,
-                                                                              input_cr_origin_in_index,
-                                                                              input_pic->stride_cr,
-                                                                              cand_bf->pred->buffer_cr,
-                                                                              cu_chroma_origin_index,
-                                                                              pred->stride_cr,
-                                                                              ctx->blk_geom->bwidth_uv,
-                                                                              ctx->blk_geom->bheight_uv,
-                                                                              ctx->hbd_md,
-                                                                              pcs->scs->static_config.psy_rd);
+                    chroma_fast_distortion = spatial_full_dist_type_fun(input_pic->buffer_cb,
+                                                                        input_cb_origin_in_index,
+                                                                        input_pic->stride_cb,
+                                                                        cand_bf->pred->buffer_cb,
+                                                                        (int32_t)cu_chroma_origin_index,
+                                                                        pred->stride_cb,
+                                                                        ctx->blk_geom->bwidth_uv,
+                                                                        ctx->blk_geom->bheight_uv);
+                    chroma_fast_distortion += get_svt_psy_full_dist(input_pic->buffer_cb,
+                                                                    input_cb_origin_in_index,
+                                                                    input_pic->stride_cb,
+                                                                    cand_bf->pred->buffer_cb,
+                                                                    cu_chroma_origin_index,
+                                                                    pred->stride_cb,
+                                                                    ctx->blk_geom->bwidth_uv,
+                                                                    ctx->blk_geom->bheight_uv,
+                                                                    ctx->hbd_md,
+                                                                    pcs->scs->static_config.psy_rd);
+                    chroma_fast_distortion += spatial_full_dist_type_fun(input_pic->buffer_cr,
+                                                                         input_cr_origin_in_index,
+                                                                         input_pic->stride_cb,
+                                                                         cand_bf->pred->buffer_cr,
+                                                                         (int32_t)cu_chroma_origin_index,
+                                                                         pred->stride_cr,
+                                                                         ctx->blk_geom->bwidth_uv,
+                                                                         ctx->blk_geom->bheight_uv);
+                    chroma_fast_distortion += get_svt_psy_full_dist(input_pic->buffer_cr,
+                                                                    input_cr_origin_in_index,
+                                                                    input_pic->stride_cr,
+                                                                    cand_bf->pred->buffer_cr,
+                                                                    cu_chroma_origin_index,
+                                                                    pred->stride_cr,
+                                                                    ctx->blk_geom->bwidth_uv,
+                                                                    ctx->blk_geom->bheight_uv,
+                                                                    ctx->hbd_md,
+                                                                    pcs->scs->static_config.psy_rd);
                 } else {
                     assert((ctx->blk_geom->bwidth_uv >> 3) < 17);
 
@@ -1325,8 +1335,8 @@ void fast_loop_core(ModeDecisionCandidateBuffer *cand_bf, PictureControlSet *pcs
     const uint32_t input_cr_origin_in_index = loc->input_cb_origin_in_index;
     const uint32_t cu_origin_index          = loc->blk_origin_index;
     const uint32_t cu_chroma_origin_index   = loc->blk_chroma_origin_index;
-    uint32_t       luma_fast_dist;
-    uint32_t       chroma_fast_distortion = 0;
+    uint64_t       luma_fast_dist;
+    uint64_t       chroma_fast_distortion = 0;
     uint32_t       full_lambda = ctx->hbd_md ? ctx->full_lambda_md[EB_10_BIT_MD] : ctx->full_lambda_md[EB_8_BIT_MD];
     uint32_t       fast_lambda = ctx->hbd_md ? ctx->fast_lambda_md[EB_10_BIT_MD] : ctx->fast_lambda_md[EB_8_BIT_MD];
 
@@ -1342,24 +1352,24 @@ void fast_loop_core(ModeDecisionCandidateBuffer *cand_bf, PictureControlSet *pcs
     if (ctx->mds0_ctrls.mds0_dist_type == SSD) {
         EbSpatialFullDistType spatial_full_dist_type_fun = ctx->hbd_md ? svt_full_distortion_kernel16_bits
                                                                        : svt_spatial_full_distortion_kernel;
-        luma_fast_dist = (uint32_t)(spatial_full_dist_type_fun(input_pic->buffer_y,
-                                                               input_origin_index,
-                                                               input_pic->stride_y,
-                                                               pred->buffer_y,
-                                                               (int32_t)cu_origin_index,
-                                                               pred->stride_y,
-                                                               ctx->blk_geom->bwidth,
-                                                               ctx->blk_geom->bheight));
-        luma_fast_dist += (uint32_t)(get_svt_psy_full_dist(input_pic->buffer_y,
-                                                           input_origin_index,
-                                                           input_pic->stride_y,
-                                                           pred->buffer_y,
-                                                           cu_origin_index,
-                                                           pred->stride_y,
-                                                           ctx->blk_geom->bwidth,
-                                                           ctx->blk_geom->bheight,
-                                                           ctx->hbd_md,
-                                                           pcs->scs->static_config.psy_rd));
+        luma_fast_dist = spatial_full_dist_type_fun(input_pic->buffer_y,
+                                                    input_origin_index,
+                                                    input_pic->stride_y,
+                                                    pred->buffer_y,
+                                                    (int32_t)cu_origin_index,
+                                                    pred->stride_y,
+                                                    ctx->blk_geom->bwidth,
+                                                    ctx->blk_geom->bheight);
+        luma_fast_dist += get_svt_psy_full_dist(input_pic->buffer_y,
+                                                input_origin_index,
+                                                input_pic->stride_y,
+                                                pred->buffer_y,
+                                                cu_origin_index,
+                                                pred->stride_y,
+                                                ctx->blk_geom->bwidth,
+                                                ctx->blk_geom->bheight,
+                                                ctx->hbd_md,
+                                                pcs->scs->static_config.psy_rd);
         cand_bf->luma_fast_dist = luma_fast_dist;
     } else if (ctx->mds0_ctrls.mds0_dist_type == VAR) {
         if (!ctx->hbd_md) {
@@ -1389,63 +1399,63 @@ void fast_loop_core(ModeDecisionCandidateBuffer *cand_bf, PictureControlSet *pcs
         assert(ctx->mds0_ctrls.mds0_dist_type == SAD);
         assert((ctx->blk_geom->bwidth >> 3) < 17);
         if (!ctx->hbd_md) {
-            cand_bf->luma_fast_dist = (uint32_t)(luma_fast_dist = svt_nxm_sad_kernel_sub_sampled(
+            cand_bf->luma_fast_dist = luma_fast_dist = svt_nxm_sad_kernel_sub_sampled(
                                                      input_pic->buffer_y + input_origin_index,
                                                      input_pic->stride_y,
                                                      pred->buffer_y + cu_origin_index,
                                                      pred->stride_y,
                                                      ctx->blk_geom->bheight,
-                                                     ctx->blk_geom->bwidth));
+                                                     ctx->blk_geom->bwidth);
         } else {
-            cand_bf->luma_fast_dist = (uint32_t)(luma_fast_dist = sad_16b_kernel(
+            cand_bf->luma_fast_dist = luma_fast_dist = sad_16b_kernel(
                                                      ((uint16_t *)input_pic->buffer_y) + input_origin_index,
                                                      input_pic->stride_y,
                                                      ((uint16_t *)pred->buffer_y) + cu_origin_index,
                                                      pred->stride_y,
                                                      ctx->blk_geom->bheight,
-                                                     ctx->blk_geom->bwidth));
+                                                     ctx->blk_geom->bwidth);
         }
     }
     if (ctx->blk_geom->has_uv && ctx->uv_ctrls.uv_mode <= CHROMA_MODE_1 && ctx->mds_skip_uv_pred == FALSE) {
         if (ctx->mds0_ctrls.mds0_dist_type == SSD) {
             EbSpatialFullDistType spatial_full_dist_type_fun = ctx->hbd_md ? svt_full_distortion_kernel16_bits
                                                                            : svt_spatial_full_distortion_kernel;
-            chroma_fast_distortion = (uint32_t)spatial_full_dist_type_fun(input_pic->buffer_cb,
-                                                                          input_cb_origin_in_index,
-                                                                          input_pic->stride_cb,
-                                                                          cand_bf->pred->buffer_cb,
-                                                                          (int32_t)cu_chroma_origin_index,
-                                                                          pred->stride_cb,
-                                                                          ctx->blk_geom->bwidth_uv,
-                                                                          ctx->blk_geom->bheight_uv);
-            chroma_fast_distortion += (uint32_t)get_svt_psy_full_dist(input_pic->buffer_cb,
-                                                                      input_cb_origin_in_index,
-                                                                      input_pic->stride_cb,
-                                                                      cand_bf->pred->buffer_cb,
-                                                                      cu_chroma_origin_index,
-                                                                      pred->stride_cb,
-                                                                      ctx->blk_geom->bwidth_uv,
-                                                                      ctx->blk_geom->bheight_uv,
-                                                                      ctx->hbd_md,
-                                                                      pcs->scs->static_config.psy_rd);
-            chroma_fast_distortion += (uint32_t)spatial_full_dist_type_fun(input_pic->buffer_cr,
-                                                                           input_cr_origin_in_index,
-                                                                           input_pic->stride_cb, // Was stride_cb ... may have been wrong?
-                                                                           cand_bf->pred->buffer_cr,
-                                                                           (int32_t)cu_chroma_origin_index,
-                                                                           pred->stride_cr,
-                                                                           ctx->blk_geom->bwidth_uv,
-                                                                           ctx->blk_geom->bheight_uv);
-            chroma_fast_distortion += (uint32_t)get_svt_psy_full_dist(input_pic->buffer_cr,
-                                                                      input_cr_origin_in_index,
-                                                                      input_pic->stride_cr,
-                                                                      cand_bf->pred->buffer_cr,
-                                                                      cu_chroma_origin_index,
-                                                                      pred->stride_cr,
-                                                                      ctx->blk_geom->bwidth_uv,
-                                                                      ctx->blk_geom->bheight_uv,
-                                                                      ctx->hbd_md,
-                                                                      pcs->scs->static_config.psy_rd);
+            chroma_fast_distortion = spatial_full_dist_type_fun(input_pic->buffer_cb,
+                                                                input_cb_origin_in_index,
+                                                                input_pic->stride_cb,
+                                                                cand_bf->pred->buffer_cb,
+                                                                (int32_t)cu_chroma_origin_index,
+                                                                pred->stride_cb,
+                                                                ctx->blk_geom->bwidth_uv,
+                                                                ctx->blk_geom->bheight_uv);
+            chroma_fast_distortion += get_svt_psy_full_dist(input_pic->buffer_cb,
+                                                            input_cb_origin_in_index,
+                                                            input_pic->stride_cb,
+                                                            cand_bf->pred->buffer_cb,
+                                                            cu_chroma_origin_index,
+                                                            pred->stride_cb,
+                                                            ctx->blk_geom->bwidth_uv,
+                                                            ctx->blk_geom->bheight_uv,
+                                                            ctx->hbd_md,
+                                                            pcs->scs->static_config.psy_rd);
+            chroma_fast_distortion += spatial_full_dist_type_fun(input_pic->buffer_cr,
+                                                                 input_cr_origin_in_index,
+                                                                 input_pic->stride_cr,
+                                                                 cand_bf->pred->buffer_cr,
+                                                                 (int32_t)cu_chroma_origin_index,
+                                                                 pred->stride_cr,
+                                                                 ctx->blk_geom->bwidth_uv,
+                                                                 ctx->blk_geom->bheight_uv);
+            chroma_fast_distortion += get_svt_psy_full_dist(input_pic->buffer_cr,
+                                                            input_cr_origin_in_index,
+                                                            input_pic->stride_cr,
+                                                            cand_bf->pred->buffer_cr,
+                                                            cu_chroma_origin_index,
+                                                            pred->stride_cr,
+                                                            ctx->blk_geom->bwidth_uv,
+                                                            ctx->blk_geom->bheight_uv,
+                                                            ctx->hbd_md,
+                                                            pcs->scs->static_config.psy_rd);
         } else {
             assert((ctx->blk_geom->bwidth_uv >> 3) < 17);
 
@@ -2007,7 +2017,7 @@ static void md_full_pel_search(PictureControlSet *pcs, ModeDecisionContext *ctx,
                                               : ctx->fast_lambda_md[hbd_md ? EB_10_BIT_MD : EB_8_BIT_MD];
     svt_init_mv_cost_params(
         &mv_cost_params, ctx, &ctx->ref_mv, frm_hdr->quantization_params.base_q_idx, rdmult, hbd_md);
-    uint32_t cost;
+    uint64_t cost;
     // Search area adjustment
     if ((ctx->blk_org_x + (mvx >> 3) + search_position_start_x) < (-ref_pic->org_x + 1))
         search_position_start_x = (-ref_pic->org_x + 1) - (ctx->blk_org_x + (mvx >> 3));
@@ -2084,24 +2094,24 @@ static void md_full_pel_search(PictureControlSet *pcs, ModeDecisionContext *ctx,
                 EbSpatialFullDistType spatial_full_dist_type_fun = hbd_md ? svt_full_distortion_kernel16_bits
                                                                           : svt_spatial_full_distortion_kernel;
 
-                cost = (uint32_t)spatial_full_dist_type_fun(input_pic->buffer_y,
-                                                            input_origin_index,
-                                                            input_pic->stride_y,
-                                                            ref_pic->buffer_y,
-                                                            ref_origin_index,
-                                                            ref_pic->stride_y,
-                                                            ctx->blk_geom->bwidth,
-                                                            ctx->blk_geom->bheight);
-                cost += (uint32_t)get_svt_psy_full_dist(input_pic->buffer_y,
-                                                         input_origin_index,
-                                                         input_pic->stride_y,
-                                                         ref_pic->buffer_y,
-                                                         ref_origin_index,
-                                                         ref_pic->stride_y,
-                                                         ctx->blk_geom->bwidth,
-                                                         ctx->blk_geom->bheight,
-                                                         ctx->hbd_md,
-                                                         pcs->scs->static_config.psy_rd);
+                cost = spatial_full_dist_type_fun(input_pic->buffer_y,
+                                                  input_origin_index,
+                                                  input_pic->stride_y,
+                                                  ref_pic->buffer_y,
+                                                  ref_origin_index,
+                                                  ref_pic->stride_y,
+                                                  ctx->blk_geom->bwidth,
+                                                  ctx->blk_geom->bheight);
+                cost += get_svt_psy_full_dist(input_pic->buffer_y,
+                                              input_origin_index,
+                                              input_pic->stride_y,
+                                              ref_pic->buffer_y,
+                                              ref_origin_index,
+                                              ref_pic->stride_y,
+                                              ctx->blk_geom->bwidth,
+                                              ctx->blk_geom->bheight,
+                                              ctx->hbd_md,
+                                              pcs->scs->static_config.psy_rd);
             } else {
                 assert((ctx->blk_geom->bwidth >> 3) < 17);
                 /* Might be able to add PSY distortion here too */
@@ -4466,13 +4476,20 @@ static void perform_tx_light_pd0(PictureControlSet *pcs, ModeDecisionContext *ct
         bwidth  = txbwidth < 64 ? txbwidth : 32;
         bheight = txbheight < 64 ? txbheight : 32;
     }
-    svt_aom_picture_full_distortion32_bits_single(transf_coeff,
+    svt_aom_picture_full_distortion32_bits_single_facade(transf_coeff,
                                                   recon_coeff,
                                                   txbwidth < 64 ? txbwidth : 32,
                                                   bwidth, // bwidth
                                                   bheight, // bheight
+                                                  txbwidth,
+                                                  txbheight,
                                                   y_full_distortion,
-                                                  cand_bf->eob.y[0]);
+                                                  cand_bf->eob.y[0],
+                                                  cand_bf->cand->pred_mode,
+                                                  cand_bf->cand->interinter_comp.type,
+                                                  pcs->temporal_layer_index,
+                                                  pcs->scs->static_config.psy_rd,
+                                                  pcs->scs->static_config.spy_rd);
     y_full_distortion[DIST_CALC_RESIDUAL] += ctx->three_quad_energy;
     const int32_t shift                   = (MAX_TX_SCALE - av1_get_tx_scale_tab[tx_size]) * 2;
     y_full_distortion[DIST_CALC_RESIDUAL] = RIGHT_SIGNED_SHIFT(y_full_distortion[DIST_CALC_RESIDUAL], shift)
@@ -4783,9 +4800,7 @@ static void tx_type_search(PictureControlSet *pcs, ModeDecisionContext *ctx, Mod
                                          PICTURE_BUFFER_DESC_Y_FLAG,
                                          ctx->hbd_md);
 
-                EbSpatialFullDistType spatial_full_dist_type_fun = ctx->hbd_md ? svt_full_distortion_kernel16_bits
-                                                                               : svt_spatial_full_distortion_kernel;
-                txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_PREDICTION] = spatial_full_dist_type_fun(
+                txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_PREDICTION] = svt_spatial_full_distortion_kernel_facade(
                     input_pic->buffer_y,
                     input_txb_origin_index,
                     input_pic->stride_y,
@@ -4793,7 +4808,13 @@ static void tx_type_search(PictureControlSet *pcs, ModeDecisionContext *ctx, Mod
                     (int32_t)txb_origin_index,
                     cand_bf->pred->stride_y,
                     cropped_tx_width,
-                    cropped_tx_height);
+                    cropped_tx_height,
+                    ctx->hbd_md,
+                    cand_bf->cand->pred_mode,
+                    cand_bf->cand->interinter_comp.type,
+                    pcs->temporal_layer_index,
+                    pcs->scs->static_config.psy_rd,
+                    pcs->scs->static_config.spy_rd);
                 txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_PREDICTION] += get_svt_psy_full_dist(
                     input_pic->buffer_y,
                     input_txb_origin_index,
@@ -4805,7 +4826,7 @@ static void tx_type_search(PictureControlSet *pcs, ModeDecisionContext *ctx, Mod
                     cropped_tx_height,
                     ctx->hbd_md,
                     pcs->scs->static_config.psy_rd);
-                txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_RESIDUAL] = spatial_full_dist_type_fun(
+                txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_RESIDUAL] = svt_spatial_full_distortion_kernel_facade(
                     input_pic->buffer_y,
                     input_txb_origin_index,
                     input_pic->stride_y,
@@ -4813,7 +4834,13 @@ static void tx_type_search(PictureControlSet *pcs, ModeDecisionContext *ctx, Mod
                     (int32_t)txb_origin_index,
                     cand_bf->recon->stride_y,
                     cropped_tx_width,
-                    cropped_tx_height);
+                    cropped_tx_height,
+                    ctx->hbd_md,
+                    cand_bf->cand->pred_mode,
+                    cand_bf->cand->interinter_comp.type,
+                    pcs->temporal_layer_index,
+                    pcs->scs->static_config.psy_rd,
+                    pcs->scs->static_config.spy_rd);
                 txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(
                     input_pic->buffer_y,
                     input_txb_origin_index,
@@ -4837,14 +4864,21 @@ static void tx_type_search(PictureControlSet *pcs, ModeDecisionContext *ctx, Mod
                     bwidth  = txbwidth < 64 ? txbwidth : 32;
                     bheight = txbheight < 64 ? txbheight : 32;
                 }
-                svt_aom_picture_full_distortion32_bits_single(
+                svt_aom_picture_full_distortion32_bits_single_facade(
                     &(((int32_t *)ctx->tx_coeffs->buffer_y)[ctx->txb_1d_offset]),
                     &(((int32_t *)recon_coeff_ptr->buffer_y)[ctx->txb_1d_offset]),
                     txbwidth < 64 ? txbwidth : 32,
                     bwidth,
                     bheight,
+                    txbwidth,
+                    txbheight,
                     txb_full_distortion_txt[DIST_SSD][tx_type],
-                    eob_txt[tx_type]);
+                    eob_txt[tx_type],
+                    cand_bf->cand->pred_mode,
+                    cand_bf->cand->interinter_comp.type,
+                    pcs->temporal_layer_index,
+                    pcs->scs->static_config.psy_rd,
+                    pcs->scs->static_config.spy_rd);
                 txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_RESIDUAL] += ctx->three_quad_energy;
                 txb_full_distortion_txt[DIST_SSD][tx_type][DIST_CALC_PREDICTION] += ctx->three_quad_energy;
                 //assert(ctx->three_quad_energy == 0 && ctx->cu_stats->size < 64);
@@ -5461,13 +5495,20 @@ static void perform_dct_dct_tx_light_pd1(PictureControlSet *pcs, ModeDecisionCon
         bheight = txbheight < 64 ? txbheight : 32;
     }
 
-    svt_aom_picture_full_distortion32_bits_single(&(((int32_t *)ctx->tx_coeffs->buffer_y)[0]),
+    svt_aom_picture_full_distortion32_bits_single_facade(&(((int32_t *)ctx->tx_coeffs->buffer_y)[0]),
                                                   &(((int32_t *)recon_coeff_ptr->buffer_y)[0]),
                                                   txbwidth < 64 ? txbwidth : 32,
                                                   bwidth,
                                                   bheight,
+                                                  txbwidth,
+                                                  txbheight,
                                                   y_full_distortion,
-                                                  cand_bf->eob.y[0]);
+                                                  cand_bf->eob.y[0],
+                                                  cand_bf->cand->pred_mode,
+                                                  cand_bf->cand->interinter_comp.type,
+                                                  pcs->temporal_layer_index,
+                                                  pcs->scs->static_config.psy_rd,
+                                                  pcs->scs->static_config.spy_rd);
     const int32_t shift                   = (MAX_TX_SCALE - av1_get_tx_scale_tab[tx_size]) * 2;
     y_full_distortion[DIST_CALC_RESIDUAL] = RIGHT_SIGNED_SHIFT(
         y_full_distortion[DIST_CALC_RESIDUAL] + ctx->three_quad_energy, shift);
@@ -5682,8 +5723,6 @@ static void perform_dct_dct_tx(PictureControlSet *pcs, ModeDecisionContext *ctx,
                                              pcs->ppcs->aligned_width - (ctx->sb_origin_x + tx_org_x));
         const int32_t cropped_tx_height = MIN((uint8_t)(ctx->blk_geom->tx_height[tx_depth] >> ctx->mds_subres_step),
                                               pcs->ppcs->aligned_height - (ctx->sb_origin_y + tx_org_y));
-        EbSpatialFullDistType spatial_full_dist_type_fun = ctx->hbd_md ? svt_full_distortion_kernel16_bits
-                                                                       : svt_spatial_full_distortion_kernel;
         if (ssim_level == SSIM_LVL_1 || ssim_level == SSIM_LVL_3) {
             y_full_distortion[DIST_SSIM][DIST_CALC_PREDICTION] = svt_spatial_full_distortion_ssim_kernel(
                 input_pic->buffer_y,
@@ -5710,14 +5749,20 @@ static void perform_dct_dct_tx(PictureControlSet *pcs, ModeDecisionContext *ctx,
             y_full_distortion[DIST_SSIM][DIST_CALC_PREDICTION] <<= 4;
             y_full_distortion[DIST_SSIM][DIST_CALC_RESIDUAL] <<= 4;
         }
-        y_full_distortion[DIST_SSD][DIST_CALC_PREDICTION] = spatial_full_dist_type_fun(input_pic->buffer_y,
+        y_full_distortion[DIST_SSD][DIST_CALC_PREDICTION] = svt_spatial_full_distortion_kernel_facade(input_pic->buffer_y,
                                                                                        input_txb_origin_index,
                                                                                        input_pic->stride_y,
                                                                                        cand_bf->pred->buffer_y,
                                                                                        (int32_t)txb_origin_index,
                                                                                        cand_bf->pred->stride_y,
                                                                                        cropped_tx_width,
-                                                                                       cropped_tx_height);
+                                                                                       cropped_tx_height,
+                                                                                       ctx->hbd_md,
+                                                                                       cand_bf->cand->pred_mode,
+                                                                                       cand_bf->cand->interinter_comp.type,
+                                                                                       pcs->temporal_layer_index,
+                                                                                       pcs->scs->static_config.psy_rd,
+                                                                                       pcs->scs->static_config.spy_rd);
         y_full_distortion[DIST_SSD][DIST_CALC_PREDICTION] += get_svt_psy_full_dist(input_pic->buffer_y,
                                                                                    input_txb_origin_index,
                                                                                    input_pic->stride_y,
@@ -5728,14 +5773,20 @@ static void perform_dct_dct_tx(PictureControlSet *pcs, ModeDecisionContext *ctx,
                                                                                    cropped_tx_height,
                                                                                    ctx->hbd_md,
                                                                                    pcs->scs->static_config.psy_rd);
-        y_full_distortion[DIST_SSD][DIST_CALC_RESIDUAL]   = spatial_full_dist_type_fun(input_pic->buffer_y,
+        y_full_distortion[DIST_SSD][DIST_CALC_RESIDUAL]   = svt_spatial_full_distortion_kernel_facade(input_pic->buffer_y,
                                                                                      input_txb_origin_index,
                                                                                      input_pic->stride_y,
                                                                                      recon_ptr->buffer_y,
                                                                                      (int32_t)txb_origin_index,
                                                                                      cand_bf->recon->stride_y,
                                                                                      cropped_tx_width,
-                                                                                     cropped_tx_height);
+                                                                                     cropped_tx_height,
+                                                                                     ctx->hbd_md,
+                                                                                     cand_bf->cand->pred_mode,
+                                                                                     cand_bf->cand->interinter_comp.type,
+                                                                                     pcs->temporal_layer_index,
+                                                                                     pcs->scs->static_config.psy_rd,
+                                                                                     pcs->scs->static_config.spy_rd);
         y_full_distortion[DIST_SSD][DIST_CALC_RESIDUAL] += get_svt_psy_full_dist(input_pic->buffer_y,
                                                                                  input_txb_origin_index,
                                                                                  input_pic->stride_y,
@@ -5762,13 +5813,20 @@ static void perform_dct_dct_tx(PictureControlSet *pcs, ModeDecisionContext *ctx,
             bheight = txbheight < 64 ? txbheight : 32;
         }
 
-        svt_aom_picture_full_distortion32_bits_single(&(((int32_t *)ctx->tx_coeffs->buffer_y)[txb_1d_offset]),
+        svt_aom_picture_full_distortion32_bits_single_facade(&(((int32_t *)ctx->tx_coeffs->buffer_y)[txb_1d_offset]),
                                                       &(((int32_t *)recon_coeff_ptr->buffer_y)[txb_1d_offset]),
                                                       txbwidth < 64 ? txbwidth : 32,
                                                       bwidth,
                                                       bheight,
+                                                      txbwidth,
+                                                      txbheight,
                                                       y_full_distortion[DIST_SSD],
-                                                      cand_bf->eob.y[txb_itr]);
+                                                      cand_bf->eob.y[txb_itr],
+                                                      cand_bf->cand->pred_mode,
+                                                      cand_bf->cand->interinter_comp.type,
+                                                      pcs->temporal_layer_index,
+                                                      pcs->scs->static_config.psy_rd,
+                                                      pcs->scs->static_config.spy_rd);
         y_full_distortion[DIST_SSD][DIST_CALC_RESIDUAL] += ctx->three_quad_energy;
         y_full_distortion[DIST_SSD][DIST_CALC_PREDICTION] += ctx->three_quad_energy;
 
@@ -8717,7 +8775,7 @@ static void lpd1_tx_shortcut_detector(PictureControlSet *pcs, ModeDecisionContex
                                       ModeDecisionCandidateBuffer **cand_bf_ptr_array) {
     const BlockGeom             *blk_geom           = ctx->blk_geom;
     const ModeDecisionCandidate *cand               = cand_bf_ptr_array[ctx->mds0_best_idx]->cand;
-    const uint32_t               best_md_stage_dist = cand_bf_ptr_array[ctx->mds0_best_idx]->luma_fast_dist;
+    const uint64_t               best_md_stage_dist = cand_bf_ptr_array[ctx->mds0_best_idx]->luma_fast_dist;
     const uint32_t               th_normalizer      = blk_geom->bheight * blk_geom->bwidth * (pcs->picture_qp >> 1);
     ctx->use_tx_shortcuts_mds3                      = (100 * best_md_stage_dist) <
         (ctx->lpd1_tx_ctrls.use_mds3_shortcuts_th * th_normalizer);
@@ -8942,7 +9000,7 @@ void tx_shortcut_detector(PictureControlSet *pcs, ModeDecisionContext *ctx,
                           ModeDecisionCandidateBuffer **cand_bf_ptr_array) {
     const BlockGeom       *blk_geom           = ctx->blk_geom;
     ModeDecisionCandidate *cand               = cand_bf_ptr_array[ctx->mds0_best_idx]->cand;
-    const uint32_t         best_md_stage_dist = cand_bf_ptr_array[ctx->mds0_best_idx]->luma_fast_dist;
+    const uint64_t         best_md_stage_dist = cand_bf_ptr_array[ctx->mds0_best_idx]->luma_fast_dist;
     const uint32_t         th_normalizer      = blk_geom->bheight * blk_geom->bwidth * (pcs->picture_qp >> 1);
     ctx->use_tx_shortcuts_mds3                = (100 * best_md_stage_dist) <
         (ctx->tx_shortcut_ctrls.use_mds3_shortcuts_th * th_normalizer);

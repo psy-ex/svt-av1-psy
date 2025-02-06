@@ -26,7 +26,7 @@ The encoder parameters are listed in this table below along with their
 | **PredStructFile**                 | --pred-struct-file   | any string   | None          | Manual prediction structure file path                                                                             |
 | **Progress**                       | --progress           | [0-2]        | 1             | Verbosity of the output [0: no progress is printed, 2: aomenc style output]                                       |
 | **NoProgress**                     | --no-progress        | [0-1]        | 0             | Do not print out progress [1: `--progress 0`, 0: `--progress 1`]                                                  |
-| **EncoderMode**                    | --preset             | [-3-13]      | 10            | Encoder preset, presets -3, -2, -1, & 13 are for debugging. Higher presets means faster encodes, but with a quality tradeoff   |
+| **EncoderMode**                    | --preset             | [-3-13]      | 10            | Encoder preset, presets -3, -2, -1, & 13 are for debugging. Higher presets means faster encodes, but with a quality tradeoff |
 | **SvtAv1Params**                   | --svtav1-params      | any string   | None          | Colon-separated list of `key=value` pairs of parameters with keys based on command line options without `--`      |
 |                                    | --nch                | [1-6]        | 1             | Number of channels (library instance) that will be instantiated                                                   |
 
@@ -59,7 +59,7 @@ For more information on valid values for specific keys, refer to the [EbEncSetti
 | **ForcedMaximumFrameWidth**      | --forced-max-frame-width    | [64-16384]                     | None        | Maximum frame width value to force.                                                                           |
 | **ForcedMaximumFrameheight**     | --forced-max-frame-height   | [64-8704]                      | None        | Maximum frame height value to force.                                                                          |
 | **FrameToBeEncoded**             | -n                          | [0-`(2^63)-1`]                 | 0           | Number of frames to encode. If `n` is larger than the input, the encoder will loop back and continue encoding |
-| **FrameToBeSkipped**             | --skip                      | [0-`(2^63)-1`]                 | 0           | Number of frames to skip. |
+| **FrameToBeSkipped**             | --skip                      | [0-`(2^63)-1`]                 | 0           | Number of frames to skip.                                                                                     |
 | **BufferedInput**                | --nb                        | [-1, 1-`(2^31)-1`]             | -1          | Buffer `n` input frames into memory and use them to encode. Only buffered frames will be encoded.             |
 | **EncoderColorFormat**           | --color-format              | [0-3]                          | 1           | Color format, only yuv420 is supported at this time [0: yuv400, 1: yuv420, 2: yuv422, 3: yuv444]              |
 | **Profile**                      | --profile                   | [0-2]                          | 0           | Bitstream profile [0: main, 1: high, 2: professional]                                                         |
@@ -68,7 +68,7 @@ For more information on valid values for specific keys, refer to the [EbEncSetti
 | **FrameRate**                    | --fps                       | [1-240]                        | 60          | Input video frame rate, integer values only, inferred if y4m                                                  |
 | **FrameRateNumerator**           | --fps-num                   | [0-2^32-1]                     | 60000       | Input video frame rate numerator                                                                              |
 | **FrameRateDenominator**         | --fps-denom                 | [0-2^32-1]                     | 1000        | Input video frame rate denominator                                                                            |
-| **EncoderBitDepth**              | --input-depth               | [8, 10]                        | 10           | Input video file and output bitstream bit-depth                                                              |
+| **EncoderBitDepth**              | --input-depth               | [8, 10]                        | 10          | Input video file and output bitstream bit-depth                                                               |
 | **Injector**                     | --inj                       | [0-1]                          | 0           | Inject pictures to the library at defined frame rate                                                          |
 | **InjectorFrameRate**            | --inj-frm-rt                | [0-240]                        | 60          | Set injector frame rate, only applicable with `--inj 1`                                                       |
 | **StatReport**                   | --enable-stat-report        | [0-1]                          | 0           | Calculates and outputs PSNR SSIM metrics at the end of encoding                                               |
@@ -77,15 +77,15 @@ For more information on valid values for specific keys, refer to the [EbEncSetti
 | **LevelOfParallelism**           | --lp                        | [0, 6]                         | 0           | Controls the number of threads to create and the number of picture buffers to allocate (higher level means more parallelism). 0 means choose level based on machine core count. Refer to Appendix A.1 |
 | **PinnedExecution**              | --pin                       | [0-core count of the machine]  | 0           | Pin the execution to the first N cores. [0: no pinning, N: number of cores to pin to]. Refer to Appendix A.1  |
 | **TargetSocket**                 | --ss                        | [-1,1]                         | -1          | Specifies which socket to run on, assumes a max of two equally-sized sockets. Refer to Appendix A.1           |
-| **FastDecode**                   | --fast-decode               | [0,2]                          | 0           | Tune settings to output bitstreams that can be decoded faster, [0 = OFF, 1,2 = levels for decode-targeted optimization (2 yields faster decoder speed)]. Defaults to 5 temporal layers structure but may override with --hierarchical-levels|
-| **Tune**                         | --tune                      | [0-4]                          | 2           | Optimize the encoding process for different desired outcomes [0 = VQ, 1 = PSNR, 2 = SSIM, 3 = Subjective SSIM, 4 = Still Picture]                                                    |
-| **Sharpness**                    | --sharpness                 | [-7-7]                         | 1           | Bias towards block sharpness in rate-distortion optimization of transform coefficients                                                                               |
-| **FrameLumaBias**                | --frame-luma-bias           | [0-100]                        | 0           | Adjusts frame-level QP based on average luminance across each frame                                                                                                  |
-| **Max32TxSize**                  | --max-32-tx-size            | [0,1]                          | 0           | Restricts use of block transform sizes to a maximum of 32x32 pixels (disabled: use max of 64x64 pixels)      |
-| **AdaptiveFilmGrain**            | --adaptive-film-grain       | [0,1]                          | 1           | Allows film grain synthesis to be sourced from different block sizes depending on resolution                 |
-| **TemporalFilteringStrength**    |  --tf-strength              | [0-4]                          | 1           | Manually adjust temporal filtering strength. Higher values = stronger temporal filtering                     |
-| **KeyframeTemporalFilteringStrength**  |  --kf-tf-strength      | [0-4]                          | 1           | Manually adjust temporal filtering strength for keyframes. Higher values = stronger temporal filtering        |
-| **NoiseNormStrength**            |  --noise-norm-strength      | [0-4]                          | 0           | Selectively boost AC coefficients to improve fine detail retention in certain circumstances                  |
+| **FastDecode**                   | --fast-decode               | [0,2]                          | 0           | Tune settings to output bitstreams that can be decoded faster, [0 = OFF, 1,2 = levels for decode-targeted optimization (2 yields faster decoder speed)]. Defaults to 5 temporal layers structure but may override with --hierarchical-levels |
+| **Tune**                         | --tune                      | [0-4]                          | 2           | Optimize the encoding process for different desired outcomes [0 = VQ, 1 = PSNR, 2 = SSIM, 3 = Subjective SSIM, 4 = Still Picture] |
+| **Sharpness**                    | --sharpness                 | [-7-7]                         | 1           | Bias towards block sharpness in rate-distortion optimization of transform coefficients                        |
+| **FrameLumaBias**                | --frame-luma-bias           | [0-100]                        | 0           | Adjusts frame-level QP based on average luminance across each frame                                           |
+| **Max32TxSize**                  | --max-32-tx-size            | [0,1]                          | 0           | Restricts use of block transform sizes to a maximum of 32x32 pixels (disabled: use max of 64x64 pixels)       |
+| **AdaptiveFilmGrain**            | --adaptive-film-grain       | [0,1]                          | 1           | Allows film grain synthesis to be sourced from different block sizes depending on resolution                  |
+| **TemporalFilteringStrength**    |  --tf-strength              | [0-4]                          | 1           | Manually adjust temporal filtering strength. Higher values = stronger temporal filtering                      |
+| **KeyframeTemporalFilteringStrength** |  --kf-tf-strength      | [0-4]                          | 1           | Manually adjust temporal filtering strength for keyframes. Higher values = stronger temporal filtering        |
+| **NoiseNormStrength**            |  --noise-norm-strength      | [0-4]                          | 0           | Selectively boost AC coefficients to improve fine detail retention in certain circumstances                   |
 
 ## Rate Control Options
 
@@ -93,7 +93,7 @@ For more information on valid values for specific keys, refer to the [EbEncSetti
 |----------------------------------|----------------------------------|------------|-------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **RateControlMode**              | --rc                             | [0-2]      | 0           | Rate control mode [0: CRF or CQP (if `--aq-mode` is 0) [Default], 1: VBR, 2: CBR]                                                                    |
 | **QP**                           | --qp                             | [1-63]     | 35          | Initial QP level value                                                                                                                               |
-| **CRF**                          | --crf                            | [1-70]     | 35       | Constant Rate Factor value, setting this value is equal to `--rc 0 --aq-mode 2 --qp x`, and can be set up in quarter-step increments                          |
+| **CRF**                          | --crf                            | [1-70]     | 35          | Constant Rate Factor value, setting this value is equal to `--rc 0 --aq-mode 2 --qp x`, and can be set up in quarter-step increments                 |
 | **TargetBitRate**                | --tbr                            | [1-100000] | 2000        | Target Bitrate (kbps), only applicable for VBR and CBR encoding, also accepts `b`, `k`, and `m` suffixes                                             |
 | **MaxBitRate**                   | --mbr                            | [1-100000] | 0           | Maximum Bitrate (kbps) only applicable for CRF encoding, also accepts `b`, `k`, and `m` suffixes                                                     |
 | **UseQpFile**                    | --use-q-file                     | [0-1]      | 0           | Overwrite the encoder default picture based QP assignments and use QP values from `--qp-file`                                                        |
@@ -105,7 +105,8 @@ For more information on valid values for specific keys, refer to the [EbEncSetti
 | **VarianceOctile**               | --variance-octile                | [1-8]      | 6           | Set variance algorithm 8x8 block selectivity level [1: 1st octile, 4: median, 6: 6th octile [Default], 8: maximum]                                   |
 | **AdaptiveQuantization**         | --aq-mode                        | [0-2]      | 2           | Set adaptive QP level [0: off, 1: variance base using AV1 segments, 2: deltaq pred efficiency]                                                       |
 | **EnableAltCurve**               | --enable-alt-curve               | [0-1]      | 0           | Enable alternative variance boost curve                                                                                                              |
-| **PsyRd**                      | --psy-rd              | [0.0-4.0]     | 0           | Use psychovisual rate distortion optimization               |
+| **PsyRd**                        | --psy-rd                         | [0.0-6.0]  | 0           | Use psychovisual rate distortion optimization                                                                                                        |
+| **SpyRd**                        | --spy-rd                         | [0-1]      | 0           | Use alternate psychovisual rate distortion optimization (more sharpness and detail, slightly more chances of banding and blocking)                   |
 | **QpScaleCompressStrength**      | --qp-scale-compress-strength     | [0-3]      | 1           | Sets the strength the QP scale algorithm compresses values across all temporal layers, which results in more consistent video quality (less quality variation across frames in a mini-gop) [0: SVT-AV1 default, 1: SVT-AV1-PSY default, 3: maximum] |
 | **UseFixedQIndexOffsets**        | --use-fixed-qindex-offsets       | [0-2]      | 0           | Overwrite the encoder default hierarchical layer based QP assignment and use fixed Q index offsets                                                   |
 | **KeyFrameQIndexOffset**         | --key-frame-qindex-offset        | [-64-63]   | 0           | Overwrite the encoder default keyframe Q index assignment                                                                                            |
@@ -328,13 +329,13 @@ Reference Scaling is better described in [the reference scaling documentation](.
 but this basically allows the input to be encoded and the output at a lower
 resolution, scaling ratio applys on both horizontally and vertically.
 
-| **ResizeMode** | **Value**                                                                                                                   |
+| **ResizeMode**   | **Value**                                                                                                                   |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------|
-| 0                | None, no frame resize allowed                                                                                            |
+| 0                | None, no frame resize allowed                                                                                               |
 | 1                | Fixed mode, all frames are encoded at the specified scale of 8/`denom`, thus a `denom` of 8 means no scaling, and 16 means half-scaling |
-| 2                | Random mode, all frames are coded at a random scale, the scaling `denom` can be picked from 8 to 16                        |
-| 3                | Dynamic mode, scale for a frame is determined based on buffer level and average qp in rate control, scaling ratio can be 3/4 or 1/2. This mode can only work in 1-pass CBR low-delay mode                  |
-| 4                | Random access mode, scaling is controlled by scale events, which determine scaling in a specified scaling `denom` or recover to original resolution                                                       |
+| 2                | Random mode, all frames are coded at a random scale, the scaling `denom` can be picked from 8 to 16                         |
+| 3                | Dynamic mode, scale for a frame is determined based on buffer level and average qp in rate control, scaling ratio can be 3/4 or 1/2. This mode can only work in 1-pass CBR low-delay mode |
+| 4                | Random access mode, scaling is controlled by scale events, which determine scaling in a specified scaling `denom` or recover to original resolution                                       |
 
 Example CLI of reference scaling dynamic mode:
 > -i input.yuv -b output.ivf --resize-mode 3 --rc 2 --pred-struct 1 --tbr 1000

@@ -1061,8 +1061,9 @@ static EbErrorType load_default_buffer_configuration_settings(
         scs->total_process_init_count += (scs->rest_process_init_count = 1);
     }
     else if (lp <= PARALLEL_LEVEL_2) {
+        const uint8_t pa_processes = scs->static_config.film_grain_denoise_strength ? 16 : 1;
         scs->total_process_init_count += (scs->source_based_operations_process_init_count = 1);
-        scs->total_process_init_count += (scs->picture_analysis_process_init_count = clamp(1, 1, max_pa_proc));
+        scs->total_process_init_count += (scs->picture_analysis_process_init_count = clamp(pa_processes, 1, max_pa_proc));
         scs->total_process_init_count += (scs->motion_estimation_process_init_count = clamp(20, 1, max_me_proc));
         scs->total_process_init_count += (scs->tpl_disp_process_init_count = clamp(6, 1, max_tpl_proc));
         scs->total_process_init_count += (scs->mode_decision_configuration_process_init_count = clamp(1, 1, max_mdc_proc));
@@ -1073,8 +1074,9 @@ static EbErrorType load_default_buffer_configuration_settings(
         scs->total_process_init_count += (scs->rest_process_init_count = clamp(1, 1, max_rest_proc));
     }
     else if (lp <= PARALLEL_LEVEL_3) {
+        const uint8_t pa_processes = scs->static_config.film_grain_denoise_strength ? 16 : 1;
         scs->total_process_init_count += (scs->source_based_operations_process_init_count = 1);
-        scs->total_process_init_count += (scs->picture_analysis_process_init_count = clamp(1, 1, max_pa_proc));
+        scs->total_process_init_count += (scs->picture_analysis_process_init_count = clamp(pa_processes, 1, max_pa_proc));
         scs->total_process_init_count += (scs->motion_estimation_process_init_count = clamp(25, 1, max_me_proc));
         scs->total_process_init_count += (scs->tpl_disp_process_init_count = clamp(6, 1, max_tpl_proc));
         scs->total_process_init_count += (scs->mode_decision_configuration_process_init_count = clamp(2, 1, max_mdc_proc));
@@ -1085,7 +1087,7 @@ static EbErrorType load_default_buffer_configuration_settings(
         scs->total_process_init_count += (scs->rest_process_init_count = clamp(2, 1, max_rest_proc));
     }
     else if (lp <= PARALLEL_LEVEL_5 || scs->input_resolution <= INPUT_SIZE_1080p_RANGE) {
-        uint8_t pa_processes = 4;
+        uint8_t pa_processes = scs->static_config.film_grain_denoise_strength ? 20 : 4;
         if (scs->static_config.pass == ENC_FIRST_PASS) {
             pa_processes = lp <= PARALLEL_LEVEL_5 ? 12 : 20;
         }
@@ -1101,7 +1103,7 @@ static EbErrorType load_default_buffer_configuration_settings(
         scs->total_process_init_count += (scs->rest_process_init_count = clamp(4, 1, max_rest_proc));
     }
     else {
-        const uint8_t pa_processes = scs->static_config.pass == ENC_FIRST_PASS ? 20 : 16;
+        const uint8_t pa_processes = (scs->static_config.pass == ENC_FIRST_PASS || scs->static_config.film_grain_denoise_strength) ? 20 : 16;
         scs->total_process_init_count += (scs->source_based_operations_process_init_count = 1);
         scs->total_process_init_count += (scs->picture_analysis_process_init_count = clamp(pa_processes, 1, max_pa_proc));
         scs->total_process_init_count += (scs->motion_estimation_process_init_count = clamp(25, 1, max_me_proc));
@@ -1950,6 +1952,7 @@ EB_API EbErrorType svt_av1_enc_init(EbComponentType *svt_enc_component)
         input_data.kf_tf_strength = enc_handle_ptr->scs_instance_array[instance_index]->scs->static_config.kf_tf_strength;
         input_data.noise_norm_strength = enc_handle_ptr->scs_instance_array[instance_index]->scs->static_config.noise_norm_strength;
         input_data.psy_rd = enc_handle_ptr->scs_instance_array[instance_index]->scs->static_config.psy_rd;
+        input_data.spy_rd = enc_handle_ptr->scs_instance_array[instance_index]->scs->static_config.spy_rd;
         input_data.static_config = enc_handle_ptr->scs_instance_array[instance_index]->scs->static_config;
 
         EB_NEW(
@@ -5038,6 +5041,9 @@ static void copy_api_from_app(
     // Psy rd
     scs->static_config.psy_rd = config_struct->psy_rd;
 
+    // Spy rd
+    scs->static_config.spy_rd = config_struct->spy_rd;
+
     // Override settings for Still Picture tune
     if (scs->static_config.tune == 4) {
         SVT_WARN("Tune 4: Still Picture is experimental, expect frequent changes that may modify present behavior.\n");
@@ -6118,7 +6124,11 @@ EB_API void svt_av1_print_version(void) {
     SVT_INFO("-------------------------------------------\n");
     SVT_INFO("SVT [version]:\tSVT-AV1-PSY Encoder Lib %s\n", SVT_AV1_CVS_VERSION);
     const char *compiler =
-#if defined( _MSC_VER ) && (_MSC_VER >= 1930)
+#if defined(__clang__)
+    __VERSION__ "\t"
+#elif defined(__GNUC__)
+    "GCC " __VERSION__ "\t"
+#elif defined( _MSC_VER ) && (_MSC_VER >= 1930)
     "Visual Studio 2022"
 #elif defined( _MSC_VER ) && (_MSC_VER >= 1920)
     "Visual Studio 2019"
@@ -6128,10 +6138,6 @@ EB_API void svt_av1_print_version(void) {
     "Visual Studio 2015"
 #elif defined( _MSC_VER )
     "Visual Studio (old)"
-#elif defined(__clang__)
-    __VERSION__ "\t"
-#elif defined(__GNUC__)
-    "GCC " __VERSION__ "\t"
 #else
     "unknown compiler"
 #endif

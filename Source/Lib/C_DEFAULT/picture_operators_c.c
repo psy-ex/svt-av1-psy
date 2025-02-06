@@ -9,6 +9,7 @@
 * PATENTS file, you can obtain it at https://www.aomedia.org/license/patent-license.
 */
 
+#include "aom_dsp_rtcd.h"
 #include "picture_operators_c.h"
 #include <stdio.h>
 #include "utility.h"
@@ -85,14 +86,10 @@ uint64_t svt_spatial_psy_distortion_kernel_c(uint8_t* input, uint32_t input_offs
                                               uint8_t* recon, int32_t recon_offset, uint32_t recon_stride,
                                               uint32_t area_width, uint32_t area_height, double psy_rd) {
     uint64_t spatial_distortion = 0;
-
-    // const double psy_rd   = 2.0f;
-    const uint32_t count = area_width * area_height;
-
     uint64_t psy_distortion = 0;
 
-    if (count >= 64 && psy_rd > 0.0) {
-        uint64_t ac_distortion = svt_psy_distortion(input + input_offset, input_stride, recon + recon_offset, recon_stride, area_width, area_height, count);
+    if (psy_rd > 0.0) {
+        uint64_t ac_distortion = svt_psy_distortion(input + input_offset, input_stride, recon + recon_offset, recon_stride, area_width, area_height);
         psy_distortion = (uint64_t)(ac_distortion * psy_rd);
     }
 
@@ -111,6 +108,68 @@ uint64_t svt_spatial_psy_distortion_kernel_c(uint8_t* input, uint32_t input_offs
     }
 
     spatial_distortion += psy_distortion;
+    return spatial_distortion;
+}
+
+// Facade that wraps the distortion metric formula with "spy-rd" adjustments
+uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t input_offset, uint32_t input_stride,
+                                                   uint8_t* recon, int32_t recon_offset, uint32_t recon_stride,
+                                                   uint32_t area_width, uint32_t area_height, bool hbd_md, PredictionMode mode,
+                                                   CompoundType compound_type, uint8_t temporal_layer_index,
+                                                   double psy_rd, Bool spy_rd) {
+
+    EbSpatialFullDistType spatial_full_dist_type_fun = hbd_md ? svt_full_distortion_kernel16_bits
+                                                              : svt_spatial_full_distortion_kernel;
+
+    int64_t spatial_distortion = spatial_full_dist_type_fun(
+                        input,
+                        input_offset,
+                        input_stride,
+                        recon,
+                        recon_offset,
+                        recon_stride,
+                        area_width,
+                        area_height);
+
+    if (spy_rd) {
+        if (mode == DC_PRED || mode == SMOOTH_PRED || mode == SMOOTH_V_PRED || mode == SMOOTH_H_PRED) {
+            if (psy_rd == 0.0) {
+                // Medium bias against "visually blurry" intra prediction modes
+                spatial_distortion = (spatial_distortion * 5) / 4;
+            }
+        } else if (mode == H_PRED || mode == V_PRED || mode == PAETH_PRED) {
+            // Mild bias against "visually neutral" intra prediction modes
+            spatial_distortion = (spatial_distortion * 9) / 8;
+        } else if (mode >= COMP_INTER_MODE_START && mode < COMP_INTER_MODE_END) {
+            if (compound_type == COMPOUND_AVERAGE || compound_type == COMPOUND_DISTWTD) {
+                // Medium bias against "visually blurry" compound inter prediction modes
+                spatial_distortion = (spatial_distortion * 5) / 4;
+            } else if (compound_type == COMPOUND_DIFFWTD) {
+                // Mild bias against difference-weighted inter prediction mode
+                spatial_distortion = (spatial_distortion * 9) / 8;
+            }
+        }
+
+        if (mode >= INTRA_MODE_START && mode < INTRA_MODE_END) {
+            if (temporal_layer_index >= 2) {
+                // Increasingly bias against intra prediction modes the deeper the temporal layer
+                uint8_t weights[] = {8, 8, 9, 10, 11, 12};
+
+                spatial_distortion = (spatial_distortion * weights[temporal_layer_index]) / 8;
+            }
+
+            if (area_width == 64 && area_height == 64) {
+                // Strong bias against intra 64x64 blocks, as those often tend to be visually blurry
+                spatial_distortion = (spatial_distortion * 3) / 2;
+            } else if (area_width * area_height <= 32 * 32) {
+                // Very mild large block intra bias to compensate for pred mode rebalancing picking
+                // smaller blocks slightly more often
+                spatial_distortion = (spatial_distortion * 17) / 16;
+            }
+            //printf("Spatial: w %i, h %i\n", area_width, area_height);
+        }
+    }
+
     return spatial_distortion;
 }
 

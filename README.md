@@ -104,9 +104,14 @@ Manually adjust temporal filtering strength specifically on keyframes. Each incr
 
 Adaptively varies temporal filtering strength based on 64x64 block error. This can slightly improve visual fidelity in scenes with fast motion or fine detail. Setting this to 2 will override `--tf-strength` and `--kf-tf-strength`, as their values will be automatically determined by the encoder.
 
-- `--psy-rd` *0.0 to 4.0*
+- `--psy-rd` *0.0 to 6.0*
 
-Configures psychovisual rate distortion strength to improve perceived quality by measuring and attempting to preserve the visual energy distribution of high-frequency details and textures. The default is 0. PSY-RD is only supported by Tune 2, Tune 3, & Tune 4.
+Configures psychovisual rate distortion strength to improve perceived quality by measuring and attempting to preserve the visual energy distribution of high-frequency details and textures. The default is 0.
+
+- `--spy-rd` *0 and 1*
+
+Configures a psychovisually-oriented metric that biases towards sharpness and detail retention, at the possible expense of increased blocking and banding. The default is 0.
+
 
 ### Modified Defaults
 

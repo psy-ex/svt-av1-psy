@@ -929,13 +929,18 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
-    if (config->psy_rd > 20.0 || config->psy_rd < 0.0) {
-        SVT_ERROR("Instance %u: PSY-RD strength must be between 0.0 and 4.0\n", channel_number + 1);
+    if (config->psy_rd > 6.0 || config->psy_rd < 0.0) {
+        SVT_ERROR("Instance %u: PSY-RD strength must be between 0.0 and 6.0\n", channel_number + 1);
         return_error = EB_ErrorBadParameter;
     }
 
-    if (config->psy_rd != 0.0 && config->tune < 2) {
-        SVT_ERROR("Instance %u: PSY-RD is only supported by Tune 2 and above\n", channel_number + 1);
+    if (config->psy_rd != 0.0 && config->tune == 1) {
+        SVT_ERROR("Instance %u: PSY-RD is only supported by psycho-visually oriented tunes\n", channel_number + 1);
+        return_error = EB_ErrorBadParameter;
+    }
+
+    if (config->spy_rd > 1) {
+        SVT_ERROR("Instance %u: spy-rd must be between 0 and 1\n", channel_number + 1);
         return_error = EB_ErrorBadParameter;
     }
 
@@ -1107,6 +1112,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->tf_strength                       = 1;
     config_ptr->kf_tf_strength                    = 1;
     config_ptr->noise_norm_strength               = 255; // Special value indicating not set
+    config_ptr->spy_rd                            = 0;
     return return_error;
 }
 
@@ -1184,8 +1190,8 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
         case SVT_AV1_RC_MODE_CQP_OR_CRF:
             if (config->max_bit_rate)
                 SVT_INFO(
-                    "SVT [config]: BRC mode / %s / max bitrate (kbps)\t\t\t: %s / %d / "
-                    "%.2f\n",
+                    "SVT [config]: BRC mode / %s / max bitrate (kbps)\t\t\t: %s / %.2f / "
+                    "%d\n",
                     scs->tpl || scs->static_config.enable_variance_boost ? "rate factor" : "CQP Assignment",
                     scs->tpl || scs->static_config.enable_variance_boost ? "capped CRF" : "CQP",
                     get_extended_crf(config),
@@ -1291,9 +1297,13 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
                             config->kf_tf_strength);
                 }
         }
-        if (config->psy_rd > 0.0 && config->tune > 1) {
+        if (config->psy_rd > 0.0 && config->tune != 1) {
             SVT_INFO("SVT [config]: PSY-RD Strength \t\t\t\t\t\t: %.2f\n",
                     config->psy_rd);
+        }
+        if (config->spy_rd) {
+            SVT_INFO("SVT [config]: spy-rd \t\t\t\t\t\t\t: %s\n",
+                    config->spy_rd ? "oui" : "non");
         }
     }
 #ifdef DEBUG_BUFFERS
@@ -2299,6 +2309,7 @@ EB_API EbErrorType svt_av1_enc_parse_parameter(EbSvtAv1EncConfiguration *config_
         {"enable-alt-curve", &config_struct->enable_alt_curve},
         {"max-32-tx-size", &config_struct->max_32_tx_size},
         {"adaptive-film-grain", &config_struct->adaptive_film_grain},
+        {"spy-rd", &config_struct->spy_rd},
     };
     const size_t bool_opts_size = sizeof(bool_opts) / sizeof(bool_opts[0]);
 
