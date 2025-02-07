@@ -30,6 +30,7 @@ target_sources(
   PUBLIC compound_convolve_neon.c
   PUBLIC compute_sad_neon.c
   PUBLIC convolve_neon.c
+  PUBLIC convolve_scale_neon.c
   PUBLIC highbd_convolve_neon.c
   PUBLIC highbd_jnt_convolve_neon.c
   PUBLIC highbd_loopfilter_neon.c

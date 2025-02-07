@@ -15,6 +15,55 @@
 #include <arm_neon.h>
 #include "definitions.h"
 
+static inline void transpose_elems_u8_8x8(uint8x8_t a0, uint8x8_t a1, uint8x8_t a2, uint8x8_t a3, uint8x8_t a4,
+                                          uint8x8_t a5, uint8x8_t a6, uint8x8_t a7, uint8x8_t *o0, uint8x8_t *o1,
+                                          uint8x8_t *o2, uint8x8_t *o3, uint8x8_t *o4, uint8x8_t *o5, uint8x8_t *o6,
+                                          uint8x8_t *o7) {
+    // Swap 8 bit elements. Goes from:
+    // a0: 00 01 02 03 04 05 06 07
+    // a1: 10 11 12 13 14 15 16 17
+    // a2: 20 21 22 23 24 25 26 27
+    // a3: 30 31 32 33 34 35 36 37
+    // a4: 40 41 42 43 44 45 46 47
+    // a5: 50 51 52 53 54 55 56 57
+    // a6: 60 61 62 63 64 65 66 67
+    // a7: 70 71 72 73 74 75 76 77
+    // to:
+    // b0.val[0]: 00 10 02 12 04 14 06 16  40 50 42 52 44 54 46 56
+    // b0.val[1]: 01 11 03 13 05 15 07 17  41 51 43 53 45 55 47 57
+    // b1.val[0]: 20 30 22 32 24 34 26 36  60 70 62 72 64 74 66 76
+    // b1.val[1]: 21 31 23 33 25 35 27 37  61 71 63 73 65 75 67 77
+
+    const uint8x16x2_t b0 = vtrnq_u8(vcombine_u8(a0, a4), vcombine_u8(a1, a5));
+    const uint8x16x2_t b1 = vtrnq_u8(vcombine_u8(a2, a6), vcombine_u8(a3, a7));
+
+    // Swap 16 bit elements resulting in:
+    // c0.val[0]: 00 10 20 30 04 14 24 34  40 50 60 70 44 54 64 74
+    // c0.val[1]: 02 12 22 32 06 16 26 36  42 52 62 72 46 56 66 76
+    // c1.val[0]: 01 11 21 31 05 15 25 35  41 51 61 71 45 55 65 75
+    // c1.val[1]: 03 13 23 33 07 17 27 37  43 53 63 73 47 57 67 77
+
+    const uint16x8x2_t c0 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[0]), vreinterpretq_u16_u8(b1.val[0]));
+    const uint16x8x2_t c1 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[1]), vreinterpretq_u16_u8(b1.val[1]));
+
+    // Unzip 32 bit elements resulting in:
+    // d0.val[0]: 00 10 20 30 40 50 60 70  01 11 21 31 41 51 61 71
+    // d0.val[1]: 04 14 24 34 44 54 64 74  05 15 25 35 45 55 65 75
+    // d1.val[0]: 02 12 22 32 42 52 62 72  03 13 23 33 43 53 63 73
+    // d1.val[1]: 06 16 26 36 46 56 66 76  07 17 27 37 47 57 67 77
+    const uint32x4x2_t d0 = vuzpq_u32(vreinterpretq_u32_u16(c0.val[0]), vreinterpretq_u32_u16(c1.val[0]));
+    const uint32x4x2_t d1 = vuzpq_u32(vreinterpretq_u32_u16(c0.val[1]), vreinterpretq_u32_u16(c1.val[1]));
+
+    *o0 = vreinterpret_u8_u32(vget_low_u32(d0.val[0]));
+    *o1 = vreinterpret_u8_u32(vget_high_u32(d0.val[0]));
+    *o2 = vreinterpret_u8_u32(vget_low_u32(d1.val[0]));
+    *o3 = vreinterpret_u8_u32(vget_high_u32(d1.val[0]));
+    *o4 = vreinterpret_u8_u32(vget_low_u32(d0.val[1]));
+    *o5 = vreinterpret_u8_u32(vget_high_u32(d0.val[1]));
+    *o6 = vreinterpret_u8_u32(vget_low_u32(d1.val[1]));
+    *o7 = vreinterpret_u8_u32(vget_high_u32(d1.val[1]));
+}
+
 static INLINE void transpose_elems_inplace_u8_8x8(uint8x8_t *a0, uint8x8_t *a1, uint8x8_t *a2, uint8x8_t *a3,
                                                   uint8x8_t *a4, uint8x8_t *a5, uint8x8_t *a6, uint8x8_t *a7) {
     // Swap 8 bit elements. Goes from:
@@ -90,6 +139,66 @@ static INLINE void transpose_elems_inplace_u8_8x4(uint8x8_t *a0, uint8x8_t *a1, 
     *a1 = vreinterpret_u8_u16(c1.val[0]);
     *a2 = vreinterpret_u8_u16(c0.val[1]);
     *a3 = vreinterpret_u8_u16(c1.val[1]);
+}
+
+static inline void transpose_elems_inplace_s16_8x4(int16x8_t *a0, int16x8_t *a1, int16x8_t *a2, int16x8_t *a3) {
+    // Swap 16 bit elements. Goes from:
+    // a0: 00 01 02 03 04 05 06 07
+    // a1: 10 11 12 13 14 15 16 17
+    // a2: 20 21 22 23 24 25 26 27
+    // a3: 30 31 32 33 34 35 36 37
+    // to:
+    // b0.val[0]: 00 10 02 12 04 14 06 16
+    // b0.val[1]: 01 11 03 13 05 15 07 17
+    // b1.val[0]: 20 30 22 32 24 34 26 36
+    // b1.val[1]: 21 31 23 33 25 35 27 37
+
+    const int16x8x2_t b0 = vtrnq_s16(*a0, *a1);
+    const int16x8x2_t b1 = vtrnq_s16(*a2, *a3);
+
+    // Swap 32 bit elements resulting in:
+    // c0.val[0]: 00 10 20 30 04 14 24 34
+    // c0.val[1]: 01 11 21 31 05 15 25 35
+    // c1.val[0]: 02 12 22 32 06 16 26 36
+    // c1.val[1]: 03 13 23 33 07 17 27 37
+
+    const int32x4x2_t c0 = vtrnq_s32(vreinterpretq_s32_s16(b0.val[0]), vreinterpretq_s32_s16(b1.val[0]));
+    const int32x4x2_t c1 = vtrnq_s32(vreinterpretq_s32_s16(b0.val[1]), vreinterpretq_s32_s16(b1.val[1]));
+
+    *a0 = vreinterpretq_s16_s32(c0.val[0]);
+    *a1 = vreinterpretq_s16_s32(c1.val[0]);
+    *a2 = vreinterpretq_s16_s32(c0.val[1]);
+    *a3 = vreinterpretq_s16_s32(c1.val[1]);
+}
+
+static inline void transpose_elems_inplace_u8_16x4(uint8x16_t *a0, uint8x16_t *a1, uint8x16_t *a2, uint8x16_t *a3) {
+    // Swap 8 bit elements. Goes from:
+    // a0: 00 01 02 03 04 05 06 07 08 09 010 011 012 013 014 015
+    // a1: 10 11 12 13 14 15 16 17 18 19 110 111 112 113 114 115
+    // a2: 20 21 22 23 24 25 26 27 28 29 210 211 212 213 214 215
+    // a3: 30 31 32 33 34 35 36 37 38 39 310 311 312 313 314 315
+    // to:
+    // b0.val[0]: 00 10 02 12 04 14 06 16 08 18 010 110 012 112 014 114
+    // b0.val[1]: 01 11 03 13 05 15 07 17 09 19 011 111 013 113 015 115
+    // b1.val[0]: 20 30 22 32 24 34 26 36 28 38 210 310 212 312 214 314
+    // b1.val[1]: 21 31 23 33 25 35 27 37 29 39 211 311 213 313 215 315
+
+    const uint8x16x2_t b0 = vtrnq_u8(*a0, *a1);
+    const uint8x16x2_t b1 = vtrnq_u8(*a2, *a3);
+
+    // Swap 16 bit elements resulting in:
+    // c0.val[0]: 00 10 20 30 04 14 24 34 08  18  28  38  012 112 212 312
+    // c0.val[1]: 02 12 22 32 06 16 26 36 09  19  29  39  013 113 213 313
+    // c1.val[0]: 01 11 21 31 05 15 25 35 010 110 210 310 014 114 214 314
+    // c1.val[1]: 03 13 23 33 07 17 27 37 011 111 211 311 015 115 215 315
+
+    const uint16x8x2_t c0 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[0]), vreinterpretq_u16_u8(b1.val[0]));
+    const uint16x8x2_t c1 = vtrnq_u16(vreinterpretq_u16_u8(b0.val[1]), vreinterpretq_u16_u8(b1.val[1]));
+
+    *a0 = vreinterpretq_u8_u16(c0.val[0]);
+    *a1 = vreinterpretq_u8_u16(c1.val[0]);
+    *a2 = vreinterpretq_u8_u16(c0.val[1]);
+    *a3 = vreinterpretq_u8_u16(c1.val[1]);
 }
 
 static INLINE void transpose_elems_inplace_u8_4x4(uint8x8_t *a0, uint8x8_t *a1) {

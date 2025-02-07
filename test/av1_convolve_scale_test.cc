@@ -450,10 +450,19 @@ TEST_P(LowBDConvolveScaleTest, DISABLED_Speed) {
     SpeedTest();
 }
 
+#ifdef ARCH_X86_64
 INSTANTIATE_TEST_SUITE_P(
     SSE4_1, LowBDConvolveScaleTest,
     ::testing::Combine(::testing::Values(svt_av1_convolve_2d_scale_sse4_1),
                        ::testing::ValuesIn(kBlockDim)));
+#endif  // ARCH_X86_64
+
+#ifdef ARCH_AARCH64
+INSTANTIATE_TEST_SUITE_P(
+    NEON, LowBDConvolveScaleTest,
+    ::testing::Combine(::testing::Values(svt_av1_convolve_2d_scale_neon),
+                       ::testing::ValuesIn(kBlockDim)));
+#endif  // ARCH_AARCH64
 
 typedef void (*HighbdConvolveFunc)(const uint16_t *src, int src_stride,
                                    uint16_t *dst, int dst_stride, int w, int h,
@@ -526,8 +535,7 @@ class HighBDConvolveScaleTest
   private:
     HighbdConvolveFunc tst_fun_;
 };
-
-const int kBDs[] = {8, 10};
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(HighBDConvolveScaleTest);
 
 TEST_P(HighBDConvolveScaleTest, Check) {
     Run();
@@ -536,9 +544,13 @@ TEST_P(HighBDConvolveScaleTest, DISABLED_Speed) {
     SpeedTest();
 }
 
+#ifdef ARCH_X86_64
+const int kBDs[] = {8, 10};
+
 INSTANTIATE_TEST_SUITE_P(
     SSE4_1, HighBDConvolveScaleTest,
     ::testing::Combine(
         ::testing::Values(svt_av1_highbd_convolve_2d_scale_sse4_1),
         ::testing::ValuesIn(kBlockDim), ::testing::ValuesIn(kBDs)));
+#endif  // ARCH_X86_64
 }  // namespace
