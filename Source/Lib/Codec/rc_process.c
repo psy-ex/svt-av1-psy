@@ -3474,14 +3474,21 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
                             break;
                     }
 
+                    // Boost chroma on wide color (BT.2020) primary with ramp down
+                    if (scs->static_config.color_primaries == EB_CICP_CP_BT_2020) {
+                        chroma_qindex -= CLIP3(0, 16, (chroma_qindex_adjustment / 2) - 8);
+                    }
+
                     chroma_qindex += scs->static_config.extended_crf_qindex_offset;
                     chroma_qindex = CLIP3(quantizer_to_qindex[scs->static_config.min_qp_allowed],
                                           quantizer_to_qindex[scs->static_config.max_qp_allowed],
                                           chroma_qindex);
 
-                    frm_hdr->quantization_params.delta_q_dc[1]     = frm_hdr->quantization_params.delta_q_dc[2] =
-                        frm_hdr->quantization_params.delta_q_ac[1] = frm_hdr->quantization_params.delta_q_ac[2] =
-                            chroma_qindex - frm_hdr->quantization_params.base_q_idx;
+                    // Calculate chroma delta q, and clip it to a valid range
+                    frm_hdr->quantization_params.delta_q_dc[1] = frm_hdr->quantization_params.delta_q_dc[2] =
+                    frm_hdr->quantization_params.delta_q_ac[1] = frm_hdr->quantization_params.delta_q_ac[2] =
+                    CLIP3(-64, 63, chroma_qindex - frm_hdr->quantization_params.base_q_idx);
+
                     if (scs->enable_qp_scaling_flag && pcs->ppcs->qp_on_the_fly == false) {
                         // max bit rate is only active for 1 pass CRF
                         if (scs->static_config.rate_control_mode == SVT_AV1_RC_MODE_CQP_OR_CRF &&
