@@ -8803,8 +8803,12 @@ void svt_aom_sig_deriv_mode_decision_config(SequenceControlSet *scs, PictureCont
         else
             pcs->mds0_level = is_islice ? 2 : 4;
     } else {
-        if (enc_mode <= ENC_M6)
-            pcs->mds0_level = 2;
+        //In the future, only enable this mode if psy-rd is active
+        //as the quality benefits of SSD mode decision L0 are otherwise dubious
+        if (enc_mode <= ENC_MR)
+            pcs->mds0_level = 1;
+        else if (enc_mode <= ENC_M6)
+             pcs->mds0_level = 2;
         else
             pcs->mds0_level = is_islice ? 2 : 4;
     }
