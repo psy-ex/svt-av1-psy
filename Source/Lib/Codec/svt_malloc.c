@@ -195,8 +195,11 @@ static inline void get_memory_usage_and_scale(size_t amount, double* const usage
     *usage = (double)amount / (double)((size_t)1 << (i * 10));
 }
 
-//this need more memory and cpu
+#if !( defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER) )
 #define PROFILE_MEMORY_USAGE
+#endif
+
+//this need more memory and cpu
 #ifdef PROFILE_MEMORY_USAGE
 
 //if we use a static array here, this size + sizeof(g_mem_entry) will exceed max size allowed on windows.

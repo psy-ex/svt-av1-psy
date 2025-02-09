@@ -61,7 +61,7 @@ typedef void (*EbDctor)(void* pobj);
         size_t      size = sizeof(*pobj);             \
         EB_NO_THROW_CALLOC(pobj, 1, size);            \
         if (pobj) {                                   \
-            err = ctor(pobj EB_VA_ARGS(__VA_ARGS__)); \
+            err = ctor(pobj, ##__VA_ARGS__);          \
             if (err != EB_ErrorNone)                  \
                 EB_DELETE_UNCHECKED(pobj);            \
         }                                             \
@@ -72,7 +72,7 @@ typedef void (*EbDctor)(void* pobj);
         EbErrorType err;                          \
         size_t      size = sizeof(*pobj);         \
         EB_CALLOC(pobj, 1, size);                 \
-        err = ctor(pobj EB_VA_ARGS(__VA_ARGS__)); \
+        err = ctor(pobj, ##__VA_ARGS__);          \
         if (err != EB_ErrorNone) {                \
             EB_DELETE_UNCHECKED(pobj);            \
             return err;                           \

@@ -21,6 +21,9 @@ set "buildtype=Debug"
 set "shared=ON"
 set "GENERATOR="
 :: (cmake -G 2>&1 | Select-String -SimpleMatch '*').Line.Split('=')[0].TrimEnd().Replace('* ','')
+if /I "%1"=="icc" (
+    set "toolset=-T"Intel C++ Compiler 2025" -DCMAKE_C_COMPILER=icx -DCMAKE_CXX_COMPILER=icx"
+)
 :: Default is not building unit tests
 set "unittest=OFF"
 if NOT -%1-==-- call :args %*
@@ -42,11 +45,11 @@ if "%shared%"=="ON" (
 if "%unittest%"=="ON" echo Building unit tests
 
 if "%vs%"=="2019" (
-    cmake ../.. %GENERATOR% -A x64 -DCMAKE_INSTALL_PREFIX=%SYSTEMDRIVE%\svt-encoders -DBUILD_SHARED_LIBS=%shared% -DBUILD_TESTING=%unittest% %cmake_eflags% || exit /b 1
+    cmake ../.. %GENERATOR% -A x64 %toolset% -DCMAKE_INSTALL_PREFIX=%SYSTEMDRIVE%\svt-encoders -DBUILD_SHARED_LIBS=%shared% -DBUILD_TESTING=%unittest% %cmake_eflags% || exit /b 1
 ) else if "%vs%"=="2022" (
-    cmake ../.. %GENERATOR% -A x64 -DCMAKE_INSTALL_PREFIX=%SYSTEMDRIVE%\svt-encoders -DBUILD_SHARED_LIBS=%shared% -DBUILD_TESTING=%unittest% %cmake_eflags% || exit /b 1
+    cmake ../.. %GENERATOR% -A x64 %toolset% -DCMAKE_INSTALL_PREFIX=%SYSTEMDRIVE%\svt-encoders -DBUILD_SHARED_LIBS=%shared% -DBUILD_TESTING=%unittest% %cmake_eflags% || exit /b 1
 ) else (
-    cmake ../.. %GENERATOR% -DCMAKE_INSTALL_PREFIX=%SYSTEMDRIVE%\svt-encoders -DBUILD_SHARED_LIBS=%shared% -DBUILD_TESTING=%unittest% %cmake_eflags% || exit /b 1
+    cmake ../.. %GENERATOR% %toolset% -DCMAKE_INSTALL_PREFIX=%SYSTEMDRIVE%\svt-encoders -DBUILD_SHARED_LIBS=%shared% -DBUILD_TESTING=%unittest% %cmake_eflags% || exit /b 1
 )
 
 if "%build%"=="y" cmake --build . --config %buildtype%
@@ -110,6 +113,9 @@ if -%1-==-- (
     echo This is currently not officially supported
     set "GENERATOR=Visual Studio 9 2008 Win64"
     set vs=2008
+    shift
+) else if /I "%1"=="icc" (
+    set "cmake_eflags=%cmake_eflags% -DCMAKE_C_FLAGS_RELEASE="/O3 /GL /Qipo /Qunroll /QxHost" -DCMAKE_CXX_FLAGS_RELEASE="/O3 /GL /Qipo /Qunroll /QxHost""
     shift
 ) else if /I "%1"=="ninja" (
     echo Generating Ninja files

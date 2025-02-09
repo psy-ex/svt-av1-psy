@@ -6124,7 +6124,12 @@ EB_API void svt_av1_print_version(void) {
     SVT_INFO("-------------------------------------------\n");
     SVT_INFO("SVT [version]:\tSVT-AV1-PSY Encoder Lib %s\n", SVT_AV1_CVS_VERSION);
     const char *compiler =
-#if defined(__clang__)
+#if defined(__INTEL_COMPILER) || defined(__INTEL_LLVM_COMPILER)
+    "Intel C++ Compiler"
+    #ifdef __INTEL_LLVM_COMPILER
+        " & Intel LLVM Compiler"
+    #endif
+#elif defined(__clang__)
     __VERSION__ "\t"
 #elif defined(__GNUC__)
     "GCC " __VERSION__ "\t"
