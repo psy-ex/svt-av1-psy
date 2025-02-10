@@ -5043,6 +5043,9 @@ static void copy_api_from_app(
 
     // Spy rd
     scs->static_config.spy_rd = config_struct->spy_rd;
+	
+    // Low Q taper
+    scs->static_config.low_q_taper = config_struct->low_q_taper;
 
     // Override settings for Still Picture tune
     if (scs->static_config.tune == 4) {
