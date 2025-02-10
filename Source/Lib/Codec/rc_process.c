@@ -1734,22 +1734,27 @@ void lowq_taper(PictureControlSet *pcs) {
 	const int16_t scs_qindex = CLIP3(MIN_Q_INDEX,
 									 MAX_Q_INDEX,
 									 quantizer_to_qindex[(uint8_t)scs->static_config.qp] + scs->static_config.extended_crf_qindex_offset);
-	const int16_t dampening_thr = MIN(60, scs_qindex);
+	const int16_t dampening_thr = MIN(44, scs_qindex);
 	uint16_t sb_cnt = scs->sb_total_count;
 	for (uint32_t sb_addr = 0; sb_addr < sb_cnt; ++sb_addr) {
         SuperBlock *sb_ptr = pcs->sb_ptr_array[sb_addr];
 
         int16_t sb_qindex = sb_ptr->qindex;
 		if (sb_qindex < dampening_thr && sb_qindex < scs_qindex) {
-			int boost = scs_qindex - sb_qindex;
-			int boost_beyond_thr = MIN(dampening_thr - sb_qindex, boost);
-			float boost_before_thr = boost_beyond_thr - boost;
+			int16_t boost = scs_qindex - sb_qindex;
+			int16_t boost_beyond_thr;
+			if (dampening_thr == scs_qindex) {
+				boost_beyond_thr = boost;
+			} else {
+				boost_beyond_thr = dampening_thr - sb_qindex;
+			}
+			float boost_before_thr = boost - boost_beyond_thr;
 			float x = 1 - (float)sb_qindex/dampening_thr;
 			float boost_dampener = (-0.3 * pow(x, 2) + x) / x;
-			int new_boost = boost_before_thr + boost_beyond_thr * boost_dampener;
+			int16_t new_boost = boost_before_thr + boost_beyond_thr * boost_dampener;
 			sb_qindex = scs_qindex - new_boost;
+			sb_ptr->qindex = sb_qindex;
 		}
-		sb_ptr->qindex = sb_qindex;
     }
 }
 
@@ -3687,16 +3692,18 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
                 // enable sb level qindex when tune 2
                 pcs->ppcs->frm_hdr.delta_q_params.delta_q_present = 1;
             }
+			
+            if (scs->static_config.rate_control_mode == SVT_AV1_RC_MODE_CQP_OR_CRF && scs->static_config.low_q_taper) 
+            {
+                lowq_taper(pcs);
+            }
 
             if (scs->static_config.enable_variance_boost && pcs->ppcs->frm_hdr.delta_q_params.delta_q_present)
             {
                 // adjust delta q res and normalize superblock delta q values to reduce signaling overhead
                 normalize_sb_delta_q(pcs);
             }
-            if (scs->static_config.rate_control_mode == SVT_AV1_RC_MODE_CQP_OR_CRF && scs->static_config.low_q_taper) 
-            {
-                lowq_taper(pcs);
-            }
+			
             if (scs->static_config.rate_control_mode && !is_superres_recode_task) {
                 svt_aom_update_rc_counts(pcs->ppcs);
             }
