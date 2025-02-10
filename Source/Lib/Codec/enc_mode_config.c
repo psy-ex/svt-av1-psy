@@ -7023,6 +7023,11 @@ static void set_mds0_controls(ModeDecisionContext *ctx, uint8_t mds0_level) {
         ctrls->mds0_dist_type               = VAR;
         ctrls->enable_cost_based_early_exit = 1;
         ctrls->mds0_distortion_th           = 0;
+    //Special mds0_level for psy-rd usage
+    case 5:
+        ctrls->mds0_dist_type               = SAD;
+        ctrls->enable_cost_based_early_exit = 0;
+        ctrls->mds0_distortion_th           = 0;
         break;
     default: assert(0); break;
     }
@@ -8806,14 +8811,28 @@ void svt_aom_sig_deriv_mode_decision_config(SequenceControlSet *scs, PictureCont
         else
             pcs->mds0_level = is_islice ? 2 : 4;
     } else {
-        //In the future, only enable this mode if psy-rd is active
-        //as the quality benefits of SSD mode decision L0 are otherwise dubious
-        if (enc_mode <= ENC_MR)
+        //Enable SSD mode decision L0 only when psy-rd>=0.5
+        //as the quality benefits of SSD mode decision L0 are dubious
+        //for the computational cost when not using the feature
+        if (pcs->scs->static_config.psy_rd >= 0.5){
+            if (enc_mode <= ENC_MR)
+                pcs->mds0_level = 1;
+            //With P6 and slower when psy-rd is enabled, there are
+            //great benefits to enabling SAD since unlike VAR,
+            //psy-rd can actually modulate SAD for better perceptual quality using mds0_level
+            else if (enc_mode <= ENC_M6)
+                pcs->mds0_level = 5;
+            else
+                pcs->mds0_level = is_islice ? 2 : 4;
+
+        } else {
+        if (enc_mode <= ENC_MRP)
             pcs->mds0_level = 1;
         else if (enc_mode <= ENC_M6)
              pcs->mds0_level = 2;
         else
             pcs->mds0_level = is_islice ? 2 : 4;
+        }
     }
     /*
        disallow_4x4
