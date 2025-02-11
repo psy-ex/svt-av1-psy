@@ -560,13 +560,21 @@ TEST_P(HighBDConvolveScaleTest, DISABLED_Speed) {
     SpeedTest();
 }
 
-#ifdef ARCH_X86_64
 const int kBDs[] = {8, 10};
 
+#ifdef ARCH_X86_64
 INSTANTIATE_TEST_SUITE_P(
     SSE4_1, HighBDConvolveScaleTest,
     ::testing::Combine(
         ::testing::Values(svt_av1_highbd_convolve_2d_scale_sse4_1),
         ::testing::ValuesIn(kBlockDim), ::testing::ValuesIn(kBDs)));
 #endif  // ARCH_X86_64
+
+#ifdef ARCH_AARCH64
+INSTANTIATE_TEST_SUITE_P(
+    NEON, HighBDConvolveScaleTest,
+    ::testing::Combine(::testing::Values(svt_av1_highbd_convolve_2d_scale_neon),
+                       ::testing::ValuesIn(kBlockDim),
+                       ::testing::ValuesIn(kBDs)));
+#endif  // ARCH_AARCH64
 }  // namespace

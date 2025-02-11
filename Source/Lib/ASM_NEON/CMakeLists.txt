@@ -32,6 +32,7 @@ target_sources(
   PUBLIC convolve_neon.c
   PUBLIC convolve_scale_neon.c
   PUBLIC highbd_convolve_neon.c
+  PUBLIC highbd_convolve_scale_neon.c
   PUBLIC highbd_jnt_convolve_neon.c
   PUBLIC highbd_loopfilter_neon.c
   PUBLIC highbd_warp_plane_neon.c
