@@ -21,6 +21,7 @@ target_sources(
   ASM_NEON_I8MM
   PUBLIC aom_convolve8_neon_i8mm.c
   PUBLIC convolve_neon_i8mm.c
+  PUBLIC convolve_scale_neon_i8mm.c
   PUBLIC jnt_convolve_neon_i8mm.c
   PUBLIC warp_plane_neon_i8mm.c)
 

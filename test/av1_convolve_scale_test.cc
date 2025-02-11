@@ -471,6 +471,13 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::ValuesIn(kBlockDim)));
 #endif  // HAVE_NEON_DOTPROD
 
+#if HAVE_NEON_I8MM
+INSTANTIATE_TEST_SUITE_P(
+    NEON_I8MM, LowBDConvolveScaleTest,
+    ::testing::Combine(::testing::Values(svt_av1_convolve_2d_scale_neon_i8mm),
+                       ::testing::ValuesIn(kBlockDim)));
+#endif  // HAVE_NEON_I8MM
+
 #endif  // ARCH_AARCH64
 
 typedef void (*HighbdConvolveFunc)(const uint16_t *src, int src_stride,
