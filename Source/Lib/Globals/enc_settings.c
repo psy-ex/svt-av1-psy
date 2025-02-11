@@ -934,11 +934,6 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
-    if (config->psy_rd != 0.0 && config->tune == 1) {
-        SVT_ERROR("Instance %u: PSY-RD is only supported by psycho-visually oriented tunes\n", channel_number + 1);
-        return_error = EB_ErrorBadParameter;
-    }
-
     if (config->spy_rd > 1) {
         SVT_ERROR("Instance %u: spy-rd must be between 0 and 1\n", channel_number + 1);
         return_error = EB_ErrorBadParameter;
