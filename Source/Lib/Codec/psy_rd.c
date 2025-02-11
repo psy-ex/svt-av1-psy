@@ -141,9 +141,9 @@ uint64_t svt_psy_distortion(const uint8_t* input, uint32_t input_stride,
     if (width >= 8 && height >= 8) { /* 8x8 or larger */
         for (uint64_t i = 0; i < height; i += 8) {
             for (uint64_t j = 0; j < width; j += 8) {
-                int32_t input_nrg = (svt_sa8d_8x8(input + i * input_stride + j, input_stride, zero_buffer, 0) >> 8) -
+                int32_t input_nrg = (svt_sa8d_8x8(input + i * input_stride + j, input_stride, zero_buffer, 0)) -
                     (svt_psy_sad_nxn(8, 8, input + i * input_stride + j, input_stride, zero_buffer, 0) >> 2);
-                int32_t recon_nrg = (svt_sa8d_8x8(recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 8) -
+                int32_t recon_nrg = (svt_sa8d_8x8(recon + i * recon_stride + j, recon_stride, zero_buffer, 0)) -
                     (svt_psy_sad_nxn(8, 8, recon + i * recon_stride + j, recon_stride, zero_buffer, 0) >> 2);
                 total_nrg += abs(input_nrg - recon_nrg);
             }
@@ -159,7 +159,9 @@ uint64_t svt_psy_distortion(const uint8_t* input, uint32_t input_stride,
             }
         }
     }
-    return (total_nrg << 2);
+    // Energy is scaled to a 1/8th (total_nrg >> 1 instead of total_nrg << 2) to match
+    // equivalent HBD strengths
+    return (total_nrg >> 1);
 }
 
 /*
