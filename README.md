@@ -12,7 +12,7 @@ Provides control over our augmented AQ Modes 0 and 2 which can utilize variance 
 
 Controls how "selective" the algorithm is when boosting superblocks, based on their low/high 8x8 variance ratio. A value of 1 is the least selective, and will readily boost a superblock if only 1/8th of the superblock is low variance. Conversely, a value of 8 will only boost if the *entire* superblock is low variance. Lower values increase bitrate. The default value is 6.
 
-- `--enable-alt-curve` *0 and 1*
+- `--enable-alt-curve` *0 and 1* (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/merge_requests/2357)**)
 
 Enable an alternative variance boost curve, with different bit allocation and visual characteristics. The default is 0.
 
@@ -24,11 +24,11 @@ Terrifically slow encoding modes for research purposes.
 
 A new tune based on Tune 2 (SSIM) called SSIM with Subjective Quality Tuning. Generally harms metric performance in exchange for better visual fidelity.
 
-- `Tune 4`
+- `Tune 4` (**[Ported to libaom](https://aomedia.googlesource.com/aom/+/refs/tags/v3.12.0)**)
 
 Another new tune based on Tune 2 (SSIM) called Still Picture. Optimized for still images based on SSIMULACRA2 performance on the CID22 Validation test set. Not recommended for use outside of all-intra encoding.
 
-- `--sharpness` *-7 to 7*
+- `--sharpness` *-7 to 7* (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/merge_requests/2346)**)
 
 A parameter for modifying loopfilter deblock sharpness and rate distortion to improve visual fidelity. The default is 1.
 
@@ -60,7 +60,7 @@ Enables a more accurate loop filter that prevents blocking, for a modest increas
 
 Lowers the minimum available preset from 8 to 2 for higher-quality 8K and 16K encoding (64 GB of RAM recommended per encoding instance).
 
-- `--frame-luma-bias` *0 to 100*
+- `--frame-luma-bias` *0 to 100* (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/merge_requests/2348)**)
 
 Enables frame-level luma bias to improve quality in dark scenes by adjusting frame-level QP based on average luminance across each frame.
 
@@ -68,7 +68,7 @@ Enables frame-level luma bias to improve quality in dark scenes by adjusting fra
 
 Restricts available transform sizes to a maximum of 32x32 pixels. Can help slightly improve detail retention at high fidelity CRFs.
 
-- `--adaptive-film-grain` *0 and 1*
+- `--adaptive-film-grain` *0 and 1* (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/merge_requests/2347)**)
 
 Adaptively varies the film grain blocksize based on the resolution of the input video. Often greatly improves the consistency of film grain in the output video, reducing grain patterns.
 
@@ -76,7 +76,7 @@ Adaptively varies the film grain blocksize based on the resolution of the input 
 
 Set the path to an HDR10+ JSON file for encoding HDR10+ video. SVT-AV1-PSY needs to be built with the `enable-hdr10plus` flag enabled in build.sh (see `./Build/linux/build.sh --help` for more info) (Thank you @quietvoid !)
 
-- `--tf-strength` *0 to 4*
+- `--tf-strength` *0 to 4* (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/merge_requests/2352)**)
 
 Manually adjust temporal filtering strength to adjust the trade-off between fewer artifacts in motion and fine detail retention. Each increment is a 2x increase in temporal filtering strength; the default value of 1 is 4x weaker than mainline SVT-AV1's default temporal filter (which would be equivalent to 3 here).
 
@@ -84,11 +84,11 @@ Manually adjust temporal filtering strength to adjust the trade-off between fewe
 
 Set the minimum & maximum quantization matrices for chroma planes. The defaults are 8 and 15, respectively. These options decouple chroma quantization matrix control from the luma quantization matrix options currently available, allowing for more control over chroma quality.
 
-- `Odd dimension encoding support`
+- `Odd dimension encoding support` (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/merge_requests/2350)**)
 
 Allows the encoder to accept content with odd width and/or height (e.g. 1920x817px). Messages like "Source Width/Height must be even for YUV_420 colorspace" are no more.
 
-- `Reduced minimum width/height requirements`
+- `Reduced minimum width/height requirements` (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/merge_requests/2356)**)
 
 Allows the encoder to accept content with width and/or height as small as 4 pixels (e.g. 32x18px).
 
@@ -100,7 +100,7 @@ In a scenario where a video frame contains areas with fine textures or flat regi
 
 Manually adjust temporal filtering strength specifically on keyframes. Each increment is a 2x increase in temporal filtering strength; a value of 1 is 4x weaker than mainline SVT-AV1's default temporal filter (which would be equivalent to 3 here). The default value is 1, which reduces alt-ref temporal filtering strength by 4x on keyframes.
 
-- `--enable-tf 2`
+- `--enable-tf 2` (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/merge_requests/2352)**)
 
 Adaptively varies temporal filtering strength based on 64x64 block error. This can slightly improve visual fidelity in scenes with fast motion or fine detail. Setting this to 2 will override `--tf-strength` and `--kf-tf-strength`, as their values will be automatically determined by the encoder.
 
@@ -129,7 +129,7 @@ SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide bet
 
 ### Other Changes
 
-- `--color-help`
+- `--color-help` (**[Merged to Mainline](https://gitlab.com/AOMediaCodec/SVT-AV1/-/merge_requests/2351)**)
 
 Prints the information found in Appendix A.2 of the user guide in order to help users more easily understand the Color Description Options in SvtAv1EncApp.
 
@@ -156,7 +156,7 @@ One way to get involved is to use SVT-AV1-PSY in your own AV1 encoding projects,
 **Projects Featuring SVT-AV1-PSY:**
 
 - [Aviator](https://github.com/gianni-rosato/aviator) ~ an AV1 encoding GUI by @gianni-rosato
-- [rAV1ator CLI](https://github.com/gianni-rosato/rav1ator-cli) ~ a TUI for video encoding with Av1an by @gianni-rosato
+- [rAV1ator CLI](https://github.com/ultimaxx/rav1ator-cli) ~ a TUI for video encoding with Av1an by @ultimaxx
 - [SVT-AV1-PSY on the AUR](https://aur.archlinux.org/packages/svt-av1-psy-git) ~ by @BlueSwordM
 - [SVT-AV1-PSY in CachyOS](https://github.com/CachyOS/CachyOS-PKGBUILDS/pull/144) ~ by @BlueSwordM
 - [Handbrake Builds](https://github.com/Nj0be/HandBrake-SVT-AV1-PSY) ~ by @Nj0be
@@ -175,7 +175,7 @@ Alliance for Open Media Patent License 1.0. See [LICENSE](LICENSE-BSD2.md) and
 under the BSD-3-clause clear license and the Alliance for Open Media Patent
 License 1.0. See [LICENSE](LICENSE.md) and [PATENTS](PATENTS.md) for details.
 
-SVT-AV1-PSY does not feature license modifications from mainline SVT-AV1.
+*SVT-AV1-PSY does not feature license modifications from mainline SVT-AV1.*
 
 ## Documentation
 
