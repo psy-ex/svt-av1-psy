@@ -5044,6 +5044,9 @@ static void copy_api_from_app(
     // Spy rd
     scs->static_config.spy_rd = config_struct->spy_rd;
 
+    // Sharp TX
+    scs->static_config.sharp_tx = config_struct->sharp_tx;
+
     // Override settings for Still Picture tune
     if (scs->static_config.tune == 4) {
         SVT_WARN("Tune 4: Still Picture is experimental, expect frequent changes that may modify present behavior.\n");
