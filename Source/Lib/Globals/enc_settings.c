@@ -944,6 +944,11 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
+    if (config->hbd_md > 3) {
+        SVT_ERROR("Instance %u: hbd-md must be between 0 and 3\n", channel_number + 1);
+        return_error = EB_ErrorBadParameter;
+    }
+
     return return_error;
 }
 
@@ -1115,6 +1120,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->psy_rd                            = 0;
     config_ptr->spy_rd                            = 0;
     config_ptr->sharp_tx                          = 1;
+    config_ptr->hbd_md                            = 0;
     return return_error;
 }
 
@@ -2303,6 +2309,7 @@ EB_API EbErrorType svt_av1_enc_parse_parameter(EbSvtAv1EncConfiguration *config_
         {"adaptive-film-grain", &config_struct->adaptive_film_grain},
         {"spy-rd", &config_struct->spy_rd},
         {"sharp-tx", &config_struct->sharp_tx},
+        {"hbd-md", &config_struct->hbd_md},
     };
     const size_t bool_opts_size = sizeof(bool_opts) / sizeof(bool_opts[0]);
 

@@ -1968,10 +1968,11 @@ void svt_aom_sig_deriv_multi_processes(SequenceControlSet *scs, PictureParentCon
 #else
     pcs->tune_tpl_for_chroma = 0;
 #endif
-    if (scs->enable_hbd_mode_decision == DEFAULT)
+    if (scs->enable_hbd_mode_decision == DEFAULT) {
         //In the future, enable full HBD mode decisions
         //only for psy-rd at P4 and slower,
         //since that's where we see most of the gains
+    if (pcs->scs->static_config.hbd_md == 0) {
         if (enc_mode <= ENC_M4)
             pcs->hbd_md = 1;
         else if (enc_mode <= ENC_M6)
@@ -1980,6 +1981,17 @@ void svt_aom_sig_deriv_multi_processes(SequenceControlSet *scs, PictureParentCon
             pcs->hbd_md = is_base ? 2 : 0;
         else
             pcs->hbd_md = is_islice ? 2 : 0;
+
+    } else if (pcs->scs->static_config.hbd_md == 1){
+        pcs->hbd_md = 1;
+
+    } else if (pcs->scs->static_config.hbd_md == 2) {
+        pcs->hbd_md = 2;
+
+    } else if (pcs->scs->static_config.hbd_md == 3) {
+        pcs->hbd_md = 3;
+    }
+}
     else
         pcs->hbd_md = scs->enable_hbd_mode_decision;
 

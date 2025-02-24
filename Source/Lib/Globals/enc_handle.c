@@ -5047,6 +5047,9 @@ static void copy_api_from_app(
     // Sharp TX
     scs->static_config.sharp_tx = config_struct->sharp_tx;
 
+    // HBD-MD
+    scs->static_config.hbd_md = config_struct->hbd_md;
+
     // Override settings for Still Picture tune
     if (scs->static_config.tune == 4) {
         SVT_WARN("Tune 4: Still Picture is experimental, expect frequent changes that may modify present behavior.\n");
