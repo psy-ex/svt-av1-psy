@@ -32,7 +32,8 @@
 // return: abs(x)+(abs(y)<<16)
 static inline sum2_t abs2(sum2_t a)
 {
-    sum2_t s = ((a >> (BITS_PER_SUM - 1)) & (((sum2_t)1 << BITS_PER_SUM) + 1)) * ((sum_t)-1);
+    const sum2_t mask = (a >> (BITS_PER_SUM - 1)) & (((sum2_t)1 << BITS_PER_SUM) + 1);
+    const sum2_t s = (mask << BITS_PER_SUM) - mask;
     return (a + s) ^ s;
 }
 // 10-bit
@@ -52,8 +53,8 @@ static inline sum2_t abs2(sum2_t a)
 // return: abs(x)+(abs(y)<<32)
 static inline sum2_hbd_t abs2_hbd(sum2_hbd_t a)
 {
-    sum2_hbd_t s = ((a >> (BITS_PER_SUM_HBD - 1)) & (((sum2_hbd_t)1 << BITS_PER_SUM_HBD) + 1)) * ((sum_hbd_t)-1);
-
+    const sum2_hbd_t mask = (a >> (BITS_PER_SUM_HBD - 1)) & (((sum2_hbd_t)1 << BITS_PER_SUM_HBD) + 1);
+    const sum2_hbd_t s = (mask << BITS_PER_SUM_HBD) - mask;
     return (a + s) ^ s;
 }
 
