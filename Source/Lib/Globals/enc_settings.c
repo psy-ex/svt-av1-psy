@@ -1117,7 +1117,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->tf_strength                       = 1;
     config_ptr->kf_tf_strength                    = 1;
     config_ptr->noise_norm_strength               = 0;
-    config_ptr->psy_rd                            = 0;
+    config_ptr->psy_rd                            = 0.5;
     config_ptr->spy_rd                            = 0;
     config_ptr->sharp_tx                          = 1;
     config_ptr->hbd_md                            = 0;
