@@ -185,7 +185,6 @@ macOS FFmpeg (Static):
   before_script:
     - !reference [.ffmpeg-before-script-clone]
     - !reference [.ffmpeg-before-script-export]
-    - git -C ffmpeg-src apply $PWD/.gitlab/workflows/linux/ffmpeg_n7_fix.patch
   script:
     - !reference [.ffmpeg-svtav1-script]
     - !reference [.ffmpeg-aom-script]

@@ -113,7 +113,6 @@ Win64 FFmpeg (Static):
     PREFIX_DIR: C:/msys64/mingw64
   before_script:
     - !reference [.ffmpeg-before-script-clone-windows]
-    - git -C ffmpeg-src apply $PWD/.gitlab/workflows/linux/ffmpeg_n7_fix.patch
   script:
     # SVT-AV1
     - |
