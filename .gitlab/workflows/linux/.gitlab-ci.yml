@@ -455,7 +455,7 @@ Linux libavif (Static):
     - cmake --build libavif-build --config Release --target install
     - valgrind --error-exitcode=1 --track-origins=yes --suppressions=/usr/lib/valgrind/debian.supp -- avifenc -c svt -d 8 -y 420 -r limited -j 2 ./Docs/img/me_fig_new.png out.avif
 
-Linux FFmpeg (n7.0.2, Static):
+Linux FFmpeg (n7.1, Static):
   extends: .linux-test-base
   stage: ffmpeg
   dependencies: []
@@ -470,7 +470,7 @@ Linux FFmpeg (n7.0.2, Static):
   before_script:
     - !reference [.ffmpeg-before-script-git-setup]
     - !reference [.ffmpeg-before-script-clone]
-    - git -C ffmpeg-src checkout n7.0.2
+    - git -C ffmpeg-src checkout n7.1
     - git -C ffmpeg-src apply $PWD/.gitlab/workflows/linux/ffmpeg_n7_fix.patch
     - !reference [.ffmpeg-before-script-export]
   script:
