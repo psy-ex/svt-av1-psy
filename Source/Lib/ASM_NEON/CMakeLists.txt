@@ -57,6 +57,7 @@ target_sources(
   PUBLIC obmc_sad_neon.c
   PUBLIC obmc_variance_neon.c
   PUBLIC pack_unpack_intrin_neon.c
+  PUBLIC pic_analysis_neon.c
   PUBLIC pickrst_neon.c
   PUBLIC picture_operators_intrinsic_neon.c
   PUBLIC restoration_pick_neon.c

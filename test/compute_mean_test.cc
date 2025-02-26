@@ -255,8 +255,6 @@ class ComputeMeanFour8x8Test
     uint8_t* input_;
 };
 
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ComputeMeanFour8x8Test);
-
 TEST_P(ComputeMeanFour8x8Test, MatchTest) {
     run_test();
 }
@@ -270,5 +268,11 @@ INSTANTIATE_TEST_SUITE_P(
     SSE2, ComputeMeanFour8x8Test,
     ::testing::Values(svt_compute_interm_var_four8x8_helper_sse2));
 #endif  // ARCH_X86_64
+
+#ifdef ARCH_AARCH64
+INSTANTIATE_TEST_SUITE_P(
+    NEON, ComputeMeanFour8x8Test,
+    ::testing::Values(svt_compute_interm_var_four8x8_neon));
+#endif  // ARCH_AARCH64
 
 }  // namespace
