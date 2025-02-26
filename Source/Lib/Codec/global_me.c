@@ -27,6 +27,15 @@
 #define GMV_ME_SAD_TH_2 10
 #define GMV_PIC_VAR_TH 750
 
+static void compute_global_motion(PictureParentControlSet *pcs, int *frm_corners, int num_frm_corners,
+                                  EbPictureBufferDesc *det_input_pic, //src frame for detection
+                                  EbPictureBufferDesc *det_ref_pic, //ref frame for detection
+                                  EbPictureBufferDesc *input_pic, //src frame for refinement
+                                  EbPictureBufferDesc *ref_pic, //ref frame for refinement
+                                  uint8_t              sf, //downsacle factor between det and refinement
+                                  uint8_t chess_refn, EbWarpedMotionParams *best_wm, int allow_high_precision_mv,
+                                  uint8_t list_idx, uint8_t ref_idx);
+
 //gm pre-processing pass, is an analysis pass done at the same time TF to detect any GM activity in
 //the clip. in case of detection in this pre-processing phase, a second GM detection pass is invoked.
 void svt_aom_gm_pre_processor(PictureParentControlSet *pcs, PictureParentControlSet **pcs_list) {
@@ -329,14 +338,14 @@ void svt_aom_upscale_wm_params(EbWarpedMotionParams *wm_params, uint8_t scale_fa
     }
 }
 
-void compute_global_motion(PictureParentControlSet *pcs, int *frm_corners, int num_frm_corners,
-                           EbPictureBufferDesc *det_input_pic, //src frame for detection
-                           EbPictureBufferDesc *det_ref_pic, //ref frame for detection
-                           EbPictureBufferDesc *input_pic, //src frame for refinement
-                           EbPictureBufferDesc *ref_pic, //ref frame for refinement
-                           uint8_t              sf, //downsacle factor between det and refinement
-                           uint8_t chess_refn, EbWarpedMotionParams *best_wm, int allow_high_precision_mv,
-                           uint8_t list_idx, uint8_t ref_idx) {
+static void compute_global_motion(PictureParentControlSet *pcs, int *frm_corners, int num_frm_corners,
+                                  EbPictureBufferDesc *det_input_pic, //src frame for detection
+                                  EbPictureBufferDesc *det_ref_pic, //ref frame for detection
+                                  EbPictureBufferDesc *input_pic, //src frame for refinement
+                                  EbPictureBufferDesc *ref_pic, //ref frame for refinement
+                                  uint8_t              sf, //downsacle factor between det and refinement
+                                  uint8_t chess_refn, EbWarpedMotionParams *best_wm, int allow_high_precision_mv,
+                                  uint8_t list_idx, uint8_t ref_idx) {
     EbWarpedMotionParams        global_motion = default_warp_params;
     const EbWarpedMotionParams *ref_params    = &default_warp_params;
     unsigned char *frm_buffer = input_pic->buffer_y + input_pic->org_x + input_pic->org_y * input_pic->stride_y;
@@ -454,4 +463,5 @@ void compute_global_motion(PictureParentControlSet *pcs, int *frm_corners, int n
     *best_wm = global_motion;
 
     for (int m = 0; m < RANSAC_NUM_MOTIONS; m++) { free(params_by_motion[m].inliers); }
+    free(correspondences);
 }

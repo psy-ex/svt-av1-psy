@@ -16,17 +16,7 @@
 #include "pic_buffer_desc.h"
 #include "me_context.h"
 
-void svt_aom_global_motion_estimation(PictureParentControlSet *pcs, EbPictureBufferDesc *input_pic);
-
-void compute_global_motion(PictureParentControlSet *pcs, int *frm_corners, int num_frm_corners,
-                           EbPictureBufferDesc *det_input_pic, //src frame for detection
-                           EbPictureBufferDesc *det_ref_pic, //ref frame for detection
-                           EbPictureBufferDesc *input_pic, //src frame for refinement
-                           EbPictureBufferDesc *ref_pic, //ref frame for refinement
-                           uint8_t              sf, //downsacle factor between det and refinement
-                           uint8_t chess_refn, EbWarpedMotionParams *best_wm, int allow_high_precision_mv,
-                           uint8_t list_idx, uint8_t ref_idx);
-
+void                    svt_aom_global_motion_estimation(PictureParentControlSet *pcs, EbPictureBufferDesc *input_pic);
 void                    svt_aom_upscale_wm_params(EbWarpedMotionParams *wm_params, uint8_t scale_factor);
 extern MvReferenceFrame svt_get_ref_frame_type(uint8_t list, uint8_t ref_idx);
 #endif // EbGlobalMotionEstimation_h
