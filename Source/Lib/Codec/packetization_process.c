@@ -988,9 +988,9 @@ void *svt_aom_packetization_kernel(void *input_ptr) {
 
             // Print a suggestion if a single picture is detected without using --avif 1
             if (!scs->static_config.avif && enc_ctx->terminating_picture_number == 0) {
-                SVT_ERROR(
-                    "A single picture was detected. Consider using --avif 1 for improved efficiency and reduced memory "
-                    "usage.\n");
+                SVT_INFO(
+                    "Only a single picture was passed in. Consider setting avif=1 for improved efficiency and reduced "
+                    "memory usage.\n");
             }
         }
         svt_release_mutex(enc_ctx->total_number_of_shown_frames_mutex);
