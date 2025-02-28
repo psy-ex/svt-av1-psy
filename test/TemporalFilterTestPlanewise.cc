@@ -1404,14 +1404,12 @@ class EstimateNoiseTestFP
     uint32_t encoder_bit_depth;
     int stride;
 };
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EstimateNoiseTestFP);
 
 TEST_P(EstimateNoiseTestFP, fixed_point) {
     RunTest();
 }
 
 using EstimateNoiseTestFPHbd = EstimateNoiseTestFP;
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EstimateNoiseTestFPHbd);
 
 TEST_P(EstimateNoiseTestFPHbd, fixed_point) {
     RunTest();
@@ -1423,17 +1421,17 @@ INSTANTIATE_TEST_SUITE_P(
     AVX2, EstimateNoiseTestFP,
     ::testing::Combine(::testing::Values(estimate_noise_fp16_c_wrapper),
                        ::testing::Values(estimate_noise_fp16_avx2_wrapper),
-                       ::testing::Values(3840, 1920, 1280, 800, 640, 360),
-                       ::testing::Values(2160, 1080, 720, 600, 480, 240),
+                       ::testing::Values(3840, 1920, 1280, 800, 640, 360, 357),
+                       ::testing::Values(2160, 1080, 720, 600, 480, 240, 237),
                        ::testing::Values(8)));
 
 INSTANTIATE_TEST_SUITE_P(
     AVX2, EstimateNoiseTestFPHbd,
     ::testing::Combine(::testing::Values(svt_estimate_noise_highbd_fp16_c),
                        ::testing::Values(svt_estimate_noise_highbd_fp16_avx2),
-                       ::testing::Values(3840, 1920, 1280, 800, 640, 360),
-                       ::testing::Values(2160, 1080, 720, 600, 480, 240),
-                       ::testing::Values(10, 12)));
+                       ::testing::Values(3840, 1920, 1280, 800, 640, 360, 357),
+                       ::testing::Values(2160, 1080, 720, 600, 480, 240, 237),
+                       ::testing::Values(10)));
 
 #endif
 
@@ -1443,10 +1441,17 @@ INSTANTIATE_TEST_SUITE_P(
     NEON, EstimateNoiseTestFP,
     ::testing::Combine(::testing::Values(estimate_noise_fp16_c_wrapper),
                        ::testing::Values(estimate_noise_fp16_neon_wrapper),
-                       ::testing::Values(3840, 1920, 1280, 800, 640, 360),
-                       ::testing::Values(2160, 1080, 720, 600, 480, 240),
+                       ::testing::Values(3840, 1920, 1280, 800, 640, 360, 357),
+                       ::testing::Values(2160, 1080, 720, 600, 480, 240, 237),
                        ::testing::Values(8)));
 
+INSTANTIATE_TEST_SUITE_P(
+    NEON, EstimateNoiseTestFPHbd,
+    ::testing::Combine(::testing::Values(svt_estimate_noise_highbd_fp16_c),
+                       ::testing::Values(svt_estimate_noise_highbd_fp16_neon),
+                       ::testing::Values(3840, 1920, 1280, 800, 640, 360, 357),
+                       ::testing::Values(2160, 1080, 720, 600, 480, 240, 237),
+                       ::testing::Values(10)));
 #endif
 
 typedef double (*EstimateNoiseFuncDbl)(const uint16_t *src, int width,
