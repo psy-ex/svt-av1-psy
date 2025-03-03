@@ -497,7 +497,6 @@ class GetProjSubspaceTest
                         }
                     }
 
-                    aom_clear_system_state();
                     int32_t xqd_c[2] = {0};
                     int32_t xqd_asm[2] = {0};
                     const SgrParamsType *const params =

@@ -571,9 +571,6 @@ static void gf_group_rate_assingment(PictureParentControlSet *pcs, FIRSTPASS_STA
     RATE_CONTROL *const          rc        = &enc_ctx->rc;
     TWO_PASS *const              twopass   = &scs->twopass;
     const FIRSTPASS_STATS *const start_pos = twopass->stats_in;
-#ifdef ARCH_X86_64
-    aom_clear_system_state();
-#endif
     GF_GROUP_STATS gf_stats;
     int            use_alt_ref;
     calculate_gf_stats(pcs, &gf_stats, this_frame, &use_alt_ref);
@@ -1099,9 +1096,6 @@ void svt_aom_one_pass_rt_rate_alloc(PictureParentControlSet *pcs) {
 void svt_aom_process_rc_stat(PictureParentControlSet *pcs) {
     SequenceControlSet *scs     = pcs->scs;
     TWO_PASS *const     twopass = &scs->twopass;
-#ifdef ARCH_X86_64
-    aom_clear_system_state();
-#endif
     FIRSTPASS_STATS this_frame;
     av1_zero(this_frame);
     process_first_pass_stats(pcs, &this_frame);

@@ -77,7 +77,6 @@ class ColorCountTest : public ::testing::Test {
             svt_aom_free(input_);
             input_ = nullptr;
         }
-        aom_clear_system_state();
     }
 
     void prepare_data() {

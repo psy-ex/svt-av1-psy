@@ -97,7 +97,6 @@ class QuantizeBTest : public ::testing::TestWithParam<QuantizeParam> {
 
     virtual ~QuantizeBTest() {
         delete rnd_;
-        aom_clear_system_state();
     }
 
     void SetUp() override {
@@ -119,7 +118,6 @@ class QuantizeBTest : public ::testing::TestWithParam<QuantizeParam> {
         svt_aom_free(dqcoeff_ref_);
         svt_aom_free(qcoeff_test_);
         svt_aom_free(dqcoeff_test_);
-        aom_clear_system_state();
     }
 
     /*

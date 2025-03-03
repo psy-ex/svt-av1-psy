@@ -53,7 +53,6 @@ class InvTxfm2dAsmTestBase : public ::testing::Test {
     ~InvTxfm2dAsmTestBase() {
         delete u_bd_rnd_;
         delete s_bd_rnd_;
-        aom_clear_system_state();
     }
 
     void SetUp() override {
@@ -72,7 +71,6 @@ class InvTxfm2dAsmTestBase : public ::testing::Test {
         svt_aom_free(input_);
         svt_aom_free(output_test_);
         svt_aom_free(output_ref_);
-        aom_clear_system_state();
     }
 
   protected:

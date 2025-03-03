@@ -2251,9 +2251,6 @@ static int rc_pick_q_and_bounds_no_stats_cbr(PictureControlSet *pcs) {
     // Limit Q range for the adaptive loop.
     if (pcs->ppcs->frm_hdr.frame_type == KEY_FRAME && !rc->this_key_frame_forced && pcs->ppcs->frame_offset != 0) {
         int qdelta = 0;
-#ifdef ARCH_X86_64
-        aom_clear_system_state();
-#endif
         qdelta = svt_av1_compute_qdelta_by_rate(
             rc, pcs->ppcs->frm_hdr.frame_type, active_worst_quality, 2.0, bit_depth, pcs->ppcs->sc_class1);
         pcs->ppcs->top_index = active_worst_quality + qdelta;
@@ -2287,9 +2284,6 @@ static int rc_pick_q_and_bounds_no_stats_cbr(PictureControlSet *pcs) {
             q      = (q + q1) / 2;
         } else if (pcs->slice_type != I_SLICE && pcs->ppcs->temporal_layer_index == 0) {
             int qdelta = 0;
-#ifdef ARCH_X86_64
-            aom_clear_system_state();
-#endif
             qdelta = svt_av1_compute_qdelta_by_rate(
                 rc, pcs->ppcs->frm_hdr.frame_type, active_worst_quality, QFACTOR, bit_depth, pcs->ppcs->sc_class1);
             q = q + qdelta;
@@ -2395,9 +2389,6 @@ static void av1_rc_update_rate_correction_factors(PictureParentControlSet *ppcs,
     // Do not update the rate factors for arf overlay frames.
     if (ppcs->is_overlay)
         return;
-
-    // Clear down mmx registers to allow floating point in what follows
-    //aom_clear_system_state();
 
     // Work out how big we would have expected the frame to be at this Q given
     // the current correction factor.
@@ -2932,7 +2923,6 @@ void recode_loop_update_q(PictureParentControlSet *ppcs, int *const loop, int *c
 
     const int min_cr = rc_cfg->min_cr;
     if (min_cr > 0) {
-        //aom_clear_system_state();
         const double compression_ratio = av1_get_compression_ratio(ppcs, ppcs->projected_frame_size >> 3);
         const double target_cr         = min_cr / 100.0;
         if (compression_ratio < target_cr) {

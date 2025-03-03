@@ -1136,7 +1136,6 @@ class GetGRadientHistTest
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test() {

@@ -81,7 +81,6 @@ class PsnrCalcTest : public ::testing::TestWithParam<ParamType> {
         svt_aom_free_frame_buffer(&tst_ref_);
         svt_aom_free_frame_buffer(&lbd_src_);
         svt_aom_free_frame_buffer(&lbd_ref_);
-        aom_clear_system_state();
     }
 
   protected:

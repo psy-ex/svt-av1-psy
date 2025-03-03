@@ -212,7 +212,6 @@ class AomUpsampledPredTest
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test() {
@@ -320,7 +319,6 @@ class CflLumaSubsamplingLbdTest
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test() {
@@ -395,7 +393,6 @@ class CflLumaSubsamplingHbdTest
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test() {

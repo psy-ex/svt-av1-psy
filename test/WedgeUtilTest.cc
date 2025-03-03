@@ -45,7 +45,6 @@ class WedgeUtilTest : public ::testing::Test {
         svt_aom_free(r0);
         svt_aom_free(r1);
         svt_aom_free(m);
-        aom_clear_system_state();
     }
 
   protected:
@@ -391,7 +390,6 @@ class AomSumSquaresTest : public ::testing::TestWithParam<AomHSumSquaresParam> {
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test() {

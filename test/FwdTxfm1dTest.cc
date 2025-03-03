@@ -86,7 +86,6 @@ class AV1FwdTxfm1dTest : public ::testing::TestWithParam<FwdTxfm1dParam> {
         svt_aom_free(output_test_);
         svt_aom_free(input_ref_);
         svt_aom_free(output_ref_);
-        aom_clear_system_state();
     }
 
     void run_fwd_accuracy_check() {

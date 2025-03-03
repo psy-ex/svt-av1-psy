@@ -340,7 +340,6 @@ class FwdTxfm2dAsmTest : public ::testing::TestWithParam<FwdTxfm2dAsmParam> {
 
     ~FwdTxfm2dAsmTest() {
         delete rnd_;
-        aom_clear_system_state();
     }
 
     void run_match_test() {

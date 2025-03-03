@@ -131,7 +131,6 @@ class AV1ConvolveTest : public ::testing::TestWithParam<ConvolveParam> {
         svt_aom_free(output_init_);
         svt_aom_free(output_ref_);
         svt_aom_free(output_tst_);
-        aom_clear_system_state();
     }
 
     virtual void run_convolve(int offset_r, int offset_c, int src_stride,

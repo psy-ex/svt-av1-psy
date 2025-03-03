@@ -410,10 +410,6 @@ static int64_t finer_search_pixel_proj_error(const uint8_t *src8, int32_t width,
     return err;
 }
 
-#ifdef ARCH_X86_64
-extern void RunEmms();
-#endif
-
 void svt_get_proj_subspace_c(const uint8_t *src8, int32_t width, int32_t height, int32_t src_stride,
                              const uint8_t *dat8, int32_t dat_stride, int32_t use_highbitdepth, int32_t *flt0,
                              int32_t flt0_stride, int32_t *flt1, int32_t flt1_stride, int32_t *xq,
@@ -424,10 +420,6 @@ void svt_get_proj_subspace_c(const uint8_t *src8, int32_t width, int32_t height,
     double        det;
     double        x[2];
     const int32_t size = width * height;
-
-#ifdef ARCH_X86_64
-    aom_clear_system_state();
-#endif
 
     // Default
     xq[0] = 0;
@@ -600,9 +592,7 @@ static SgrprojInfo search_selfguided_restoration(const uint8_t *dat8, int32_t wi
                   flt0,
                   flt1,
                   flt_stride);
-#ifdef ARCH_X86_64
-        aom_clear_system_state();
-#endif
+
         const SgrParamsType *const params = &svt_aom_eb_sgr_params[ep];
         svt_get_proj_subspace(src8,
                               width,
@@ -617,9 +607,7 @@ static SgrprojInfo search_selfguided_restoration(const uint8_t *dat8, int32_t wi
                               flt_stride,
                               exq,
                               params);
-#ifdef ARCH_X86_64
-        aom_clear_system_state();
-#endif
+
         encode_xq(exq, exqd, params);
         int64_t err = finer_search_pixel_proj_error(src8,
                                                     width,
@@ -943,9 +931,6 @@ static int64_t compute_score(int32_t wiener_win, int64_t *M, int64_t *H, InterpK
     int32_t       i, k, l;
     const int32_t plane_off   = (WIENER_WIN - wiener_win) >> 1;
     const int32_t wiener_win2 = wiener_win * wiener_win;
-#ifdef ARCH_X86_64
-    aom_clear_system_state();
-#endif
 
     a[WIENER_HALFWIN] = b[WIENER_HALFWIN] = WIENER_FILT_STEP;
     for (i = 0; i < WIENER_HALFWIN; ++i) {
@@ -1362,10 +1347,6 @@ static void search_wiener_seg(const RestorationTileLimits *limits, const Av1Pixe
             rusi->sse[RESTORE_WIENER] = INT64_MAX;
             return;
         }
-
-#ifdef ARCH_X86_64
-        aom_clear_system_state();
-#endif
     }
     // Perform refinement search for filter coeffs and compute SSE
     rusi->sse[RESTORE_WIENER] = finer_tile_search_wiener_seg(rsc, limits, tile_rect, &rui, wiener_win);
@@ -1408,10 +1389,6 @@ static void search_wiener_finish(const RestorationTileLimits *limits, const Av1P
         rusi->sse[RESTORE_WIENER]            = INT64_MAX;
         return;
     }
-
-#ifdef ARCH_X86_64
-    aom_clear_system_state();
-#endif
 
     rusi->wiener = rsc->rusi_pic[rest_unit_idx].wiener;
 

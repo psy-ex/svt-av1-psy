@@ -83,7 +83,6 @@ class CflSubAvgTest : public ::testing::TestWithParam<CflSubAvgParam> {
     }
 
     virtual ~CflSubAvgTest() {
-        aom_clear_system_state();
     }
 
     void prepare_data() {

@@ -81,7 +81,6 @@ class AV1InvTxfm1dTest : public ::testing::TestWithParam<InvTxfm1dParam> {
         svt_aom_free(input_);
         svt_aom_free(output_);
         svt_aom_free(inv_output_);
-        aom_clear_system_state();
     }
 
     void run_inv_accuracy_check() {

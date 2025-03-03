@@ -207,7 +207,6 @@ class ConvolveScaleTestBase : public ::testing::Test {
         delete image_;
     }
     virtual void TearDown() {
-        aom_clear_system_state();
     }
 
     // Implemented by subclasses (SetUp depends on the parameters passed

@@ -46,7 +46,6 @@ class AV1SelfguidedFilterTest
     }
 
     virtual void TearDown() {
-        aom_clear_system_state();
     }
 
   protected:
@@ -285,7 +284,6 @@ class AV1HighbdSelfguidedFilterTest
     }
 
     virtual void TearDown() {
-        aom_clear_system_state();
     }
 
   protected:

@@ -99,7 +99,6 @@ class LoopFilterTest : public ::testing::TestWithParam<TestParamType> {
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void init_buffer_with_value(uint8_t *buf, int length, uint8_t val) {

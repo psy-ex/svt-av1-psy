@@ -50,7 +50,6 @@ class SpatialFullDistortionFuncTestBase : public ::testing::Test {
     void TearDown() override {
         free(recon_);
         free(input_);
-        aom_clear_system_state();
     }
 
   protected:
@@ -513,7 +512,6 @@ class FullDistortionKernel32Bits
     void TearDown() {
         free(recon);
         free(coeff);
-        aom_clear_system_state();
     }
 
   protected:
@@ -607,7 +605,6 @@ class FullDistortionKernelCbfZero32Bits
     }
     void TearDown() {
         free(coeff);
-        aom_clear_system_state();
     }
 
   protected:

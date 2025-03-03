@@ -108,7 +108,6 @@ class FFT2DTest : public ::testing::TestWithParam<FFT2DTestParam> {
         svt_aom_free(temp_ref_);
         svt_aom_free(output_tst_);
         svt_aom_free(output_ref_);
-        aom_clear_system_state();
     }
 
     void run_fft_accuracy_check() {
@@ -236,7 +235,6 @@ class IFFT2DTest : public ::testing::TestWithParam<IFFT2DTestParam> {
         svt_aom_free(temp_ref_);
         svt_aom_free(output_tst_);
         svt_aom_free(output_ref_);
-        aom_clear_system_state();
     }
 
     void run_ifft_accuracy_check() {

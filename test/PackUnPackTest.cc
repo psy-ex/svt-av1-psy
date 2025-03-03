@@ -127,7 +127,6 @@ class PackTest : public ::testing::TestWithParam<PackParam> {
             svt_aom_free(local_cache1_);
         if (local_cache2_)
             svt_aom_free(local_cache2_);
-        aom_clear_system_state();
     }
 
   protected:
@@ -243,7 +242,6 @@ class PackMsbTest
             svt_aom_free(out_16bit_buffer1_);
         if (out_16bit_buffer2_)
             svt_aom_free(out_16bit_buffer2_);
-        aom_clear_system_state();
     }
 
   protected:
@@ -385,7 +383,6 @@ class Unpack2bCompress
             svt_aom_free(out_8bit_buffer_mod_);
         if (in_16bit_)
             svt_aom_free(in_16bit_);
-        aom_clear_system_state();
     }
 
   protected:
@@ -557,8 +554,6 @@ class Pack2dTest : public ::testing::TestWithParam<Pack2d16BitParam> {
 
         if (out_16bit_buffer_test_)
             svt_aom_free(out_16bit_buffer_test_);
-
-        aom_clear_system_state();
     }
 
   protected:
@@ -698,7 +693,6 @@ class UnPack2d16BitTest : public ::testing::TestWithParam<UnPack2d16BitParam> {
             svt_aom_free(out_nbit_buffer_ref_);
         if (out_nbit_buffer_test_)
             svt_aom_free(out_nbit_buffer_test_);
-        aom_clear_system_state();
     }
 
   protected:
@@ -821,7 +815,6 @@ class UnPack8BitTest : public ::testing::TestWithParam<UnPack8BitParam> {
             svt_aom_free(out_8bit_buffer_ref_);
         if (out_8bit_buffer_test_)
             svt_aom_free(out_8bit_buffer_test_);
-        aom_clear_system_state();
     }
 
   protected:
@@ -961,7 +954,6 @@ class UnPackAvgTest : public ::testing::TestWithParam<UnPackAvgParam> {
             svt_aom_free(out_8bit_buffer_ref_);
         if (out_8bit_buffer_test_)
             svt_aom_free(out_8bit_buffer_test_);
-        aom_clear_system_state();
     }
 
   protected:
@@ -1098,7 +1090,6 @@ class UnPackAvgSafeSubTest
             svt_aom_free(out_8bit_buffer_ref_);
         if (out_8bit_buffer_test_)
             svt_aom_free(out_8bit_buffer_test_);
-        aom_clear_system_state();
     }
 
   protected:

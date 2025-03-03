@@ -67,7 +67,6 @@ class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextParam> {
     }
 
     virtual ~EncodeTxbTest() {
-        aom_clear_system_state();
     }
 
     void check_get_nz_map_context_assembly(GetNzMapContextsFunc test_func,
@@ -208,7 +207,6 @@ class EncodeTxbInitLevelTest
 
     virtual ~EncodeTxbInitLevelTest() {
         delete rnd_;
-        aom_clear_system_state();
     }
 
     void run_test(const TxbInitLevelsFunc test_func, const int tx_size,

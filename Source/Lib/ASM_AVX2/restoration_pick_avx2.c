@@ -36,9 +36,6 @@ void svt_get_proj_subspace_avx2(const uint8_t *src8, int width, int height, int 
     double    x[2];
     const int size = width * height;
 
-    aom_clear_system_state();
-    RunEmms();
-
     // Default
     xq[0] = 0;
     xq[1] = 0;

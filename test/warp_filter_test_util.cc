@@ -134,7 +134,6 @@ void AV1WarpFilterTest::SetUp() {
 
 void AV1WarpFilterTest::TearDown() {
     delete rnd_;
-    aom_clear_system_state();
 }
 
 void AV1WarpFilterTest::RunSpeedTest(warp_affine_func test_impl) {
@@ -420,7 +419,6 @@ void AV1HighbdWarpFilterTest::SetUp() {
 
 void AV1HighbdWarpFilterTest::TearDown() {
     delete rnd_;
-    aom_clear_system_state();
 }
 
 void AV1HighbdWarpFilterTest::RunSpeedTest(highbd_warp_affine_func test_impl) {

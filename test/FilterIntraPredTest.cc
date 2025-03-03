@@ -55,7 +55,6 @@ class FilterIntraPredTest : public ::testing::TestWithParam<PredParams> {
         svt_aom_free(input_);
         svt_aom_free(pred_ref_);
         svt_aom_free(pred_tst_);
-        aom_clear_system_state();
     }
 
   protected:

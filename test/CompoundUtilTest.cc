@@ -72,7 +72,6 @@ class CompBlendTest : public ::testing::TestWithParam<BlendTestParam> {
         svt_aom_free(src0_);
         svt_aom_free(src1_);
         svt_aom_free(mask_);
-        aom_clear_system_state();
     }
 
     void run_test() {
@@ -744,7 +743,6 @@ class BuildCompDiffwtdMaskTest
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test(const DIFFWTD_MASK_TYPE type) {
@@ -823,7 +821,6 @@ class BuildCompDiffwtdMaskHighbdTest
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test(const DIFFWTD_MASK_TYPE type, int bd) {
@@ -923,7 +920,6 @@ class BuildCompDiffwtdMaskD16Test
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
   protected:
@@ -1029,7 +1025,6 @@ class AomSseTest : public ::testing::TestWithParam<AomSseParam> {
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test() {
@@ -1092,7 +1087,6 @@ class AomSseHighbdTest : public ::testing::TestWithParam<AomSseParam> {
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test() {
@@ -1184,7 +1178,6 @@ class AomSubtractBlockTest
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test() {
@@ -1257,7 +1250,6 @@ class AomHighbdSubtractBlockTest
     }
 
     void TearDown() override {
-        aom_clear_system_state();
     }
 
     void run_test() {

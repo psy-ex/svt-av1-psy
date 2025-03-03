@@ -455,14 +455,6 @@ typedef int16_t InterpKernel[SUBPEL_TAPS];
 /***************************************************/
 /****************** Helper Macros ******************/
 /***************************************************/
-#ifdef ARCH_X86_64
-extern void RunEmms();
-#define aom_clear_system_state() RunEmms()
-#else
-#define aom_clear_system_state() \
-    {}
-#endif
-
 /* Shift down with rounding for use when n >= 0, value >= 0 */
 #define ROUND_POWER_OF_TWO(value, n) (((value) + (((1 << (n)) >> 1))) >> (n))
 

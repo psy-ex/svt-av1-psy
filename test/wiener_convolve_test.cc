@@ -119,7 +119,6 @@ class AV1WienerConvolveTest : public ::testing::TestWithParam<ParamType> {
             svt_aom_free(output_ref_);
             output_ref_ = nullptr;
         }
-        aom_clear_system_state();
     }
 
   protected:

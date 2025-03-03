@@ -86,7 +86,6 @@ class AV1FwdTxfm2dTest : public ::testing::TestWithParam<FwdTxfm2dParam> {
         svt_aom_free(output_test_);
         svt_aom_free(input_ref_);
         svt_aom_free(output_ref_);
-        aom_clear_system_state();
     }
 
   protected:
