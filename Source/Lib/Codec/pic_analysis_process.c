@@ -36,7 +36,6 @@
  * Context
  **************************************/
 typedef struct PictureAnalysisContext {
-    EB_ALIGN(64) uint8_t local_cache[64];
     EbFifo *resource_coordination_results_input_fifo_ptr;
     EbFifo *picture_analysis_results_output_fifo_ptr;
 } PictureAnalysisContext;

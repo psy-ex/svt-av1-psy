@@ -36,8 +36,8 @@ typedef struct MeCandidate {
 typedef union MvCandidate {
     uint32_t as_int;
     struct {
-        signed short x_mv;
-        signed short y_mv;
+        int16_t x_mv;
+        int16_t y_mv;
     };
 } MvCandidate;
 // move this to a new file with ctor & dtor

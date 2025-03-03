@@ -4200,6 +4200,7 @@ EbErrorType svt_aom_inter_prediction(SequenceControlSet *scs, PictureControlSet 
             } else {
                 src_ptr = ref_pic_list0->buffer_y +
                     ((ref_pic_list0->org_x + (ref_pic_list0->org_y) * ref_pic_list0->stride_y) << is16bit);
+                src_ptr_2b = NULL;
             }
             // ScaleFactor
             const struct ScaleFactors *const sf = (use_intrabc || pcs == NULL || pcs->ppcs->is_not_scaled)
@@ -4249,10 +4250,16 @@ EbErrorType svt_aom_inter_prediction(SequenceControlSet *scs, PictureControlSet 
                 conv_params_y.use_jnt_comp_avg      = conv_params_y.use_dist_wtd_comp_avg;
             }
 
-            src_ptr = ref_pic_list1->buffer_y +
-                ((ref_pic_list1->org_x + (ref_pic_list1->org_y) * ref_pic_list1->stride_y));
-            src_ptr_2b = ref_pic_list1->buffer_bit_inc_y +
-                ((ref_pic_list1->org_x + (ref_pic_list1->org_y) * ref_pic_list1->stride_bit_inc_y));
+            if (ref_pic_list1->buffer_bit_inc_y) {
+                src_ptr = ref_pic_list1->buffer_y +
+                    ((ref_pic_list1->org_x + (ref_pic_list1->org_y) * ref_pic_list1->stride_y));
+                src_ptr_2b = ref_pic_list1->buffer_bit_inc_y +
+                    ((ref_pic_list1->org_x + (ref_pic_list1->org_y) * ref_pic_list1->stride_bit_inc_y));
+            } else {
+                src_ptr = ref_pic_list1->buffer_y +
+                    ((ref_pic_list1->org_x + (ref_pic_list1->org_y) * ref_pic_list1->stride_y) << is16bit);
+                src_ptr_2b = NULL;
+            }
             // ScaleFactor
             const struct ScaleFactors *const sf = (use_intrabc || pcs->ppcs->is_not_scaled) ? &sf_identity
                                                                                             : &ref1_scale_factors;
@@ -4345,7 +4352,6 @@ EbErrorType svt_aom_inter_prediction(SequenceControlSet *scs, PictureControlSet 
                 : &ref0_scale_factors;
 
             // List0-Cb
-
             if (ref_pic_list0->buffer_bit_inc_cb) {
                 src_ptr = ref_pic_list0->buffer_cb +
                     (((ref_pic_list0->org_x) / 2 + (ref_pic_list0->org_y) / 2 * ref_pic_list0->stride_cb));
@@ -4354,6 +4360,7 @@ EbErrorType svt_aom_inter_prediction(SequenceControlSet *scs, PictureControlSet 
             } else {
                 src_ptr = ref_pic_list0->buffer_cb +
                     (((ref_pic_list0->org_x) / 2 + (ref_pic_list0->org_y) / 2 * ref_pic_list0->stride_cb) << is16bit);
+                src_ptr_2b = NULL;
             }
 
             svt_aom_enc_make_inter_predictor(scs,
@@ -4385,7 +4392,6 @@ EbErrorType svt_aom_inter_prediction(SequenceControlSet *scs, PictureControlSet 
                                              is16bit);
 
             // List0-Cr
-
             if (ref_pic_list0->buffer_bit_inc_cr) {
                 src_ptr = ref_pic_list0->buffer_cr +
                     (((ref_pic_list0->org_x) / 2 + (ref_pic_list0->org_y) / 2 * ref_pic_list0->stride_cr));
@@ -4395,6 +4401,7 @@ EbErrorType svt_aom_inter_prediction(SequenceControlSet *scs, PictureControlSet 
             } else {
                 src_ptr = ref_pic_list0->buffer_cr +
                     (((ref_pic_list0->org_x) / 2 + (ref_pic_list0->org_y) / 2 * ref_pic_list0->stride_cr) << is16bit);
+                src_ptr_2b = NULL;
             }
             svt_aom_enc_make_inter_predictor(scs,
                                              src_ptr,
@@ -4450,12 +4457,16 @@ EbErrorType svt_aom_inter_prediction(SequenceControlSet *scs, PictureControlSet 
             }
 
             // List1-Cb
-
-            src_ptr = ref_pic_list1->buffer_cb +
-                (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_cb));
-            src_ptr_2b = ref_pic_list1->buffer_bit_inc_cb +
-                (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_bit_inc_cb));
-
+            if (ref_pic_list1->buffer_bit_inc_cb) {
+                src_ptr = ref_pic_list1->buffer_cb +
+                    (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_cb));
+                src_ptr_2b = ref_pic_list1->buffer_bit_inc_cb +
+                    (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_bit_inc_cb));
+            } else {
+                src_ptr = ref_pic_list1->buffer_cb +
+                    (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_cb) << is16bit);
+                src_ptr_2b = NULL;
+            }
             svt_aom_enc_make_inter_predictor(scs,
                                              src_ptr,
                                              src_ptr_2b,
@@ -4485,12 +4496,17 @@ EbErrorType svt_aom_inter_prediction(SequenceControlSet *scs, PictureControlSet 
                                              is16bit);
 
             // List1-Cr
+            if (ref_pic_list1->buffer_bit_inc_cr) {
+                src_ptr = ref_pic_list1->buffer_cr +
+                    (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_cr));
+                src_ptr_2b = ref_pic_list1->buffer_bit_inc_cr +
+                    (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_bit_inc_cr));
 
-            src_ptr = ref_pic_list1->buffer_cr +
-                (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_cr));
-            src_ptr_2b = ref_pic_list1->buffer_bit_inc_cr +
-                (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_bit_inc_cr));
-
+            } else {
+                src_ptr = ref_pic_list1->buffer_cr +
+                    (((ref_pic_list1->org_x) / 2 + (ref_pic_list1->org_y) / 2 * ref_pic_list1->stride_cr) << is16bit);
+                src_ptr_2b = NULL;
+            }
             svt_aom_enc_make_inter_predictor(scs,
                                              src_ptr,
                                              src_ptr_2b,

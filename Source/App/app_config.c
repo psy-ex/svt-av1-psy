@@ -2025,7 +2025,7 @@ int get_version(int argc, char *argv[]) {
 #ifdef NDEBUG
     static int debug_build = 1;
 #else
-    static int  debug_build = 0;
+    static int debug_build = 0;
 #endif
     if (find_token(argc, argv, VERSION_TOKEN, NULL))
         return 0;

@@ -1956,7 +1956,6 @@ static void set_inter_comp_controls(ModeDecisionContext *ctx, uint8_t inter_comp
         inter_comp_ctrls->skip_mvp_on_ref_info = 0;
         inter_comp_ctrls->use_rate             = 1;
         inter_comp_ctrls->pred0_to_pred1_mult  = 0;
-        inter_comp_ctrls->mvp_no_cmp_low_cmplx = 0;
         inter_comp_ctrls->mvp_no_diff_nsq      = 0;
         inter_comp_ctrls->mvp_no_wdg_var_th    = 0;
         inter_comp_ctrls->no_sym_dist          = 0;
@@ -1973,7 +1972,6 @@ static void set_inter_comp_controls(ModeDecisionContext *ctx, uint8_t inter_comp
         inter_comp_ctrls->skip_mvp_on_ref_info = 0;
         inter_comp_ctrls->use_rate             = 0;
         inter_comp_ctrls->pred0_to_pred1_mult  = 0;
-        inter_comp_ctrls->mvp_no_cmp_low_cmplx = 0;
         inter_comp_ctrls->mvp_no_diff_nsq      = 0;
         inter_comp_ctrls->mvp_no_wdg_var_th    = 0;
         inter_comp_ctrls->no_sym_dist          = 0;
@@ -1991,7 +1989,6 @@ static void set_inter_comp_controls(ModeDecisionContext *ctx, uint8_t inter_comp
         inter_comp_ctrls->skip_mvp_on_ref_info = 0;
         inter_comp_ctrls->use_rate             = 0;
         inter_comp_ctrls->pred0_to_pred1_mult  = 1;
-        inter_comp_ctrls->mvp_no_cmp_low_cmplx = 0;
         inter_comp_ctrls->mvp_no_diff_nsq      = 0;
         inter_comp_ctrls->mvp_no_wdg_var_th    = 0;
         inter_comp_ctrls->no_sym_dist          = 0;
@@ -2008,7 +2005,6 @@ static void set_inter_comp_controls(ModeDecisionContext *ctx, uint8_t inter_comp
         inter_comp_ctrls->skip_mvp_on_ref_info = 1;
         inter_comp_ctrls->use_rate             = 0;
         inter_comp_ctrls->pred0_to_pred1_mult  = 1;
-        inter_comp_ctrls->mvp_no_cmp_low_cmplx = 0;
         inter_comp_ctrls->mvp_no_diff_nsq      = 0;
         inter_comp_ctrls->mvp_no_wdg_var_th    = 0;
         inter_comp_ctrls->no_sym_dist          = 1;
@@ -2027,7 +2023,6 @@ static void set_inter_comp_controls(ModeDecisionContext *ctx, uint8_t inter_comp
         inter_comp_ctrls->skip_mvp_on_ref_info = 1;
         inter_comp_ctrls->use_rate             = 0;
         inter_comp_ctrls->pred0_to_pred1_mult  = 4;
-        inter_comp_ctrls->mvp_no_cmp_low_cmplx = 1;
         inter_comp_ctrls->mvp_no_diff_nsq      = 1;
         inter_comp_ctrls->mvp_no_wdg_var_th    = 20;
         inter_comp_ctrls->no_sym_dist          = 1;

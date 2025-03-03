@@ -1488,12 +1488,6 @@ static bool skip_mvp_compound_on_ref_types(ModeDecisionContext *ctx, MvReference
     return skip_comp;
 }
 
-static uint32_t get_comp_th(uint32_t qp) {
-    float qpf = (float)(qp);
-    //3
-    return (uint32_t)(-60.6 * qpf + 2440);
-}
-
 /*********************************************************************
 **********************************************************************
         Upto 12 inter Candidated injected
@@ -1503,8 +1497,7 @@ UniPred L1 : NEARST         + upto 3x NEAR
 BIPred     : NEARST_NEARST  + upto 3x NEAR_NEAR
 **********************************************************************
 **********************************************************************/
-static void inject_mvp_candidates_ii(const SequenceControlSet *scs, PictureControlSet *pcs, ModeDecisionContext *ctx,
-                                     uint32_t *candTotCnt) {
+static void inject_mvp_candidates_ii(PictureControlSet *pcs, ModeDecisionContext *ctx, uint32_t *candTotCnt) {
     BlkStruct   *blk_ptr        = ctx->blk_ptr;
     FrameHeader *frm_hdr        = &pcs->ppcs->frm_hdr;
     bool         allow_compound = (frm_hdr->reference_mode == SINGLE_REFERENCE || ctx->blk_geom->bwidth == 4 ||
@@ -1639,11 +1632,8 @@ static void inject_mvp_candidates_ii(const SequenceControlSet *scs, PictureContr
             uint8_t list_idx_0 = get_list_idx(rf[0]);
             uint8_t list_idx_1 = get_list_idx(rf[1]);
 
-            ctx->cmp_store.pred0_cnt       = 0;
-            ctx->cmp_store.pred1_cnt       = 0;
-            const uint32_t is_low_cmplxity = MIN(ctx->md_me_dist, ctx->md_pme_dist) /
-                    (ctx->blk_geom->bwidth * ctx->blk_geom->bheight) <
-                get_comp_th(scs->static_config.qp);
+            ctx->cmp_store.pred0_cnt = 0;
+            ctx->cmp_store.pred1_cnt = 0;
 
             // Always consider the 2 closet ref frames (i.e. ref_idx=0) @ MVP cand generation
             if (!is_valid_bipred_ref(ctx, NRST_NEAR_GROUP, list_idx_0, ref_idx_0, list_idx_1, ref_idx_1))
@@ -1669,8 +1659,6 @@ static void inject_mvp_candidates_ii(const SequenceControlSet *scs, PictureContr
                         (rf[1] == frm_hdr->skip_mode_params.ref_frame_idx_1);
                     bool mask_done = 0;
                     for (MD_COMP_TYPE cur_type = MD_COMP_AVG; cur_type < tot_comp_types; cur_type++) {
-                        if (ctx->inter_comp_ctrls.mvp_no_cmp_low_cmplx && cur_type != MD_COMP_AVG && is_low_cmplxity)
-                            break;
                         if (ctx->inter_comp_ctrls.mvp_no_diff_nsq && cur_type == MD_COMP_DIFF0 &&
                             ctx->blk_geom->shape != PART_N)
                             continue;
@@ -1747,9 +1735,6 @@ static void inject_mvp_candidates_ii(const SequenceControlSet *scs, PictureContr
                     if (inj_mv) {
                         bool mask_done = 0;
                         for (MD_COMP_TYPE cur_type = MD_COMP_AVG; cur_type < tot_comp_types; cur_type++) {
-                            if (ctx->inter_comp_ctrls.mvp_no_cmp_low_cmplx && cur_type != MD_COMP_AVG &&
-                                is_low_cmplxity)
-                                break;
                             if (ctx->inter_comp_ctrls.mvp_no_diff_nsq && cur_type == MD_COMP_DIFF0 &&
                                 ctx->blk_geom->shape != PART_N)
                                 continue;
@@ -3302,7 +3287,7 @@ static void inject_inter_candidates_light_pd1(PictureControlSet *pcs, ModeDecisi
     *candidate_total_cnt = cand_total_cnt;
 }
 static void svt_aom_inject_inter_candidates(PictureControlSet *pcs, ModeDecisionContext *ctx,
-                                            const SequenceControlSet *scs, uint32_t *candidate_total_cnt) {
+                                            uint32_t *candidate_total_cnt) {
     FrameHeader *frm_hdr             = &pcs->ppcs->frm_hdr;
     uint32_t     cand_total_cnt      = *candidate_total_cnt;
     bool         is_compound_enabled = (frm_hdr->reference_mode == SINGLE_REFERENCE) ? 0 : 1;
@@ -3322,7 +3307,7 @@ static void svt_aom_inject_inter_candidates(PictureControlSet *pcs, ModeDecision
     ************* */
     if (!(ctx->is_intra_bordered && ctx->cand_reduction_ctrls.use_neighbouring_mode_ctrls.enabled))
         if (ctx->new_nearest_injection)
-            inject_mvp_candidates_ii(scs, pcs, ctx, &cand_total_cnt);
+            inject_mvp_candidates_ii(pcs, ctx, &cand_total_cnt);
     //----------------------
     //    NEAREST_NEWMV, NEW_NEARESTMV, NEAR_NEWMV, NEW_NEARMV.
     //----------------------
@@ -4027,7 +4012,6 @@ EbErrorType generate_md_stage_0_cand(
             svt_aom_inject_inter_candidates(
                 pcs,
                 ctx,
-                scs,
                 &cand_total_cnt);
     }
     // For I_SLICE, DC is always injected, and therefore there is no a risk of no candidates @ md_syage_0()

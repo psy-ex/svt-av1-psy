@@ -107,8 +107,6 @@ typedef struct InterCompCtrls {
     uint8_t pred0_to_pred1_mult;
     // if true, use rate @ compound params derivation
     uint8_t use_rate;
-    //no compound for low complexity blocks (MVP only)
-    uint8_t mvp_no_cmp_low_cmplx;
     //no diff for nsq (MVP only)
     uint8_t mvp_no_diff_nsq;
     //no wedge if blk variance is less than mvp_no_wdg_var_th; 0: OFF (MVP only)
