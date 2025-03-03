@@ -1969,11 +1969,13 @@ void svt_aom_sig_deriv_multi_processes(SequenceControlSet *scs, PictureParentCon
     pcs->tune_tpl_for_chroma = 0;
 #endif
     if (scs->enable_hbd_mode_decision == DEFAULT) {
-        //In the future, enable full HBD mode decisions
-        //only for psy-rd at P4 and slower,
-        //since that's where we see most of the gains
+
     if (pcs->scs->static_config.hbd_md == 0) {
-        if (enc_mode <= ENC_M4)
+        if (enc_mode <= ENC_M2)
+            pcs->hbd_md = 1;
+        //Empiral testing shows enabling full 10-bit MD greatly increases
+        //psy-rd performance once it becomes strong enough (>=0.6)
+        if (enc_mode <= ENC_M4 && pcs->scs->static_config.psy_rd >= 0.6)
             pcs->hbd_md = 1;
         else if (enc_mode <= ENC_M6)
             pcs->hbd_md = 2;
@@ -8826,7 +8828,7 @@ void svt_aom_sig_deriv_mode_decision_config(SequenceControlSet *scs, PictureCont
         //Enable SSD mode decision L0 only when psy-rd>=0.5
         //as the quality benefits of SSD mode decision L0 are dubious
         //for the computational cost when not using the feature
-        if (pcs->scs->static_config.psy_rd >= 0.5){
+        if (pcs->scs->static_config.psy_rd >= 0.6){
             if (enc_mode <= ENC_MR)
                 pcs->mds0_level = 1;
             //With P6 and slower when psy-rd is enabled, there are
