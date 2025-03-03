@@ -63,7 +63,6 @@ set(asm_files
     picture_operators_sse2.asm
     subpel_variance_sse2.asm
     subtract_sse2.asm
-    x64RegisterUtil.asm
     )
 
 add_library(ASM_SSE2 OBJECT ${all_files})
