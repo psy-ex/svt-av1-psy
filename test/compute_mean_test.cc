@@ -273,6 +273,12 @@ INSTANTIATE_TEST_SUITE_P(
 INSTANTIATE_TEST_SUITE_P(
     NEON, ComputeMeanFour8x8Test,
     ::testing::Values(svt_compute_interm_var_four8x8_neon));
+
+#if HAVE_NEON_DOTPROD
+INSTANTIATE_TEST_SUITE_P(
+    NEON_DOTPROD, ComputeMeanFour8x8Test,
+    ::testing::Values(svt_compute_interm_var_four8x8_neon_dotprod));
+#endif  // HAVE_NEON_DOTPROD
 #endif  // ARCH_AARCH64
 
 }  // namespace
