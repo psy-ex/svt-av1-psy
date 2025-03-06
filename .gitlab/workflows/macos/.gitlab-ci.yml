@@ -148,7 +148,7 @@ macOS Unit Tests (m1):
   needs:
     - macOS (Static, Tests, m1)
 
-macOS Enc Test:
+macOS Enc Test (x86):
   extends: .macos-test-base
   variables:
     TEST_FILES: akiyo_cif.y4m Chimera-Aerial_480x264_2997fps_10bit_420_150frames.y4m
@@ -158,7 +158,7 @@ macOS Enc Test:
   needs:
     - macOS (Static, Tests)
 
-macOS Enc Test(m1):
+macOS Enc Test (m1):
   extends: .macos-test-base
   tags:
     - macos

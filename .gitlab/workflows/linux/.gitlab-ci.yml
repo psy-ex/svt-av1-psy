@@ -345,26 +345,26 @@ Enc Default Diff test:
     - success=true
     - |
       for dist in test-*-*-*-*bit-*.ivf; do
-        case $dist in *-default-Linux-Release-*bit-*.ivf) continue;; esac
+        case $dist in *-default-Linux_x86_64-Release-*bit-*.ivf) continue;; esac
         printf 'Testing %s\n' "$dist"
         case $dist in
-        test-*-8bit-m2.ivf) diff -q test-default-Linux-Release-8bit-m2.ivf "$dist" || success=false ;;
-        test-*-8bit-m8.ivf) diff -q test-default-Linux-Release-8bit-m8.ivf "$dist" || success=false ;;
-        test-*-10bit-m2.ivf) diff -q test-default-Linux-Release-10bit-m2.ivf "$dist" || success=false ;;
-        test-*-10bit-m8.ivf) diff -q test-default-Linux-Release-10bit-m8.ivf "$dist" || success=false ;;
+        test-*-8bit-m2.ivf) diff -q test-default-Linux_x86_64-Release-8bit-m2.ivf "$dist" || success=false ;;
+        test-*-8bit-m8.ivf) diff -q test-default-Linux_x86_64-Release-8bit-m8.ivf "$dist" || success=false ;;
+        test-*-10bit-m2.ivf) diff -q test-default-Linux_x86_64-Release-10bit-m2.ivf "$dist" || success=false ;;
+        test-*-10bit-m8.ivf) diff -q test-default-Linux_x86_64-Release-10bit-m8.ivf "$dist" || success=false ;;
 
-        vbr1pass-*-8bit-m2.ivf) diff -q vbr1pass-default-Linux-Release-8bit-m2.ivf "$dist" || success=false ;;
-        vbr1pass-*-8bit-m8.ivf) diff -q vbr1pass-default-Linux-Release-8bit-m8.ivf "$dist" || success=false ;;
-        vbr1pass-*-10bit-m2.ivf) diff -q vbr1pass-default-Linux-Release-10bit-m2.ivf "$dist" || success=false ;;
-        vbr1pass-*-10bit-m8.ivf) diff -q vbr1pass-default-Linux-Release-10bit-m8.ivf "$dist" || success=false ;;
-        vbr2pass-*-8bit-m2.ivf) diff -q vbr2pass-default-Linux-Release-8bit-m2.ivf "$dist" || success=false ;;
-        vbr2pass-*-8bit-m8.ivf) diff -q vbr2pass-default-Linux-Release-8bit-m8.ivf "$dist" || success=false ;;
-        vbr2pass-*-10bit-m2.ivf) diff -q vbr2pass-default-Linux-Release-10bit-m2.ivf "$dist" || success=false ;;
-        vbr2pass-*-10bit-m8.ivf) diff -q vbr2pass-default-Linux-Release-10bit-m8.ivf "$dist" || success=false ;;
-        cbr-*-8bit-m2.ivf) diff -q cbr-default-Linux-Release-8bit-m2.ivf "$dist" || success=false ;;
-        cbr-*-8bit-m8.ivf) diff -q cbr-default-Linux-Release-8bit-m8.ivf "$dist" || success=false ;;
-        cbr-*-10bit-m2.ivf) diff -q cbr-default-Linux-Release-10bit-m2.ivf "$dist" || success=false ;;
-        cbr-*-10bit-m8.ivf) diff -q cbr-default-Linux-Release-10bit-m8.ivf "$dist" || success=false ;;
+        vbr1pass-*-8bit-m2.ivf) diff -q vbr1pass-default-Linux_x86_64-Release-8bit-m2.ivf "$dist" || success=false ;;
+        vbr1pass-*-8bit-m8.ivf) diff -q vbr1pass-default-Linux_x86_64-Release-8bit-m8.ivf "$dist" || success=false ;;
+        vbr1pass-*-10bit-m2.ivf) diff -q vbr1pass-default-Linux_x86_64-Release-10bit-m2.ivf "$dist" || success=false ;;
+        vbr1pass-*-10bit-m8.ivf) diff -q vbr1pass-default-Linux_x86_64-Release-10bit-m8.ivf "$dist" || success=false ;;
+        vbr2pass-*-8bit-m2.ivf) diff -q vbr2pass-default-Linux_x86_64-Release-8bit-m2.ivf "$dist" || success=false ;;
+        vbr2pass-*-8bit-m8.ivf) diff -q vbr2pass-default-Linux_x86_64-Release-8bit-m8.ivf "$dist" || success=false ;;
+        vbr2pass-*-10bit-m2.ivf) diff -q vbr2pass-default-Linux_x86_64-Release-10bit-m2.ivf "$dist" || success=false ;;
+        vbr2pass-*-10bit-m8.ivf) diff -q vbr2pass-default-Linux_x86_64-Release-10bit-m8.ivf "$dist" || success=false ;;
+        cbr-*-8bit-m2.ivf) diff -q cbr-default-Linux_x86_64-Release-8bit-m2.ivf "$dist" || success=false ;;
+        cbr-*-8bit-m8.ivf) diff -q cbr-default-Linux_x86_64-Release-8bit-m8.ivf "$dist" || success=false ;;
+        cbr-*-10bit-m2.ivf) diff -q cbr-default-Linux_x86_64-Release-10bit-m2.ivf "$dist" || success=false ;;
+        cbr-*-10bit-m8.ivf) diff -q cbr-default-Linux_x86_64-Release-10bit-m8.ivf "$dist" || success=false ;;
         esac
       done
     - $success
