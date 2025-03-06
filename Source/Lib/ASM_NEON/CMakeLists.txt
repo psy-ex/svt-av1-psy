@@ -31,26 +31,25 @@ target_sources(
   PUBLIC compute_sad_neon.c
   PUBLIC convolve_neon.c
   PUBLIC convolve_scale_neon.c
-  PUBLIC highbd_convolve_neon.c
-  PUBLIC highbd_convolve_scale_neon.c
-  PUBLIC highbd_jnt_convolve_neon.c
-  PUBLIC highbd_loopfilter_neon.c
-  PUBLIC highbd_warp_plane_neon.c
   PUBLIC dav1d_asm.S
   PUBLIC dav1d_util.S
   PUBLIC deblocking_filter_intrinsic_neon.c
   PUBLIC encodetxb_neon.c
-  PUBLIC transforms_intrin_neon.c
-  PUBLIC hadmard_path_neon.c
+  PUBLIC hadamard_path_neon.c
   PUBLIC highbd_blend_a64_mask_neon.c
+  PUBLIC highbd_convolve_neon.c
+  PUBLIC highbd_convolve_scale_neon.c
   PUBLIC highbd_fwd_txfm_neon.c
   PUBLIC highbd_inter_prediction_neon.c
   PUBLIC highbd_intra_prediction_neon.c
   PUBLIC highbd_inv_txfm_neon.c
+  PUBLIC highbd_jnt_convolve_neon.c
+  PUBLIC highbd_loopfilter_neon.c
   PUBLIC highbd_pickrst_neon.c
   PUBLIC highbd_quantize_neon.c
   PUBLIC highbd_sse_neon.c
   PUBLIC highbd_variance_neon.c
+  PUBLIC highbd_warp_plane_neon.c
   PUBLIC highbd_wiener_convolve_neon.c
   PUBLIC inter_prediction_neon.c
   PUBLIC intra_prediction_neon.c
@@ -66,6 +65,7 @@ target_sources(
   PUBLIC sse_neon.c
   PUBLIC subtract_block_neon.c
   PUBLIC temporal_filtering_neon.c
+  PUBLIC transforms_intrin_neon.c
   PUBLIC upsampled_pred_neon.c
   PUBLIC variance_neon.c
   PUBLIC warp_plane_neon.c
