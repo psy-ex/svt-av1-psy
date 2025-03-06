@@ -173,6 +173,8 @@ svfloat32_t func(svfloat32_t a) {
 
     add_definitions(-DARCH_AARCH64=1)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-lax-vector-conversions")
+    # Prevents missmatch between arm and x86 bitstreams
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffp-contract=off")
 endif()
 
 include(GNUInstallDirs)
