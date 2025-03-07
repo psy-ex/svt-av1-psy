@@ -14,19 +14,6 @@
 #include <immintrin.h>
 #include <math.h>
 
-static INLINE void avx2_mul_epi16_epi32(__m256i *a, __m256i *b, __m256i *out) {
-    __m256i a_32[2];
-    __m256i b_32[2];
-
-    a_32[0] = _mm256_cvtepi16_epi32(_mm256_extracti128_si256(*a, 1));
-    a_32[1] = _mm256_cvtepi16_epi32(_mm256_castsi256_si128(*a));
-
-    b_32[0] = _mm256_cvtepi16_epi32(_mm256_extracti128_si256(*b, 1));
-    b_32[1] = _mm256_cvtepi16_epi32(_mm256_castsi256_si128(*b));
-
-    out[0] = _mm256_mullo_epi32(a_32[0], b_32[0]);
-    out[1] = _mm256_mullo_epi32(a_32[1], b_32[1]);
-}
 void svt_get_proj_subspace_avx2(const uint8_t *src8, int width, int height, int src_stride, const uint8_t *dat8,
                                 int dat_stride, int use_highbitdepth, int32_t *flt0, int flt0_stride, int32_t *flt1,
                                 int flt1_stride, int *xq, const SgrParamsType *params) {
@@ -50,7 +37,6 @@ void svt_get_proj_subspace_avx2(const uint8_t *src8, int width, int height, int 
 
     __m256i u_256, s_256, f1_256, f2_256;
     __m256i f1_256_tmp, f2_256_tmp;
-    __m256i out[2];
 
     if (!use_highbitdepth) {
         const uint8_t *src = src8;
@@ -83,29 +69,17 @@ void svt_get_proj_subspace_avx2(const uint8_t *src8, int width, int height, int 
                     f2_256 = _mm256_sub_epi16(f2_256, u_256);
                 } else
                     f2_256 = _mm256_set1_epi16(0);
+
                 //    H[0][0] += f1 * f1;
-                avx2_mul_epi16_epi32(&f1_256, &f1_256, out);
-                h_00 = _mm256_add_epi32(h_00, out[0]);
-                h_00 = _mm256_add_epi32(h_00, out[1]);
-
+                h_00 = _mm256_add_epi32(h_00, _mm256_madd_epi16(f1_256, f1_256));
                 //    H[1][1] += f2 * f2;
-                avx2_mul_epi16_epi32(&f2_256, &f2_256, out);
-                h_11 = _mm256_add_epi32(h_11, out[0]);
-                h_11 = _mm256_add_epi32(h_11, out[1]);
+                h_11 = _mm256_add_epi32(h_11, _mm256_madd_epi16(f2_256, f2_256));
                 //    H[0][1] += f1 * f2;
-                avx2_mul_epi16_epi32(&f1_256, &f2_256, out);
-                h_01 = _mm256_add_epi32(h_01, out[0]);
-                h_01 = _mm256_add_epi32(h_01, out[1]);
-
+                h_01 = _mm256_add_epi32(h_01, _mm256_madd_epi16(f1_256, f2_256));
                 //    C[0] += f1 * s;
-                avx2_mul_epi16_epi32(&f1_256, &s_256, out);
-                c_0 = _mm256_add_epi32(c_0, out[0]);
-                c_0 = _mm256_add_epi32(c_0, out[1]);
-
+                c_0 = _mm256_add_epi32(c_0, _mm256_madd_epi16(f1_256, s_256));
                 //    C[1] += f2 * s;
-                avx2_mul_epi16_epi32(&f2_256, &s_256, out);
-                c_1 = _mm256_add_epi32(c_1, out[0]);
-                c_1 = _mm256_add_epi32(c_1, out[1]);
+                c_1 = _mm256_add_epi32(c_1, _mm256_madd_epi16(f2_256, s_256));
             }
 
             //Complement when width not divided by 16
@@ -180,29 +154,17 @@ void svt_get_proj_subspace_avx2(const uint8_t *src8, int width, int height, int 
                     f2_256 = _mm256_sub_epi16(f2_256, u_256);
                 } else
                     f2_256 = _mm256_set1_epi16(0);
+
                 //    H[0][0] += f1 * f1;
-                avx2_mul_epi16_epi32(&f1_256, &f1_256, out);
-                h_00 = _mm256_add_epi32(h_00, out[0]);
-                h_00 = _mm256_add_epi32(h_00, out[1]);
-
+                h_00 = _mm256_add_epi32(h_00, _mm256_madd_epi16(f1_256, f1_256));
                 //    H[1][1] += f2 * f2;
-                avx2_mul_epi16_epi32(&f2_256, &f2_256, out);
-                h_11 = _mm256_add_epi32(h_11, out[0]);
-                h_11 = _mm256_add_epi32(h_11, out[1]);
+                h_11 = _mm256_add_epi32(h_11, _mm256_madd_epi16(f2_256, f2_256));
                 //    H[0][1] += f1 * f2;
-                avx2_mul_epi16_epi32(&f1_256, &f2_256, out);
-                h_01 = _mm256_add_epi32(h_01, out[0]);
-                h_01 = _mm256_add_epi32(h_01, out[1]);
-
+                h_01 = _mm256_add_epi32(h_01, _mm256_madd_epi16(f1_256, f2_256));
                 //    C[0] += f1 * s;
-                avx2_mul_epi16_epi32(&f1_256, &s_256, out);
-                c_0 = _mm256_add_epi32(c_0, out[0]);
-                c_0 = _mm256_add_epi32(c_0, out[1]);
-
+                c_0 = _mm256_add_epi32(c_0, _mm256_madd_epi16(f1_256, s_256));
                 //    C[1] += f2 * s;
-                avx2_mul_epi16_epi32(&f2_256, &s_256, out);
-                c_1 = _mm256_add_epi32(c_1, out[0]);
-                c_1 = _mm256_add_epi32(c_1, out[1]);
+                c_1 = _mm256_add_epi32(c_1, _mm256_madd_epi16(f2_256, s_256));
             }
 
             //Complement when width not divided by 16
