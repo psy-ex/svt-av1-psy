@@ -1029,7 +1029,7 @@ EbErrorType svt_av1_set_default_params(EbSvtAv1EncConfiguration *config_ptr) {
     config_ptr->enable_variance_boost             = true;
     config_ptr->variance_boost_strength           = 2;
     config_ptr->variance_octile                   = 6;
-    config_ptr->tf_strength                       = 3;
+    config_ptr->tf_strength                       = 1;
     config_ptr->variance_boost_curve              = 0;
     config_ptr->luminance_qp_bias                 = 0;
     config_ptr->sharpness                         = 0; 
