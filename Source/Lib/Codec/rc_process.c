@@ -3302,6 +3302,10 @@ void *svt_aom_rate_control_kernel(void *input_ptr) {
                         chroma_qindex += scs->static_config.chroma_qindex_offsets[pcs->temporal_layer_index];
                     }
 
+                    if (scs->static_config.tune == 3) {
+                        chroma_qindex += -rint(chroma_qindex / 8.0); // Chroma boost to fix saturation issues
+                    }
+
                     chroma_qindex = CLIP3(quantizer_to_qindex[scs->static_config.min_qp_allowed],
                                           quantizer_to_qindex[scs->static_config.max_qp_allowed],
                                           chroma_qindex);
