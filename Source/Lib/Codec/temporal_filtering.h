@@ -46,7 +46,7 @@
 // 1. Weight factor used to balance the weighted-average between window error
 //    and block error. The weight is for window error while the weight for block
 //    error is always set as 1.
-#define TF_WINDOW_BLOCK_BALANCE_WEIGHT 5
+#define TF_WINDOW_BLOCK_BALANCE_WEIGHT 10
 // 2. Threshold for using q to adjust the filtering weight. Concretely, when
 //    using a small q (high bitrate), we would like to reduce the filtering
 //    strength such that more detailed information can be preserved. Hence, when

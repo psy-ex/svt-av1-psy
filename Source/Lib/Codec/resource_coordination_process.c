@@ -362,7 +362,7 @@ static EbErrorType reset_pcs_av1(PictureParentControlSet *pcs) {
     frm_hdr->loop_filter_params.filter_level[1] = 0;
     frm_hdr->loop_filter_params.filter_level_u  = 0;
     frm_hdr->loop_filter_params.filter_level_v  = 0;
-    frm_hdr->loop_filter_params.sharpness_level = 0;
+    frm_hdr->loop_filter_params.sharpness_level = (pcs->scs->static_config.sharpness > 0 ? pcs->scs->static_config.sharpness : 0);
 
     frm_hdr->loop_filter_params.mode_ref_delta_enabled = 0;
     frm_hdr->loop_filter_params.mode_ref_delta_update  = 0;

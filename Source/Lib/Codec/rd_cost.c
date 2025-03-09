@@ -631,10 +631,10 @@ uint64_t svt_aom_intra_fast_cost(PictureControlSet *pcs, struct ModeDecisionCont
             &mv, &ref_mv, ctx->md_rate_est_ctx->dv_joint_cost, dvcost, MV_COST_WEIGHT_SUB);
 
         rate                      = mv_rate + ctx->md_rate_est_ctx->intrabc_fac_bits[cand->use_intrabc];
-        cand_bf->fast_luma_rate   = rate;
+        cand_bf->fast_luma_rate   = rate * (pcs->scs->static_config.tune == 3 ? 2 : 1);
         cand_bf->fast_chroma_rate = 0;
-        uint64_t luma_sad         = luma_distortion;
-        uint64_t chromasad_       = chroma_distortion;
+        uint64_t luma_sad         = luma_distortion * (pcs->scs->static_config.tune == 3 ? 2 : 1);
+        uint64_t chromasad_       = chroma_distortion * (pcs->scs->static_config.tune == 3 ? 4 : 1);
         uint64_t total_distortion = luma_sad + chromasad_;
 
         return (RDCOST(lambda, rate, total_distortion));
@@ -731,10 +731,10 @@ uint64_t svt_aom_intra_fast_cost(PictureControlSet *pcs, struct ModeDecisionCont
             luma_rate += ctx->md_rate_est_ctx->intrabc_fac_bits[cand->use_intrabc];
         }
         // Keep the Fast Luma and Chroma rate for future use
-        cand_bf->fast_luma_rate   = luma_rate;
-        cand_bf->fast_chroma_rate = chroma_rate;
-        luma_sad                  = luma_distortion;
-        chromasad_                = chroma_distortion;
+        cand_bf->fast_luma_rate   = luma_rate * (pcs->scs->static_config.tune == 3 ? 2 : 1);
+        cand_bf->fast_chroma_rate = chroma_rate * (pcs->scs->static_config.tune == 3 ? 4 : 1);
+        luma_sad                  = luma_distortion * (pcs->scs->static_config.tune == 3 ? 2 : 1);
+        chromasad_                = chroma_distortion * (pcs->scs->static_config.tune == 3 ? 4 : 1);
         total_distortion          = luma_sad + chromasad_;
 
         rate = luma_rate + chroma_rate;
@@ -1110,10 +1110,10 @@ static uint64_t av1_inter_fast_cost_light(struct ModeDecisionContext *ctx, BlkSt
     //chroma_rate = intra_chroma_mode_bits_num + intra_chroma_ang_mode_bits_num;
 
     // Keep the Fast Luma and Chroma rate for future use
-    cand_bf->fast_luma_rate   = luma_rate;
-    cand_bf->fast_chroma_rate = chroma_rate;
-    luma_sad                  = luma_distortion;
-    chromasad_                = chroma_distortion;
+    cand_bf->fast_luma_rate   = luma_rate * (pcs->scs->static_config.tune == 3 ? 2 : 1);
+    cand_bf->fast_chroma_rate = chroma_rate * (pcs->scs->static_config.tune == 3 ? 4 : 1);
+    luma_sad                  = luma_distortion * (pcs->scs->static_config.tune == 3 ? 2 : 1);
+    chromasad_                = chroma_distortion * (pcs->scs->static_config.tune == 3 ? 4 : 1);
     total_distortion          = luma_sad + chromasad_;
     //if (blk_geom->has_uv == 0 && chromasad_ != 0)
     //    SVT_LOG("svt_aom_inter_fast_cost: Chroma error");
@@ -1357,10 +1357,10 @@ uint64_t svt_aom_inter_fast_cost(PictureControlSet *pcs, struct ModeDecisionCont
     // chroma_rate = intra_chroma_mode_bits_num + intra_chroma_ang_mode_bits_num;
 
     // Keep the Fast Luma and Chroma rate for future use
-    cand_bf->fast_luma_rate   = luma_rate;
-    cand_bf->fast_chroma_rate = chroma_rate;
-    luma_sad                  = luma_distortion;
-    chromasad_                = chroma_distortion;
+    cand_bf->fast_luma_rate   = luma_rate * (pcs->scs->static_config.tune == 3 ? 2 : 1);
+    cand_bf->fast_chroma_rate = chroma_rate * (pcs->scs->static_config.tune == 3 ? 4 : 1);
+    luma_sad                  = luma_distortion * (pcs->scs->static_config.tune == 3 ? 2 : 1);
+    chromasad_                = chroma_distortion * (pcs->scs->static_config.tune == 3 ? 4 : 1);
     total_distortion          = luma_sad + chromasad_;
     if (blk_geom->has_uv == 0 && chromasad_ != 0)
         SVT_ERROR("svt_aom_inter_fast_cost: Chroma error");

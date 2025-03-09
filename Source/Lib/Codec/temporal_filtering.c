@@ -2868,7 +2868,7 @@ static EbErrorType produce_temporally_filtered_pic(
             (input_picture_ptr_central->org_x >> ss_x),
     };
     int decay_control[COLOR_CHANNELS];
-    if (scs->vq_ctrls.sharpness_ctrls.tf && centre_pcs->is_noise_level && scs->calculate_variance && centre_pcs->pic_avg_variance < VQ_PIC_AVG_VARIANCE_TH) {
+    if ((scs->vq_ctrls.sharpness_ctrls.tf && centre_pcs->is_noise_level && scs->calculate_variance && centre_pcs->pic_avg_variance < VQ_PIC_AVG_VARIANCE_TH) || scs->static_config.tune == 3) {
 
         decay_control[C_Y] = 1;
         decay_control[C_U] = 1;
@@ -2934,13 +2934,17 @@ static EbErrorType produce_temporally_filtered_pic(
         //q_decay = 0.5 * pow((double)q / 64, 2);
         FP_ASSERT(q < (1 << 15));
         uint32_t q_decay_fp8 = 256;
-        if (q >= TF_QINDEX_CUTOFF) {
-            q_decay_fp8 = (q * q) >> 5;
+        if (scs->static_config.tune == 3) {
+            q_decay_fp8 = MAX((uint32_t)(16 * pow((double)q, 0.5) + 0.25 * pow((double)q, 1.5)), 1); // Tuned for const_0dot7_fp16 at 0.8 (52428)
+        } else {
+            if (q >= TF_QINDEX_CUTOFF) {
+                q_decay_fp8 = (q * q) >> 5;
+            }
+            else {
+                q_decay_fp8 = MAX(q << 2, 1);
+            }
         }
-        else {
-            q_decay_fp8 = MAX(q << 2, 1);
-        }
-        const int32_t const_0dot7_fp16 = 45875; //0.7
+        const int32_t const_0dot7_fp16 = (scs->static_config.tune == 3 ? 52428 : 45875);// tune 3 ? 0.8 : 0.7;
         /*Calculation of log and dceay_factor possible to move to estimate_noise() and calculate one time for GOP*/
         //decay_control * (0.7 + log1p(noise_levels[C_Y]))
         int32_t n_decay_fp10 = (decay_control[C_Y] * (const_0dot7_fp16 + noise_levels_log1p_fp16[C_Y])) /
