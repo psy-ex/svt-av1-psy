@@ -211,6 +211,7 @@
 #define MAX_CHROMA_QM_LEVEL_TOKEN "--chroma-qm-max"
 
 #define NOISE_NORM_STRENGTH_TOKEN "--noise-norm-strength"
+#define KF_TF_STRENGTH_FILTER_TOKEN "--kf-tf-strength"
 
 static EbErrorType validate_error(EbErrorType err, const char *token, const char *value) {
     switch (err) {
@@ -1261,6 +1262,8 @@ ConfigEntry config_entry_variance_boost[] = {
     {SINGLE_INPUT, MIN_CHROMA_QM_LEVEL_TOKEN, "[PSY] Min chroma quant matrix flatness, default is 8 [0-15]", set_cfg_generic_token},
     {SINGLE_INPUT, MAX_CHROMA_QM_LEVEL_TOKEN, "[PSY] Max chroma quant matrix flatness, default is 15 [0-15]", set_cfg_generic_token},
     {SINGLE_INPUT, NOISE_NORM_STRENGTH_TOKEN, "[PSY] Noise normalization strength, default is 0 [0-4]", set_cfg_generic_token},
+    //Alt-ref temporal filtering strength on keyframes
+    {SINGLE_INPUT, KF_TF_STRENGTH_FILTER_TOKEN, "[PSY] Adjust TF strength on keyframes, default is 1 (4x weaker than mainline) [0-4]", set_cfg_generic_token},
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};
 
@@ -1467,6 +1470,9 @@ ConfigEntry config_entry[] = {
 
     // Noise normalization strength
     {SINGLE_INPUT, NOISE_NORM_STRENGTH_TOKEN, "NoiseNormStrength", set_cfg_generic_token},
+
+    //Alt-ref temporal filtering strength on keyframes
+    {SINGLE_INPUT, KF_TF_STRENGTH_FILTER_TOKEN, "KeyframeTemporalFilteringStrength", set_cfg_generic_token},
 
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};

@@ -132,6 +132,7 @@ For more information on valid values for specific keys, refer to the [EbEncSetti
 | **RoiMapFile**                   | --roi-map-file                   | any string | Null        | Path to a file containing picture based QP offset map                                                                                                |
 | **TemporalFilteringStrength**    | --tf-strength                    | [0-4]      | 3           | Manually adjust temporal filtering strength. Higher values = stronger temporal filtering                                                             |
 | **Sharpness**                    | --sharpness                      | [-7-7]     | 0           | Bias towards decreased/increased sharpness                                                                                                           |
+| **KFTemporalFilteringStrength**  | --kf-tf-strength                 | [0-4]      | 1           | Manually adjust alt-ref temporal filtering strengh on keyframes. Higher values = stronger alt-ref temporal filtering                                 |
 
 
 ### **UseFixedQIndexOffsets** and more information
