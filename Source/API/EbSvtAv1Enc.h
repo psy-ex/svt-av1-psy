@@ -997,6 +997,14 @@ typedef struct EbSvtAv1EncConfiguration {
      */
     uint8_t noise_norm_strength;
 
+    /* Manually adjust TF strength on keyframes
+     * 0: disable alt-ref TF on keyframes
+     * 1: 10 + (4 - 1) = 13 (4x weaker, PSY default)
+     * 2: 10 + (4 - 2) = 12 (2x weaker)
+     * 3: 10 + (4 - 3) = 11 (mainline default)
+     * 4: 10 + (4 - 4) = 10 (2x stronger) */
+     uint8_t kf_tf_strength;
+
     /*Add 128 Byte Padding to Struct to avoid changing the size of the public configuration struct*/
     uint8_t padding[128];
 } EbSvtAv1EncConfiguration;

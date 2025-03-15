@@ -96,6 +96,10 @@ Allows the encoder to accept content with width and/or height as small as 4 pixe
 
 In a scenario where a video frame contains areas with fine textures or flat regions, noise normalization helps maintain visual quality by boosting certain AC coefficients. The default value is 0, but it is enabled at strength 3 when using Tune 3.
 
+- `--kf-tf-strength` *0 to 4*
+
+Manually adjust temporal filtering strength specifically on keyframes. Each increment is a 2x increase in temporal filtering strength; a value of 1 is 4x weaker than mainline SVT-AV1's default temporal filter (which would be equivalent to 3 here). The default value is 1, which reduces alt-ref temporal filtering strength by 4x on keyframes, fixing a critical visual bug that mainline svt-av1 doesn't have yet.
+
 ### Modified Defaults
 
 SVT-AV1-PSY has different defaults than mainline SVT-AV1 in order to provide better visual fidelity out of the box. They include:

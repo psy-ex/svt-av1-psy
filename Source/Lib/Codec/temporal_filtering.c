@@ -2993,11 +2993,21 @@ static EbErrorType produce_temporally_filtered_pic(
             const uint8_t tf_shift_factor = 10 + (4 - scs->static_config.tf_strength);
             assert(tf_shift_factor <= 14);
 
-            // kf_tf_shift_factor is 1 + tf strength when using Tune 0 (VQ)
-            uint8_t kf_tf_shift_factor = tf_shift_factor;
-            if (scs->vq_ctrls.sharpness_ctrls.tf)
-                kf_tf_shift_factor = MIN(14, tf_shift_factor + 1);
+            // kf_tf_shift_factor is manually adjusted by the user via --kf-tf-strength
+            // 10 + (4 - (0)) = 14 (Disables alt-ref TF on keyframes)
+            // 10 + (4 - (1)) = 13 (4x weaker, PSY default)
+            // 10 + (4 - (2)) = 12 (2x weaker)
+            // 10 + (4 - (3)) = 11 (mainline default)
+            // 10 + (4 - (4)) = 10 (2x stronger)
+            const uint8_t kf_tf_shift_factor = 10 + (4 - scs->static_config.kf_tf_strength);
             assert(kf_tf_shift_factor <= 14);
+
+            /* mainline behavior: kf_tf_shift_factor is 1 + tf strength when using Tune 0 (VQ)
+            uint8_t kf_tf_shift_factor = tf_shift_factor;
+
+            if (scs->vq_ctrls.sharpness_ctrls.tf)
+                kf_tf_shift_factor = MIN(14, kf_tf_shift_factor + 1);
+            */
 
             // when kf_tf_shift_factor is 14, we disable tf on keyframes
             if (frame_update_type == SVT_AV1_KF_UPDATE && kf_tf_shift_factor == 14) {
@@ -3557,11 +3567,21 @@ static EbErrorType produce_temporally_filtered_pic_ld(
         const uint8_t tf_shift_factor = 10 + (4 - scs->static_config.tf_strength);
         assert(tf_shift_factor <= 14);
 
-        // kf_tf_shift_factor is 1 + tf strength when using Tune 0 (VQ)
-        uint8_t kf_tf_shift_factor = tf_shift_factor;
-        if (scs->vq_ctrls.sharpness_ctrls.tf)
-            kf_tf_shift_factor = MIN(14, tf_shift_factor + 1);
+        // kf_tf_shift_factor is manually adjusted by the user via --kf-tf-strength
+        // 10 + (4 - (0)) = 14 (Disables alt-ref TF on keyframes)
+        // 10 + (4 - (1)) = 13 (4x weaker, PSY default)
+        // 10 + (4 - (2)) = 12 (2x weaker)
+        // 10 + (4 - (3)) = 11 (mainline default)
+        // 10 + (4 - (4)) = 10 (2x stronger)
+        const uint8_t kf_tf_shift_factor = 10 + (4 - scs->static_config.kf_tf_strength);
         assert(kf_tf_shift_factor <= 14);
+
+        /* mainline behavior: kf_tf_shift_factor is 1 + tf strength when using Tune 0 (VQ)
+        uint8_t kf_tf_shift_factor = tf_shift_factor;
+
+        if (scs->vq_ctrls.sharpness_ctrls.tf)
+            kf_tf_shift_factor = MIN(14, kf_tf_shift_factor + 1);
+        */
 
         // when kf_tf_shift_factor is 14, we disable tf on keyframes
         if (frame_update_type == SVT_AV1_KF_UPDATE && kf_tf_shift_factor == 14) {
