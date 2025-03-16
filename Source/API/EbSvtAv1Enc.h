@@ -915,7 +915,7 @@ typedef struct EbSvtAv1EncConfiguration {
     /* @brief Bias towards decreased/increased sharpness in the deblocking loop filter & during rate distortion
      * Minimum value is -7 (less sharp).
      * Maximum value is 7 (more sharp).
-     * Default is 0 (medium sharpness). */
+     * Default is 1 in svt-av1-psy (medium sharpness). */
     int8_t sharpness;
 
     /* @brief Enable the user to configure which curve variance boost uses.
