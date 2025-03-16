@@ -1260,6 +1260,7 @@ ConfigEntry config_entry_variance_boost[] = {
     // Min/max chroma qm
     {SINGLE_INPUT, MIN_CHROMA_QM_LEVEL_TOKEN, "[PSY] Min chroma quant matrix flatness, default is 8 [0-15]", set_cfg_generic_token},
     {SINGLE_INPUT, MAX_CHROMA_QM_LEVEL_TOKEN, "[PSY] Max chroma quant matrix flatness, default is 15 [0-15]", set_cfg_generic_token},
+    //Noise normalisation strength
     {SINGLE_INPUT, NOISE_NORM_STRENGTH_TOKEN, "[PSY] Noise normalization strength, default is 0 [0-4]", set_cfg_generic_token},
     //Alt-ref temporal filtering strength on keyframes
     {SINGLE_INPUT, KF_TF_STRENGTH_FILTER_TOKEN, "[PSY] Adjust TF strength on keyframes, default is 1 (4x weaker than mainline) [0-4]", set_cfg_generic_token},
