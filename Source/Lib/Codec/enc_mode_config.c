@@ -8490,7 +8490,23 @@ void svt_aom_sig_deriv_mode_decision_config(SequenceControlSet *scs, PictureCont
         else
             pcs->mds0_level = is_islice ? 2 : 4;
     } else {
-        if (enc_mode <= ENC_M4)
+        //Enable SSD mode decision L0 only when psy-rd>=0.5
+        //as the quality benefits of SSD mode decision L0 are dubious
+        //for the computational cost when not using the feature
+        if (pcs->scs->static_config.psy_rd >= 0.5){
+            if (enc_mode <= ENC_MR)
+                pcs->mds0_level = 1;
+            //With P6 and slower when psy-rd is enabled, there are
+            //great benefits to enabling SAD since unlike VAR,
+            //psy-rd can actually modulate SAD for better perceptual quality using mds0_level
+            else if (enc_mode <= ENC_M6)
+                 pcs->mds0_level = 0;
+            else
+                pcs->mds0_level = is_islice ? 2 : 4;
+        } else {
+        if (enc_mode <= ENC_MRP)
+            pcs->mds0_level = 1;
+        else if (enc_mode <= ENC_M4)
             pcs->mds0_level = 2;
         else if (enc_mode <= ENC_M5)
             pcs->mds0_level = is_base ? 2 : 3;
@@ -8498,6 +8514,7 @@ void svt_aom_sig_deriv_mode_decision_config(SequenceControlSet *scs, PictureCont
             pcs->mds0_level = is_islice ? 2 : 3;
         else
             pcs->mds0_level = is_islice ? 2 : 4;
+        }
     }
     /*
 disallow_4x4
