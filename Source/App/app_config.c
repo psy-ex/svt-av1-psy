@@ -987,7 +987,7 @@ ConfigEntry config_entry_rc[] = {
     // Sharpness
     {SINGLE_INPUT,
      SHARPNESS_TOKEN,
-     "Bias towards decreased/increased sharpness, default is 0 [-7 to 7]",
+     "Bias towards decreased/increased sharpness, default is 1 [-7 to 7]",
      set_cfg_generic_token},
     // Termination
     {SINGLE_INPUT, NULL, NULL, NULL}};
