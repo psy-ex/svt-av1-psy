@@ -945,6 +945,9 @@ typedef struct EbSvtAv1EncConfiguration {
      */
     bool avif;
 
+    /* EXPERIMENTAL new parameters start here. Also deduct the size of the parameter */
+    /* from the padding array */
+
     /* @brief Q index for extended CRF support
      * Value is internally determined by CRF parameter value
      * Default is 0 if CRF is an integer
@@ -1035,7 +1038,7 @@ typedef struct EbSvtAv1EncConfiguration {
      uint8_t hbd_mds;
 
     /*Add 128 Byte Padding to Struct to avoid changing the size of the public configuration struct*/
-    uint8_t padding[128];
+    uint8_t padding[128 - 2 * sizeof(bool) - 8 * sizeof(uint8_t) - sizeof(double)];
 } EbSvtAv1EncConfiguration;
 
 /**
