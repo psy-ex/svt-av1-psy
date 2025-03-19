@@ -912,8 +912,8 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
         return_error = EB_ErrorBadParameter;
     }
 
-    if (config->spy_rd != 0 && config->spy_rd != 1) {
-        SVT_ERROR("Instance %u: spy-rd must be between 0 and 1\n", channel_number + 1);
+    if (config->spy_rd < 0 || config->spy_rd > 2) {
+        SVT_ERROR("Instance %u: spy-rd must be between 0 and 2\n", channel_number + 1);
         return_error = EB_ErrorBadParameter;
     }
 
@@ -1241,10 +1241,10 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
             SVT_INFO("SVT [config]: PSY-RD Strength \t\t\t\t\t\t: %.2f\n",
                     config->psy_rd);
         }
-        if (config->spy_rd) {
-            SVT_INFO("SVT [config]: spy-rd \t\t\t\t\t\t\t: %s\n",
-                    config->spy_rd ? "oui" : "non");
-        }
+        // 1 is full spy-rd, 2 is partial spy-rd
+        SVT_INFO("SVT [config]: spy-rd \t\t\t\t\t\t\t: %s\n",
+        config->spy_rd == 1 ? "oui" : (config->spy_rd == 2 ? "ouais" : "non"));
+        
     }
 #ifdef DEBUG_BUFFERS
     SVT_INFO("SVT [config]: INPUT / OUTPUT \t\t\t\t\t\t\t: %d / %d\n",
@@ -2127,6 +2127,7 @@ EB_API EbErrorType svt_av1_enc_parse_parameter(EbSvtAv1EncConfiguration *config_
         {"kf-tf-strength", &config_struct->kf_tf_strength},
         {"enable-tf", &config_struct->enable_tf},
         {"tf-strength", &config_struct->tf_strength},
+        {"spy-rd", &config_struct->spy_rd},
         {"hbd-mds", &config_struct->hbd_mds},
         {"sharp-tx", &config_struct->sharp_tx},
     };
@@ -2248,7 +2249,6 @@ EB_API EbErrorType svt_av1_enc_parse_parameter(EbSvtAv1EncConfiguration *config_
         {"lossless", &config_struct->lossless},
         {"avif", &config_struct->avif},
         {"max-32-tx-size", &config_struct->max_32_tx_size},
-        {"spy-rd", &config_struct->spy_rd},
     };
     const size_t bool_opts_size = sizeof(bool_opts) / sizeof(bool_opts[0]);
 

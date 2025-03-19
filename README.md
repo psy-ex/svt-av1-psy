@@ -108,9 +108,9 @@ Adaptively varies temporal filtering strength based on 64x64 block error. This c
 
 Configures psychovisual rate distortion strength to improve perceived quality by measuring and attempting to preserve the visual energy distribution of high-frequency details and textures. The default is 0.
 
-- `--spy-rd` *0 and 1*
+- `--spy-rd` *0 to 2*
 
-Configures a psychovisually-oriented metric that biases towards sharpness and detail retention, at the possible expense of increased blocking and banding. The default is 0.
+Configure psychovisually-oriented pathways that bias towards sharpness and detail retention, at the possible expense of increased blocking and banding. The default is 0, with 1 being the most aggressive and 2 being less aggressive.
 
 
 ### Modified Defaults

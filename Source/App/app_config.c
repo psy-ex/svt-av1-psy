@@ -1272,7 +1272,7 @@ ConfigEntry config_entry_variance_boost[] = {
     //Psy-rd
     {SINGLE_INPUT, PSY_RD_TOKEN, "[PSY] Psychovisual rate distortion strength, default is 0.5; high quality mode activated at >=0.6 [0.0-6.0]", set_cfg_generic_token},
     //Spy-rd
-    {SINGLE_INPUT, SPY_RD_TOKEN, "[PSY] Alternative psychovisual rate distortion, default is 0 [0-1]", set_cfg_generic_token},
+    {SINGLE_INPUT, SPY_RD_TOKEN, "[PSY] Alternative psychovisual rate distortion pathways, default is 0 [0-2]; 1 = full, 2 = partial", set_cfg_generic_token},
     //Sharp-tx
     {SINGLE_INPUT, SHARP_TX_TOKEN, "[PSY] Sharp transform optimization, default is 1; best used in combination with psy-rd [0-1]", set_cfg_generic_token},
     //HBD Mode Decisions

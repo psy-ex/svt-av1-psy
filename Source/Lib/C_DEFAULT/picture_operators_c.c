@@ -116,7 +116,7 @@ uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t inpu
                                                    uint8_t* recon, int32_t recon_offset, uint32_t recon_stride,
                                                    uint32_t area_width, uint32_t area_height, bool hbd_md, PredictionMode mode,
                                                    CompoundType compound_type, uint8_t temporal_layer_index,
-                                                   double psy_rd, bool spy_rd) {
+                                                   double psy_rd, uint8_t spy_rd) {
 
     EbSpatialFullDistType spatial_full_dist_type_fun = hbd_md ? svt_full_distortion_kernel16_bits
                                                               : svt_spatial_full_distortion_kernel;
@@ -130,8 +130,8 @@ uint64_t svt_spatial_full_distortion_kernel_facade(uint8_t* input, uint32_t inpu
                         recon_stride,
                         area_width,
                         area_height);
-
-    if (spy_rd) {
+    //Only enable intra prediction tweaks when full spy-rd is active
+    if (spy_rd == 1) {
         if (mode == DC_PRED || mode == SMOOTH_PRED || mode == SMOOTH_V_PRED || mode == SMOOTH_H_PRED) {
             if (psy_rd == 0.0) {
                 // Medium bias against "visually blurry" intra prediction modes
