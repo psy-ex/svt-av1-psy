@@ -2546,7 +2546,7 @@ static void interpolation_filter_search(PictureControlSet *pcs, ModeDecisionCont
         }
 
         // spy-rd: bias RD towards picking sharper interpolation filters
-        if (scs->static_config.spy_rd) {
+        if (scs->static_config.spy_rd > 0) {
             // SHARP filter on either x or y axis
             if (filter_sets[i][0] == 2 || filter_sets[i][1] == 2)
                 tmp_rd = (tmp_rd * 75) / 100;

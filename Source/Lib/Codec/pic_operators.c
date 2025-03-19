@@ -238,13 +238,13 @@ void svt_aom_picture_full_distortion32_bits_single_facade(int32_t *coeff, int32_
                                                           uint32_t bwidth, uint32_t bheight, uint32_t area_width,
                                                           uint32_t area_height, uint64_t *distortion, uint32_t cnt_nz_coeff,
                                                           PredictionMode mode, CompoundType compound_type, uint8_t temporal_layer_index,
-                                                          double psy_rd, bool spy_rd)
+                                                          double psy_rd, uint8_t spy_rd)
 {
     svt_aom_picture_full_distortion32_bits_single(coeff, recon_coeff, stride,
                                                     bwidth, bheight, distortion,
                                                     cnt_nz_coeff);
-
-    if (spy_rd) {
+    //Only enable intra prediction tweaks when full spy-rd is active
+    if (spy_rd == 1) {
         if (mode == DC_PRED || mode == SMOOTH_PRED || mode == SMOOTH_V_PRED || mode == SMOOTH_H_PRED) {
             if (psy_rd == 0.0) {
                 // Medium bias against "visually blurry" intra prediction modes
