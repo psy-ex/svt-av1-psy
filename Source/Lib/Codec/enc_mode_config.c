@@ -1977,7 +1977,7 @@ void svt_aom_sig_deriv_multi_processes(SequenceControlSet *scs, PictureParentCon
         //psy-rd performance once it becomes strong enough (>=0.6)
         else if (enc_mode <= ENC_M4 && pcs->scs->static_config.psy_rd >= 0.6)
             pcs->hbd_md = 1;
-        else if (enc_mode <= ENC_M6)
+        else if (enc_mode <= ENC_M6 && pcs->scs->static_config.psy_rd >= 0.6)
             pcs->hbd_md = 2;
         else if (enc_mode <= ENC_M7)
             pcs->hbd_md = is_base ? 2 : 0;
