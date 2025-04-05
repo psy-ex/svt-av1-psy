@@ -9597,7 +9597,8 @@ static void md_encode_block(PictureControlSet *pcs, ModeDecisionContext *ctx, ui
     }
     // 3rd Full-Loop
     ctx->md_stage        = MD_STAGE_3;
-    ctx->tune_ssim_level = (pcs->scs->static_config.tune == 2 || pcs->ppcs->scs->static_config.tune == 3 || pcs->ppcs->scs->static_config.tune == 4) && (ctx->pd_pass == PD_PASS_1) ? SSIM_LVL_1 : SSIM_LVL_0;
+    ctx->tune_ssim_level = (pcs->scs->static_config.tune == 2 && ctx->pd_pass == PD_PASS_1) ? SSIM_LVL_3 : ((pcs->ppcs->scs->static_config.tune == 3
+        || pcs->ppcs->scs->static_config.tune == 4) && ctx->pd_pass == PD_PASS_1) ? SSIM_LVL_1 : SSIM_LVL_0;
     md_stage_3(pcs,
                ctx,
                input_pic,
