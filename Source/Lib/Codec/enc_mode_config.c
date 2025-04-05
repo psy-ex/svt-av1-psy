@@ -2115,6 +2115,11 @@ void svt_aom_sig_deriv_pre_analysis_scs(SequenceControlSet *scs) {
     }
     scs->seq_header.enable_intra_edge_filter = 1;
 
+    // Tune 4 gets the "still picture" flag set
+    if (scs->static_config.tune == 4) {
+        scs->seq_header.still_picture = 1;
+    }
+
     if (scs->static_config.enable_restoration_filtering == DEFAULT) {
         // As allocation has already happened based on the initial input resolution, the resolution
         // changes should not impact enabling restoration. For some presets, restoration is off for 8K
