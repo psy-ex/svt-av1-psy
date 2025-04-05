@@ -1111,9 +1111,9 @@ ConfigEntry config_entry_specific[] = {
     // --- end: ALTREF_FILTERING_SUPPORT
     {SINGLE_INPUT,
      TUNE_TOKEN,
-     "Optimize the encoding process for different desired outcomes [0 = VQ, 1 = PSNR, 2 = SSIM, 3 = Subjective SSIM, 4 = Still Picture], "
+     "Optimize the encoding process for different desired outcomes [0 = VQ, 1 = PSNR, 2 = SSIM, 3 = Subjective SSIM, 4 = Still Picture, 5 = Enhanced SSIM], "
      "default is 2 "
-     "[0-4]",
+     "[0-5]",
      set_cfg_generic_token},
     // MD Parameters
     {SINGLE_INPUT,

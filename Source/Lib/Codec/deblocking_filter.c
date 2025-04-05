@@ -1144,7 +1144,8 @@ EbErrorType svt_av1_pick_filter_level(EbPictureBufferDesc *srcBuffer, // source 
     struct LoopFilter *const lf            = &frm_hdr->loop_filter_params;
     const int32_t            sharpness_val = CLIP3(0, 7, pcs->scs->static_config.sharpness);
     lf->sharpness_level                    = sharpness_val;
-    if (frm_hdr->frame_type == KEY_FRAME && (pcs->scs->static_config.tune == 0 || pcs->scs->static_config.tune == 3))
+    if (frm_hdr->frame_type == KEY_FRAME && (pcs->scs->static_config.tune == 0
+        || pcs->scs->static_config.tune == 3 || pcs->scs->static_config.tune == 5 ))
         lf->sharpness_level = MIN(7, sharpness_val + 2);
 
     if (method == LPF_PICK_MINIMAL_LPF)

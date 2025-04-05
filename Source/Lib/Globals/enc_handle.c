@@ -3262,7 +3262,7 @@ static void derive_vq_params(SequenceControlSet* scs) {
         // Stability
         vq_ctrl->stability_ctrls.depth_refinement = 1;
     }
-    else if (scs->static_config.tune == 3) {
+    else if (scs->static_config.tune == 3 || scs->static_config.tune == 5) {
 
         vq_ctrl->sharpness_ctrls.scene_transition = 1;
         vq_ctrl->sharpness_ctrls.tf               = 1;

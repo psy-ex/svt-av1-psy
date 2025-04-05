@@ -2147,7 +2147,7 @@ static void aom_av1_set_mb_ssim_rdmult_scaling(PictureParentControlSet *pcs) {
             double    var = 0.0, num_of_var = 0.0;
             const int index = row * num_cols + col;
 
-            if (pcs->scs->static_config.tune == 3) {
+            if (pcs->scs->static_config.tune == 3 || pcs->scs->static_config.tune == 5) {
                 const int mi_row = row << 2;
                 const int mi_col = col << 2;
                 const int row_offset_y = row << 2;
@@ -2213,7 +2213,7 @@ static void aom_av1_set_mb_ssim_rdmult_scaling(PictureParentControlSet *pcs) {
             }
         }
     }
-    if (pcs->scs->static_config.tune != 3) {
+    if (pcs->scs->static_config.tune != 3 && pcs->scs->static_config.tune != 5) {
         log_sum = exp(log_sum / (double)(num_rows * num_cols));
         if (do_print) {
             fprintf(stdout, "\nlog_sum %.4f\n", log_sum);
@@ -2242,7 +2242,7 @@ static void aom_av1_set_mb_ssim_rdmult_scaling(PictureParentControlSet *pcs) {
                 }
             }
         }
-    } else { // Do superblock-based adjustment if we're on Tune 3
+    } else { // Do superblock-based adjustment if we're on Tune 3 or Tune 5
         const int sb_size = pcs->scs->seq_header.sb_size;
         const int num_mi_w_sb = mi_size_wide[sb_size];
         const int num_mi_h_sb = mi_size_high[sb_size];
@@ -2321,7 +2321,8 @@ void *svt_aom_source_based_operations_kernel(void *input_ptr) {
             }
         }
         /*********************************************Picture-based operations**********************************************************/
-        if (scs->static_config.tune == 2 || scs->static_config.tune == 3 || scs->static_config.tune == 4) {
+        if (scs->static_config.tune == 2 || scs->static_config.tune == 3
+            || scs->static_config.tune == 4 || scs->static_config.tune == 5) {
             aom_av1_set_mb_ssim_rdmult_scaling(pcs);
         }
         sbo_send_picture_out(context_ptr, pcs, false);
