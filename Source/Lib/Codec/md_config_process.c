@@ -276,6 +276,13 @@ void svt_av1_qm_init(PictureParentControlSet *pcs) {
                 pcs->frm_hdr.quantization_params.qm[AOM_PLANE_U] = psy_still_get_qmlevel(base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_U], min_chroma_qmlevel, max_chroma_qmlevel);
                 pcs->frm_hdr.quantization_params.qm[AOM_PLANE_V] = psy_still_get_qmlevel(base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_V], min_chroma_qmlevel, max_chroma_qmlevel);
                 break;
+            case 5:
+                //Chroma always seem to suffer too much with steep quantization matrices, so we're temporarily
+                //forcing not very steep quantization matrices for chroma channels
+                //Will enable for tune 5 and ideally within a range in the near future
+                pcs->frm_hdr.quantization_params.qm[AOM_PLANE_Y] = psy_get_qmlevel(base_qindex, min_qmlevel, max_qmlevel);
+                pcs->frm_hdr.quantization_params.qm[AOM_PLANE_U] = psy_get_qmlevel(base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_U], min_chroma_qmlevel, max_chroma_qmlevel);
+                pcs->frm_hdr.quantization_params.qm[AOM_PLANE_V] = psy_get_qmlevel(base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_V], min_chroma_qmlevel, max_chroma_qmlevel);
             default:
                 pcs->frm_hdr.quantization_params.qm[AOM_PLANE_Y] = aom_get_qmlevel(base_qindex, min_qmlevel, max_qmlevel);
                 pcs->frm_hdr.quantization_params.qm[AOM_PLANE_U] = aom_get_qmlevel(base_qindex + pcs->frm_hdr.quantization_params.delta_q_ac[AOM_PLANE_U], min_chroma_qmlevel, max_chroma_qmlevel);
