@@ -1479,7 +1479,6 @@ void svt_av1_perform_noise_normalization(MacroblockPlane *p,
     const int height = get_txb_high_tab[tx_size];
     const ScanOrder *const scan_order = &av1_scan_orders[tx_size][tx_type];
     const int16_t *scan = scan_order->scan;
-    const uint8_t tune = pcs->scs->static_config.tune;
 
     // If block is too small, terminate early
     if (width == 4 && height == 4) {
@@ -1487,11 +1486,6 @@ void svt_av1_perform_noise_normalization(MacroblockPlane *p,
     }
 
     uint8_t noisenorm_strength = pcs->scs->static_config.noise_norm_strength;
-
-    // If tune is 3 & noisenorm_strength is 0, set noisenorm_strength to 3
-    if (noisenorm_strength < 1 && tune == 3) {
-        noisenorm_strength = 3;
-    }
 
     // If noisenorm_strength is 0, terminate early
     if (noisenorm_strength < 1) {
