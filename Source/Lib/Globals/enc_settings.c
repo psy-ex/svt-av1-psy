@@ -511,28 +511,27 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
             config->fast_decode);
         return_error = EB_ErrorBadParameter;
     }
-    if (config->tune > 2) {
+    if (config->tune > 3) {
         SVT_ERROR(
-            "Instance %u: Invalid tune flag [0 - 2, 0 for VQ, 1 for PSNR and 2 for SSIM], your "
+            "Instance %u: Invalid tune flag [0 - 2, 0 for VQ, 1 for PSNR, 2 for SSIM, and 3 for SSIM with subjective qual. tuning], your "
             "input: %d\n",
             channel_number + 1,
             config->tune);
         return_error = EB_ErrorBadParameter;
     }
-    if (config->tune == 2) {
+    if (config->tune == 3) {
         if (config->rate_control_mode != 0 || config->pred_structure != SVT_AV1_PRED_RANDOM_ACCESS) {
-            SVT_ERROR("Instance %u: tune SSIM only supports CRF rate control mode currently\n",
+            SVT_ERROR("Instance %u: Tune Subjective SSIM only supports the CRF rate control mode currently\n",
                       channel_number + 1,
                       config->tune);
             return_error = EB_ErrorBadParameter;
         } else {
             SVT_WARN(
-                "Instance %u: tune ssim (2) is supported for testing and debugging purposes."
-                "This configuration should not be used for any benchmarking analysis at this stage\n",
+                "Instance %u: The Subjective SSIM configuration is considered experimental at this stage. "
+                "Keep in mind for benchmarking analysis that this configuration will likely harm metric performance.\n",
                 channel_number + 1);
         }
     }
-
     if (config->superres_mode > SUPERRES_AUTO) {
         SVT_ERROR("Instance %u: invalid superres-mode %d, should be in the range [%d - %d]\n",
                   channel_number + 1,
@@ -800,10 +799,10 @@ EbErrorType svt_av1_verify_settings(SequenceControlSet *scs) {
             "consider using --fast-decode 1 or 2, especially if the intended decoder is running with "
             "limited multi-threading capabilities.\n");
     }
-    if (config->tune == 0 && config->fast_decode > 0) {
+    if ((config->tune == 0 || config->tune == 3) && config->fast_decode > 0) {
         SVT_WARN(
             "--fast - decode has been developed and optimized with --tune 1. "
-            "Please use it with caution when encoding with --tune 0. You can also consider using "
+            "Please use it with caution when encoding with --tune 0 or 3. You can also consider using "
             "--tile-columns 1 if you are targeting a high quality encode and a multi-core "
             "high-performance decoder HW\n");
     }
@@ -1063,7 +1062,8 @@ void svt_av1_print_lib_params(SequenceControlSet *scs) {
                  config->enc_mode,
                  config->tune == 0       ? "VQ"
                      : config->tune == 1 ? "PSNR"
-                                         : "SSIM",
+                         : config->tune == 2 ? "SSIM"
+                                             : "Subjective SSIM",
                  config->pred_structure == 1       ? "low delay"
                      : config->pred_structure == 2 ? "random access"
                                                    : "Unknown pred structure");

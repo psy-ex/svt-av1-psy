@@ -8714,7 +8714,7 @@ static void md_encode_block_light_pd1(PictureControlSet *pcs, ModeDecisionContex
     //Get the new lambda for current block
     if (pcs->ppcs->blk_lambda_tuning) {
         svt_aom_set_tuned_blk_lambda(ctx, pcs);
-    } else if (pcs->ppcs->scs->static_config.tune == 2) {
+    } else if (pcs->ppcs->scs->static_config.tune == 2 || pcs->ppcs->scs->static_config.tune == 3) {
         int mi_row = ctx->blk_org_y / 4;
         int mi_col = ctx->blk_org_x / 4;
         aom_av1_set_ssim_rdmult(ctx, pcs, mi_row, mi_col);
@@ -9084,7 +9084,7 @@ static void md_encode_block(PictureControlSet *pcs, ModeDecisionContext *ctx, ui
     //Get the new lambda for current block
     if (pcs->ppcs->blk_lambda_tuning) {
         svt_aom_set_tuned_blk_lambda(ctx, pcs);
-    } else if (pcs->ppcs->scs->static_config.tune == 2) {
+    } else if (pcs->ppcs->scs->static_config.tune == 2 || pcs->ppcs->scs->static_config.tune == 3) {
         int mi_row = ctx->blk_org_y / 4;
         int mi_col = ctx->blk_org_x / 4;
         aom_av1_set_ssim_rdmult(ctx, pcs, mi_row, mi_col);
@@ -9366,7 +9366,7 @@ static void md_encode_block(PictureControlSet *pcs, ModeDecisionContext *ctx, ui
     }
     // 3rd Full-Loop
     ctx->md_stage        = MD_STAGE_3;
-    ctx->tune_ssim_level = (pcs->scs->static_config.tune == 2) && (ctx->pd_pass == PD_PASS_1) ? SSIM_LVL_3 : SSIM_LVL_0;
+    ctx->tune_ssim_level = (pcs->scs->static_config.tune == 2 || pcs->ppcs->scs->static_config.tune == 3) && (ctx->pd_pass == PD_PASS_1) ? SSIM_LVL_3 : SSIM_LVL_0;
     md_stage_3(pcs,
                ctx,
                input_pic,
