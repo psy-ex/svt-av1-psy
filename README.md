@@ -16,7 +16,7 @@ While efforts to merge SVT-AV1-PSY features to mainline SVT-AV1 have been ongoin
 
 If you would like to use our features moving forward, the best versions of our important changes have been and will continue to be making their way over to mainline SVT-AV1. I'll provide a link to the project here: https://gitlab.com/AOMediaCodec/SVT-AV1/
 
-In the meantime, BlueSwordM will be keeping up a fork of this project in its current state to address bugs and other more immediate issues. It is up to him where he wants that project to go. I'll link Blue's GitHub here for visibility as well: https://github.com/BlueSwordM
+In the meantime, BlueSwordM will be keeping up a fork of this project in its current state to address bugs and other more immediate issues. It is up to him where he wants that project to go. I'll link Blue's GitHub here for visibility as well: https://github.com/BlueSwordM/svt-av1-psyex
 
 ## Recap
 
